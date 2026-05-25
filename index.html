@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BHA — Brain Hierarchical Alignment for Visual Decoding</title>
+    <meta
+      name="description"
+      content="BHA aligns hierarchical brain signals to visual semantics via bridge priors for generalizable EEG/MEG-to-image decoding."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <nav class="site-nav" aria-label="Primary">
+      <div class="site-nav__inner">
+        <span class="site-nav__brand">BHA</span>
+        <div class="site-nav__right">
+          <div class="site-nav__links">
+            <a href="#abstract" data-i18n="nav.abstract">Abstract</a>
+            <a href="#method" data-i18n="nav.method">Method</a>
+            <a href="#results" data-i18n="nav.results">Results</a>
+            <a href="#quantitative" data-i18n="nav.quantitative">Quantitative</a>
+            <a href="#subjects" data-i18n="nav.subjects">Subjects</a>
+            <a href="#code" data-i18n="nav.code">Code</a>
+            <a href="#bibtex" data-i18n="nav.bibtex">BibTeX</a>
+          </div>
+          <div class="lang-switch" role="group" data-i18n-attr="aria-label:lang.label">
+            <button type="button" class="lang-switch__btn is-active" data-set-lang="en" aria-pressed="true" data-i18n="lang.en">EN</button>
+            <button type="button" class="lang-switch__btn" data-set-lang="zh" aria-pressed="false" data-i18n="lang.zh">中文</button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="hero__bg" aria-hidden="true"></div>
+      <div class="hero__grid" aria-hidden="true"></div>
+      <div class="hero__content">
+        <p class="hero__badge">
+          <span class="hero__badge-dot" aria-hidden="true"></span>
+          <span data-i18n="hero.badge">Brain-to-image decoding</span>
+        </p>
+        <h1>
+          Brain Hierarchical Alignment Improves Generalizable Visual Decoding via Bridge Priors
+        </h1>
+        <p class="hero__subtitle" data-i18n="hero.subtitle">
+          We align multi-level neural activity to hierarchical visual representations and transport
+          them through bridge priors—linking retrieval, high-level semantics, and low-level appearance
+          in a unified framework.
+        </p>
+        <div class="hero__cta">
+          <a class="btn btn--primary" href="#abstract" data-i18n="hero.cta.read">Read overview</a>
+        </div>
+        <div class="hero__meta">
+          <span><strong data-i18n="hero.meta.modalities">Modalities</strong> · EEG (63-ch) · MEG (271-ch)</span>
+          <span><strong data-i18n="hero.meta.tasks">Tasks</strong> · Retrieval · Reconstruction</span>
+          <span><strong data-i18n="hero.meta.datasets">Datasets</strong> · THINGS-EEG2 · THINGS-MEG</span>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="abstract" class="section section--alt">
+        <div class="section__inner">
+          <p class="section__label" data-i18n="abstract.label">Overview</p>
+          <h2 data-i18n="abstract.title">From neural hierarchies to images</h2>
+          <p class="lead" data-i18n-html="abstract.lead1">
+            <strong>BHA (Brain Hierarchical Alignment)</strong> is a decoding framework that maps
+            hierarchical brain representations to visual semantics using
+            <em>bridge priors</em>—including Schrödinger-bridge, diffusion-prior, and cascade-bridge
+            variants—so that models trained on one subject or setting can better transfer to new
+            subjects and modalities.
+          </p>
+          <p class="lead" style="margin-bottom: 0" data-i18n="abstract.lead2">
+            The codebase supports end-to-end pipelines: brain encoder training, high-level
+            reconstruction with IP-Adapter and SDXL-Turbo, low-level latent regression with optional
+            bridge refinement, and dual-path evaluation that blends semantic and appearance pathways.
+          </p>
+
+          <ul class="checklist">
+            <li data-i18n="abstract.item1">Intra-subject and leave-one-subject-out (LOSO) evaluation on standard THINGS splits</li>
+            <li data-i18n="abstract.item2">Multiple encoder backbones and prior families in one reproducible shell workflow</li>
+            <li data-i18n="abstract.item3">Rich metrics: PixCorr, SSIM, deep feature similarity, and bidirectional retrieval</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="method" class="section">
+        <div class="section__inner">
+          <p class="section__label" data-i18n="method.label">Method</p>
+          <h2 data-i18n="method.title">Hierarchical alignment with bridge transport</h2>
+          <p class="lead" data-i18n="method.lead">
+            High-level tracks align brain signals to OpenCLIP-style vision features and decode
+            through a learned prior; low-level tracks regress SDXL VAE latents with optional bridge
+            refinement. A dual-path evaluator blends the two for sharper, more faithful
+            reconstructions.
+          </p>
+
+          <div class="cards">
+            <article class="card">
+              <div class="card__icon" aria-hidden="true">◇</div>
+              <h3 data-i18n="method.card1.title">Hierarchical visual fusion (multi-model, multi-layer)</h3>
+              <p data-i18n="method.card1.body">
+                Fuses semantic and appearance features from multiple vision encoders and network layers into a multi-scale representation space aligned with brain signals.
+              </p>
+            </article>
+            <article class="card">
+              <div class="card__icon" aria-hidden="true">◎</div>
+              <h3 data-i18n="method.card2.title">Hierarchical alignment loss (pre/post projection)</h3>
+              <p data-i18n="method.card2.body">
+                Applies hierarchical alignment constraints before and after projection into a shared embedding space, jointly optimizing cross-modal matching and representation geometry.
+              </p>
+            </article>
+            <article class="card">
+              <div class="card__icon" aria-hidden="true">▣</div>
+              <h3 data-i18n="method.card3.title">Hierarchical high–low fusion for reconstruction</h3>
+              <p data-i18n="method.card3.body">
+                Fuses high-level semantic and low-level appearance pathways with a tunable blend weight to balance semantic accuracy and fine-grained visual fidelity.
+              </p>
+            </article>
+          </div>
+
+          <figure class="figure-block">
+            <img
+              src="imgs/fig-framework.png"
+              alt="Diagram of the BHA framework: brain encoder, hierarchical alignment, bridge priors, and image decoding paths."
+              width="1600"
+              height="900"
+              loading="lazy"
+            />
+            <figcaption class="figure-caption" data-i18n="method.figcap">
+              Framework overview: hierarchical brain representations are aligned to visual features
+              and transported through bridge priors for retrieval and reconstruction.
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="results" class="section section--alt">
+        <div class="section__inner">
+          <p class="section__label" data-i18n="results.label">Qualitative</p>
+          <h2 data-i18n="results.title">Reconstruction preview</h2>
+          <p class="lead" data-i18n="results.lead">
+            Representative decoded images from our pipeline (quantitative benchmarks in the paper).
+          </p>
+          <figure class="figure-block figure-block--teaser">
+            <img
+              src="imgs/fig-preview_imgs.png"
+              alt="Grid of reconstructed images compared to ground truth."
+              width="2780"
+              height="1468"
+              loading="lazy"
+            />
+            <figcaption class="figure-caption" data-i18n="results.figcap">
+              Teaser reconstructions from the dual-path evaluation (high-level + low-level blend).
+            </figcaption>
+          </figure>
+
+          <div class="metrics" aria-label="Evaluation highlights">
+            <div class="metric">
+              <div class="metric__name" data-i18n="results.metric.sim">Similarity</div>
+              <div class="metric__desc" data-i18n="results.metric.sim.desc">
+                AlexNet, InceptionV3, CLIP, EfficientNet, SwAV feature metrics
+              </div>
+            </div>
+            <div class="metric">
+              <div class="metric__name" data-i18n="results.metric.qual">Image quality</div>
+              <div class="metric__desc" data-i18n="results.metric.qual.desc">PixCorr and SSIM against held-out stimuli</div>
+            </div>
+            <div class="metric">
+              <div class="metric__name" data-i18n="results.metric.ret">Retrieval</div>
+              <div class="metric__desc" data-i18n="results.metric.ret.desc">EEG↔image and image↔EEG top-k accuracy (high-level track)</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="quantitative" class="section">
+        <div class="section__inner">
+          <p class="section__label" data-i18n="quant.label">Quantitative</p>
+          <h2 data-i18n="quant.title">Main results from the paper</h2>
+          <p class="lead" data-i18n="quant.lead">
+            Key tables and Figure&nbsp;3 from our NeurIPS submission: reconstruction benchmarks on
+            THINGS-EEG2, cross-modality retrieval, and the effect of high-/low-level blending
+            coefficient&nbsp;α. Click any panel to view at full resolution.
+          </p>
+
+          <div class="paper-figures">
+            <figure class="figure-block paper-figure">
+              <a
+                class="paper-figure__link"
+                href="assets/paper/table1_reconstruction.png"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src="assets/paper/table1_reconstruction.png"
+                  alt="Table 1: Visual reconstruction performance on THINGS-EEG2."
+                  width="1290"
+                  height="876"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="paper-figure__open" data-i18n="quant.open">Open full size</span>
+              </a>
+              <figcaption class="figure-caption" data-i18n-html="quant.t1cap">
+                <strong>Table 1.</strong> Visual reconstruction performance on THINGS-EEG2 (low- and
+                high-level metrics). Oracle rows report real-image CLS / VAE-latent conditioning and
+                their α&nbsp;=&nbsp;0.5 blend; bold and underline mark best and second-best results.
+              </figcaption>
+            </figure>
+
+            <figure class="figure-block paper-figure">
+              <a
+                class="paper-figure__link"
+                href="assets/paper/table2_retrieval.png"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src="assets/paper/table2_retrieval.png"
+                  alt="Table 2: Average Top-1 and Top-5 retrieval accuracy on THINGS-EEG2 and THINGS-MEG."
+                  width="1290"
+                  height="618"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="paper-figure__open" data-i18n="quant.open">Open full size</span>
+              </a>
+              <figcaption class="figure-caption" data-i18n-html="quant.t2cap">
+                <strong>Table 2.</strong> Average Top-1 / Top-5 accuracy (%) for 200-way zero-shot
+                retrieval on THINGS-EEG2 and THINGS-MEG (subject-wise averages).
+              </figcaption>
+            </figure>
+
+            <figure class="figure-block paper-figure">
+              <a
+                class="paper-figure__link"
+                href="assets/paper/figure3_alpha_blend.png"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src="assets/paper/figure3_alpha_blend.png"
+                  alt="Figure 3: Effect of blending coefficient alpha on reconstruction metrics per subject."
+                  width="1290"
+                  height="666"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="paper-figure__open" data-i18n="quant.open">Open full size</span>
+              </a>
+              <figcaption class="figure-caption" data-i18n-html="quant.f3cap">
+                <strong>Figure 3.</strong> Effect of high-/low-level blending coefficient α on
+                reconstruction quality. Metrics are plotted per subject as α varies from the VAE branch
+                (α&nbsp;=&nbsp;0) to the IP-Adapter branch (α&nbsp;=&nbsp;1); α&nbsp;=&nbsp;0.5 offers
+                the best overall compromise.
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section id="subjects" class="section section--alt">
+        <div class="section__inner">
+          <p class="section__label" data-i18n="subjects.label">Per-subject</p>
+          <h2 data-i18n="subjects.title">Reconstruction detail by participant</h2>
+          <p class="lead" data-i18n="subjects.lead">
+            Each panel summarizes reconstructions for one participant (α sweep). Previews are
+            scaled to fit your screen; click any panel to open the full-resolution PNG.
+          </p>
+
+          <div class="subject-grid">
+            <figure class="subject-card">
+              <div class="subject-card__head">
+                <h3 class="subject-card__title">Subject 01</h3>
+                <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
+              </div>
+              <a
+                class="subject-card__link"
+                href="reconst_imgs_display/reconst_alpha_sweep_sub-01.png"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n-attr="aria-label:subjects.aria"
+                data-i18n-vars='{"n":"01"}'
+                aria-label="Open subject 01 reconstruction panel at full resolution"
+              >
+                <img
+                  src="reconst_imgs_display/reconst_alpha_sweep_sub-01.png"
+                  alt="Reconstruction alpha sweep panel for subject 01."
+                  width="3448"
+                  height="3425"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
+              </a>
+            </figure>
+
+            <figure class="subject-card">
+              <div class="subject-card__head">
+                <h3 class="subject-card__title">Subject 02</h3>
+                <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
+              </div>
+              <a
+                class="subject-card__link"
+                href="reconst_imgs_display/reconst_alpha_sweep_sub-02.png"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n-attr="aria-label:subjects.aria"
+                data-i18n-vars='{"n":"02"}'
+                aria-label="Open subject 02 reconstruction panel at full resolution"
+              >
+                <img
+                  src="reconst_imgs_display/reconst_alpha_sweep_sub-02.png"
+                  alt="Reconstruction alpha sweep panel for subject 02."
+                  width="3448"
+                  height="3425"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
+              </a>
+            </figure>
+
+            <figure class="subject-card">
+              <div class="subject-card__head">
+                <h3 class="subject-card__title">Subject 03</h3>
+                <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
+              </div>
+              <a
+                class="subject-card__link"
+                href="reconst_imgs_display/reconst_alpha_sweep_sub-03.png"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n-attr="aria-label:subjects.aria"
+                data-i18n-vars='{"n":"03"}'
+                aria-label="Open subject 03 reconstruction panel at full resolution"
+              >
+                <img
+                  src="reconst_imgs_display/reconst_alpha_sweep_sub-03.png"
+                  alt="Reconstruction alpha sweep panel for subject 03."
+                  width="3448"
+                  height="3425"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
+              </a>
+            </figure>
+
+            <figure class="subject-card">
+              <div class="subject-card__head">
+                <h3 class="subject-card__title">Subject 04</h3>
+                <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
+              </div>
+              <a
+                class="subject-card__link"
+                href="reconst_imgs_display/reconst_alpha_sweep_sub-04.png"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n-attr="aria-label:subjects.aria"
+                data-i18n-vars='{"n":"04"}'
+                aria-label="Open subject 04 reconstruction panel at full resolution"
+              >
+                <img
+                  src="reconst_imgs_display/reconst_alpha_sweep_sub-04.png"
+                  alt="Reconstruction alpha sweep panel for subject 04."
+                  width="3448"
+                  height="3425"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
+              </a>
+            </figure>
+
+            <figure class="subject-card">
+              <div class="subject-card__head">
+                <h3 class="subject-card__title">Subject 05</h3>
+                <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
+              </div>
+              <a
+                class="subject-card__link"
+                href="reconst_imgs_display/reconst_alpha_sweep_sub-05.png"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n-attr="aria-label:subjects.aria"
+                data-i18n-vars='{"n":"05"}'
+                aria-label="Open subject 05 reconstruction panel at full resolution"
+              >
+                <img
+                  src="reconst_imgs_display/reconst_alpha_sweep_sub-05.png"
+                  alt="Reconstruction alpha sweep panel for subject 05."
+                  width="3448"
+                  height="3425"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
+              </a>
+            </figure>
+
+            <figure class="subject-card">
+              <div class="subject-card__head">
+                <h3 class="subject-card__title">Subject 06</h3>
+                <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
+              </div>
+              <a
+                class="subject-card__link"
+                href="reconst_imgs_display/reconst_alpha_sweep_sub-06.png"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n-attr="aria-label:subjects.aria"
+                data-i18n-vars='{"n":"06"}'
+                aria-label="Open subject 06 reconstruction panel at full resolution"
+              >
+                <img
+                  src="reconst_imgs_display/reconst_alpha_sweep_sub-06.png"
+                  alt="Reconstruction alpha sweep panel for subject 06."
+                  width="3448"
+                  height="3425"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
+              </a>
+            </figure>
+
+            <figure class="subject-card">
+              <div class="subject-card__head">
+                <h3 class="subject-card__title">Subject 07</h3>
+                <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
+              </div>
+              <a
+                class="subject-card__link"
+                href="reconst_imgs_display/reconst_alpha_sweep_sub-07.png"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n-attr="aria-label:subjects.aria"
+                data-i18n-vars='{"n":"07"}'
+                aria-label="Open subject 07 reconstruction panel at full resolution"
+              >
+                <img
+                  src="reconst_imgs_display/reconst_alpha_sweep_sub-07.png"
+                  alt="Reconstruction alpha sweep panel for subject 07."
+                  width="3448"
+                  height="3425"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
+              </a>
+            </figure>
+
+            <figure class="subject-card">
+              <div class="subject-card__head">
+                <h3 class="subject-card__title">Subject 08</h3>
+                <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
+              </div>
+              <a
+                class="subject-card__link"
+                href="reconst_imgs_display/reconst_alpha_sweep_sub-08.png"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n-attr="aria-label:subjects.aria"
+                data-i18n-vars='{"n":"08"}'
+                aria-label="Open subject 08 reconstruction panel at full resolution"
+              >
+                <img
+                  src="reconst_imgs_display/reconst_alpha_sweep_sub-08.png"
+                  alt="Reconstruction alpha sweep panel for subject 08."
+                  width="3448"
+                  height="3425"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
+              </a>
+            </figure>
+
+            <figure class="subject-card">
+              <div class="subject-card__head">
+                <h3 class="subject-card__title">Subject 09</h3>
+                <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
+              </div>
+              <a
+                class="subject-card__link"
+                href="reconst_imgs_display/reconst_alpha_sweep_sub-09.png"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n-attr="aria-label:subjects.aria"
+                data-i18n-vars='{"n":"09"}'
+                aria-label="Open subject 09 reconstruction panel at full resolution"
+              >
+                <img
+                  src="reconst_imgs_display/reconst_alpha_sweep_sub-09.png"
+                  alt="Reconstruction alpha sweep panel for subject 09."
+                  width="3448"
+                  height="3425"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
+              </a>
+            </figure>
+
+            <figure class="subject-card">
+              <div class="subject-card__head">
+                <h3 class="subject-card__title">Subject 10</h3>
+                <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
+              </div>
+              <a
+                class="subject-card__link"
+                href="reconst_imgs_display/reconst_alpha_sweep_sub-10.png"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n-attr="aria-label:subjects.aria"
+                data-i18n-vars='{"n":"10"}'
+                aria-label="Open subject 10 reconstruction panel at full resolution"
+              >
+                <img
+                  src="reconst_imgs_display/reconst_alpha_sweep_sub-10.png"
+                  alt="Reconstruction alpha sweep panel for subject 10."
+                  width="3448"
+                  height="3425"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
+              </a>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section id="code" class="section">
+        <div class="section__inner">
+          <p class="section__label" data-i18n="code.label">Reproducibility</p>
+          <h2 data-i18n="code.title">Code &amp; scripts</h2>
+          <p class="lead" data-i18n="code.lead">
+            Four entry points mirror the paper’s experimental sections: retrieval benchmarking,
+            high-level reconstruction, low-level latent training, and dual-path evaluation. See the
+            repository README for environment variables and dataset paths.
+          </p>
+          <div class="cards">
+            <article class="card">
+              <h3><code>bench_retrieval.sh</code></h3>
+              <p data-i18n="code.card1">Train encoders; intra-subject + LOSO retrieval on EEG or MEG.</p>
+            </article>
+            <article class="card">
+              <h3><code>bench_reconst.sh</code></h3>
+              <p data-i18n="code.card2">High-level reconstruction with bridge prior + IP-Adapter + SDXL-Turbo.</p>
+            </article>
+            <article class="card">
+              <h3><code>train_lowlevel.sh</code></h3>
+              <p data-i18n="code.card3">Direct regression to VAE latents with optional bridge refinement.</p>
+            </article>
+            <article class="card">
+              <h3><code>reconstruction_evaluation.sh</code></h3>
+              <p data-i18n="code.card4">Load HL/LL checkpoints, blend paths, sweep α, optional GT ceiling.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="bibtex" class="section section--alt">
+        <div class="section__inner">
+          <p class="section__label" data-i18n="bibtex.label">Citation</p>
+          <h2 data-i18n="bibtex.title">BibTeX</h2>
+          <p class="lead" data-i18n="bibtex.lead">Use this placeholder during anonymous review; swap for the official entry after publication.</p>
+          <pre class="bibtex" id="bibtex-block">@article{anonymous2026bha,
+  title   = {Brain Hierarchical Alignment Improves Generalizable Visual Decoding via Bridge Priors},
+  author  = {Anonymous},
+  journal = {Under review},
+  year    = {2026}
+}</pre>
+          <p class="bibtex-note" data-i18n-html="bibtex.tip">
+            Tip: add a “Copy” button with <code>navigator.clipboard</code> when you are no longer on
+            a strict static host—clipboard often requires HTTPS.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p data-i18n="footer.body">
+        Built for anonymous release · MIT License · Acknowledgements: THINGS-EEG2/MEG, ATMS-style
+        alignment, I2SB / Schrödinger-bridge literature, IP-Adapter, SDXL-Turbo, DINOv2 / REPA-style
+        alignment — cite upstream work when using this code.
+      </p>
+    </footer>
+
+    <script src="i18n.js"></script>
+    <script src="script.js" defer></script>
+  </body>
+</html>

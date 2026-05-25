@@ -1,0 +1,14 @@
+.DS_Store
+Thumbs.db
+*.log
+
+# IDE / agents — never publish
+.cursor/
+.claude/
+.codex/
+.agents/
+*.cursor-*
+.agent-transcripts/
+
+# Build artifact from private monorepo (re-pack before each release)
+_deploy/
