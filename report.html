@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css" />
     <link rel="stylesheet" href="styles.css?v=7" />
-    <link rel="stylesheet" href="report.css?v=5" />
+    <link rel="stylesheet" href="report.css?v=6" />
   </head>
   <body class="rp">
     <nav class="nav is-scrolled rp-nav" id="nav">
@@ -82,80 +82,180 @@
         <section id="s3" class="rp-sec">
           <h2><span>03</span>Model</h2>
           <figure class="rp-fig rp-fig--arch">
-<svg viewBox="0 0 1200 520" role="img" aria-label="BHA architecture: BrainViT encoder, two-stage training with four vision teachers, and reconstruction through a frozen generator.">
-  <defs>
-    <linearGradient id="ag" x1="0" x2="1"><stop offset="0" stop-color="#06c7f1"/><stop offset=".45" stop-color="#2b5cff"/><stop offset="1" stop-color="#7c3aed"/></linearGradient>
-    <linearGradient id="ap" x1="0" x2="1"><stop offset="0" stop-color="#ff3d81"/><stop offset="1" stop-color="#ff9a7a"/></linearGradient>
-    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9aa0b8"/></marker>
-    <marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#7c3aed"/></marker>
-  </defs>
-  <g class="arch-panel"><rect x="8" y="8" width="300" height="504" rx="18"/><text class="arch-h" x="24" y="36">a · BrainViT encoder</text>
-    <g class="arch-sig" transform="translate(40,70)">
-      <path d="M0 30 C10 10 15 50 25 30 S40 5 50 30 S70 55 80 30 S100 10 110 30 S130 50 140 30 S160 5 170 30 S190 55 200 30 S220 10 230 30"/>
-      <path d="M0 62 C10 42 15 82 25 62 S40 37 50 62 S70 87 80 62 S100 42 110 62 S130 82 140 62 S160 37 170 62 S190 87 200 62 S220 42 230 62"/>
-      <path d="M0 94 C10 74 15 114 25 94 S40 69 50 94 S70 119 80 94 S100 74 110 94 S130 114 140 94 S160 69 170 94 S190 119 200 94 S220 74 230 94"/>
-    </g>
-    <text class="arch-s" x="40" y="186">63 × 250  EEG  ·  271 × 250  MEG</text>
-    <g class="arch-box" transform="translate(40,204)"><rect width="236" height="40" rx="10"/><text x="118" y="25">Sensor grid mapping (no params)</text></g>
-    <g class="arch-box" transform="translate(40,258)"><rect width="236" height="40" rx="10"/><text x="118" y="25">Multiscale feature conv · 64·63·36</text></g>
-    <g class="arch-box" transform="translate(40,312)"><rect width="236" height="40" rx="10"/><text x="118" y="25">Local–global sensor conv · 40×36</text></g>
-    <g class="arch-box" transform="translate(40,366)"><rect width="236" height="40" rx="10"/><text x="118" y="25">Residual projection + LayerNorm</text></g>
-    <g class="arch-box arch-box--out" transform="translate(40,428)"><rect width="236" height="44" rx="12"/><text x="118" y="27">h  ·  1,024-d  ·  3.17 M params</text></g>
-    <path class="arch-ln" d="M158 190V204M158 244V258M158 298V312M158 352V366M158 406V428"/>
-  </g>
+<svg class="fw" viewBox="0 0 1000 905" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="BHA framework: BrainViT encoder, two-stage multi-teacher distillation with group MoE readouts, and frozen-generator reconstruction">
+<defs>
+  <linearGradient id="fwg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#06c7f1"/><stop offset=".5" stop-color="#2b5cff"/><stop offset="1" stop-color="#7c3aed"/></linearGradient>
+  <marker id="fwa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#5b6275"/></marker>
+  <marker id="fwr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#ff3d81"/></marker>
+  <symbol id="fire" viewBox="0 0 16 16"><path d="M8 1c1 3 4 4 4 8a4 4 0 0 1-8 0c0-2 1-3 1-3s.2 1.6 1.3 1.6C7.5 5.5 6 3.5 8 1z" fill="#ff6a3d"/><path d="M8 9.5c.9 1 1.3 1.8 1.3 2.6A1.3 1.3 0 0 1 6.7 12c0-.9.5-1.6 1.3-2.5z" fill="#ffd166"/></symbol>
+  <symbol id="snow" viewBox="0 0 16 16"><g stroke="#2aa7d8" stroke-width="1.6" stroke-linecap="round"><path d="M8 1.5v13M2.4 4.75l11.2 6.5M2.4 11.25l11.2-6.5"/><path d="M6 2.8l2 1.5 2-1.5M6 13.2l2-1.5 2 1.5M2.9 6.9l2.4.3 1-2.2M13.1 9.1l-2.4-.3-1 2.2M2.9 9.1l2.4-.3 1 2.2M13.1 6.9l-2.4.3-1-2.2"/></g></symbol>
+  <clipPath id="fwc1"><rect x="0" y="0" width="56" height="56" rx="6"/></clipPath>
+</defs>
+<style>
+  .fw text{font-family:'Inter',system-ui,sans-serif;font-size:12.5px;fill:#23263a}
+  .fw .t{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:15.5px;fill:#0f1222;letter-spacing:-.01em}
+  .fw .k{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;fill:#6b7190;text-transform:uppercase}
+  .fw .m{font-family:'JetBrains Mono',monospace;font-size:11.5px;fill:#7c3aed}
+  .fw .mr{font-family:'JetBrains Mono',monospace;font-size:11.5px;fill:#ff3d81}
+  .fw .small{font-size:11px;fill:#5b6275}
+  .fw .c{text-anchor:middle}
+  .fw .w{fill:#fff;font-weight:600}
+  .fw .panel{fill:#f6f7fb;stroke:#e3e6f0}
+  .fw .box{fill:#fff;stroke:#cfd4e3;stroke-width:1.2}
+  .fw .tr{fill:#fff3ee;stroke:#ffb79c}
+  .fw .fz{fill:#eaf7fc;stroke:#a9dff0}
+  .fw .sub{fill:#eef1ff;stroke:#c9d1ff}
+  .fw .ex{fill:#f1f2f6;stroke:#cfd4e3}
+  .fw .ex.on{fill:#fff6d6;stroke:#f2c94c}
+  .fw .ln{fill:none;stroke:#5b6275;stroke-width:1.4;marker-end:url(#fwa)}
+  .fw .ln2{fill:none;stroke:#5b6275;stroke-width:1.4}
+  .fw .bk{fill:none;stroke:#ff3d81;stroke-width:1.5;stroke-dasharray:4 3;marker-end:url(#fwr)}
+  .fw .bk2{fill:none;stroke:#ff3d81;stroke-width:1.5;stroke-dasharray:4 3;marker-end:url(#fwr);marker-start:url(#fwr)}
+  .fw .dash{fill:none;stroke:#9aa0b8;stroke-width:1.2;stroke-dasharray:5 4}
+  .fw .grp{fill:none;stroke:#8fd3a6;stroke-width:1.4;stroke-dasharray:6 4}
+  .fw .sig{fill:none;stroke:url(#fwg);stroke-width:1.8}
+</style>
 
-  <g class="arch-panel"><rect x="324" y="8" width="552" height="504" rx="18"/><text class="arch-h" x="340" y="36">b · Two-stage multi-teacher distillation</text>
-    <text class="arch-tag" x="340" y="62">STAGE 1 · joint brain–visual adaptation</text>
-    <g class="arch-tchr" transform="translate(340,74)">
-      <g><rect width="118" height="34" rx="9"/><text x="59" y="22">OpenCLIP ViT-H</text></g>
-      <g transform="translate(130,0)"><rect width="118" height="34" rx="9"/><text x="59" y="22">DFN · layer 6</text></g>
-      <g transform="translate(260,0)"><rect width="118" height="34" rx="9"/><text x="59" y="22">MAE · layer 18</text></g>
-      <g transform="translate(390,0)"><rect width="118" height="34" rx="9"/><text x="59" y="22">DINOv2 · layer 12</text></g>
-    </g>
-    <path class="arch-ln" marker-end="url(#arr)" d="M399 108V134M529 108V134M659 108V134M789 108V134"/>
-    <g class="arch-box arch-box--fuse" transform="translate(340,136)"><rect width="508" height="40" rx="10"/><text x="254" y="25">Learned fusion F  ·  norm Σ norm(W_k e_k)  →  shared target e₀</text></g>
-    <g class="arch-box arch-box--out" transform="translate(340,196)"><rect width="200" height="40" rx="10"/><text x="100" y="25">BrainViT  h</text></g>
-    <path class="arch-ln arch-ln--loss" d="M540 216H586" marker-end="url(#arrg)"/><path class="arch-ln arch-ln--loss" d="M594 176V236"/>
-    <text class="arch-loss" x="596" y="206">BiCLIP loss</text><text class="arch-loss" x="596" y="220">brain ↔ fused target</text><text class="arch-loss" x="596" y="234">encoder and target both learned</text>
+<!-- ============ (a) BrainViT ============ -->
+<text class="t" x="20" y="26">(a) Unified geometry-aware BrainViT</text>
+<rect class="panel" x="20" y="40" width="250" height="520" rx="16"/>
+<g font-size="12.5">
+  <path class="sig" d="M60 70c8-14 14 14 22 0s14 14 22 0 14 14 22 0 14 14 22 0 14 14 22 0 14 14 22 0 14 14 22 0"/>
+  <text class="c" x="145" y="96">Brain signals</text>
+  <path class="ln" d="M145 102v16"/>
+  <rect class="box sub" x="50" y="120" width="190" height="32" rx="7"/><text class="c" x="145" y="141">Embedding layer</text>
+  <path class="ln" d="M145 152v16"/>
+  <rect class="box sub" x="50" y="170" width="190" height="32" rx="7"/><text class="c" x="145" y="191">Spatial encoding</text>
+  <path class="ln" d="M145 202v16"/>
+  <rect class="box sub" x="50" y="220" width="190" height="32" rx="7"/><text class="c" x="145" y="241">Channel transformer <tspan style="font-style:italic;fill:#6b7190">× N</tspan></text>
+  <path class="ln" d="M145 252v16"/>
+  <rect class="box sub" x="50" y="270" width="190" height="32" rx="7"/><text class="c" x="145" y="291">Parameter-free resampler</text>
+  <path class="ln" d="M145 302v16"/>
+  <rect class="box sub" x="50" y="320" width="190" height="46" rx="7"/><text class="c" x="145" y="339">Group-wise temporal–</text><text class="c" x="145" y="355">spatial convolution</text>
+  <path class="ln" d="M145 366v16"/>
+  <rect class="box sub" x="50" y="384" width="190" height="32" rx="7"/><text class="c" x="145" y="405">Output layer</text>
+  <path class="ln" d="M145 416v16"/>
+  <rect x="50" y="434" width="190" height="34" rx="8" fill="url(#fwg)"/><text class="c w" x="145" y="456">Embedding · 1,024-d</text>
+  <text class="k c" x="145" y="500">3.17 m parameters</text>
+  <text class="small c" x="145" y="520">shared by every task below</text>
+</g>
 
-    <line class="arch-sep" x1="340" x2="860" y1="256" y2="256"/>
-    <text class="arch-tag" x="340" y="282">STAGE 2 · frozen backbone, teacher-specific readouts</text>
-    <g class="arch-box arch-box--frozen" transform="translate(340,296)"><rect width="200" height="40" rx="10"/><text x="100" y="25">❄ BrainViT + fusion</text></g>
-    <path class="arch-ln" marker-end="url(#arr)" d="M540 316H566"/>
-    <g class="arch-box" transform="translate(568,296)"><rect width="110" height="40" rx="10"/><text x="55" y="25">Adapter A</text></g>
-    <path class="arch-ln" d="M678 316H700M700 316V468"/>
-    <g class="arch-read" transform="translate(704,352)">
-      <g><rect width="146" height="26" rx="7"/><text x="73" y="17">shared readout → s⁰</text></g>
-      <g transform="translate(0,32)"><rect width="146" height="26" rx="7"/><text x="73" y="17">OpenCLIP readout → s¹</text></g>
-      <g transform="translate(0,64)"><rect width="146" height="26" rx="7"/><text x="73" y="17">DFN readout → s²</text></g>
-      <g transform="translate(0,96)"><rect width="146" height="26" rx="7"/><text x="73" y="17">MAE readout → s³</text></g>
-      <g transform="translate(0,128)"><rect width="146" height="26" rx="7"/><text x="73" y="17">DINOv2 readout → s⁴</text></g>
-    </g>
-    <path class="arch-ln" d="M700 365H704M700 397H704M700 429H704M700 461H704M700 493H704"/>
-    <g class="arch-box arch-box--fuse" transform="translate(340,352)"><rect width="340" height="40" rx="10"/><text x="170" y="25">S = s⁰ + g · Σ π_k s^k   (learned weights, gate)</text></g>
-    <text class="arch-s" x="340" y="420">Each teacher readout: base projection + always-on expert</text>
-    <text class="arch-s" x="340" y="438">+ routed residual experts; trainable visual adapters V_k</text>
-    <text class="arch-s" x="340" y="456">on the frozen teacher targets. Linear / MLP heads give</text>
-    <text class="arch-s" x="340" y="474">the same accuracy — the gain is the composition.</text>
-    <text class="arch-s arch-s--em" x="340" y="500">Within-subject 87.0 Raw / 93.9 CSLS-2 Top-1</text>
+<!-- ============ (b) distillation ============ -->
+<text class="t" x="300" y="26">(b) Group-latent MoE multi-teacher distillation</text>
+<rect class="panel" x="300" y="40" width="680" height="520" rx="16"/>
+<!-- dashed links from (a) to BrainViT box -->
+<path class="dash" d="M270 70L560 86"/><path class="dash" d="M270 470L560 118"/>
+<g>
+  <text class="k" x="800" y="72">1 · pretraining</text>
+  <rect class="box tr" x="560" y="82" width="130" height="36" rx="8"/><use href="#fire" x="568" y="92" width="14" height="14"/><text x="590" y="105">BrainViT</text>
+  <path class="bk2" d="M625 122v24"/>
+  <text class="m" x="640" y="138">ℒ<tspan font-size="9" dy="3">BiCLIP</tspan></text>
+  <rect class="box tr" x="330" y="150" width="630" height="34" rx="8"/><use href="#fire" x="340" y="160" width="14" height="14"/><text class="c" x="645" y="172" style="font-weight:600">Fusion head</text>
+  <!-- teachers -->
+  <g>
+    <rect class="box fz" x="350" y="214" width="120" height="40" rx="8"/><use href="#snow" x="358" y="227" width="14" height="14"/><text x="380" y="239">DINOv2</text><path class="ln" d="M410 212V186"/>
+    <rect class="box fz" x="500" y="214" width="120" height="40" rx="8"/><use href="#snow" x="508" y="227" width="14" height="14"/><text x="530" y="239">DFN</text><path class="ln" d="M560 212V186"/>
+    <rect class="box fz" x="670" y="214" width="120" height="40" rx="8"/><use href="#snow" x="678" y="227" width="14" height="14"/><text x="700" y="239">MAE</text><path class="ln" d="M730 212V186"/>
+    <rect class="box fz" x="820" y="214" width="120" height="40" rx="8"/><use href="#snow" x="828" y="227" width="14" height="14"/><text x="850" y="239">OpenCLIP</text><path class="ln" d="M880 212V186"/>
   </g>
+  <text class="small c" x="645" y="276">four frozen vision teachers · one learned fused target</text>
+</g>
+<!-- stage 2 group -->
+<rect class="grp" x="318" y="288" width="644" height="258" rx="14"/>
+<text class="k" x="760" y="312">2 · multi-teacher distillation</text>
+<rect class="box fz" x="560" y="300" width="150" height="40" rx="8"/><use href="#snow" x="568" y="313" width="14" height="14"/><text x="590" y="318">Pretrained</text><text x="590" y="333">BrainViT</text>
+<!-- routers -->
+<g id="routers">
+  <g transform="translate(340,370)">
+    <rect class="box" x="0" y="0" width="150" height="110" rx="10"/><use href="#fire" x="8" y="8" width="14" height="14"/><text x="28" y="19">Router 1</text>
+    <rect class="ex on" x="10" y="36" width="36" height="62" rx="5"/><rect class="ex" x="52" y="36" width="46" height="62" rx="5"/><rect class="ex on" x="104" y="36" width="36" height="62" rx="5"/>
+    <text class="small c" x="28" y="60">Exp.</text><text class="small c" x="28" y="74">1</text><text class="c" x="75" y="72">…</text><text class="small c" x="122" y="60">Exp.</text><text class="small c" x="122" y="74">N</text>
+  </g>
+  <g transform="translate(510,370)">
+    <rect class="box" x="0" y="0" width="150" height="110" rx="10"/><use href="#fire" x="8" y="8" width="14" height="14"/><text x="28" y="19">Router 2</text>
+    <rect class="ex on" x="10" y="36" width="36" height="62" rx="5"/><rect class="ex" x="52" y="36" width="46" height="62" rx="5"/><rect class="ex on" x="104" y="36" width="36" height="62" rx="5"/>
+    <text class="small c" x="28" y="60">Exp.</text><text class="small c" x="28" y="74">1</text><text class="c" x="75" y="72">…</text><text class="small c" x="122" y="60">Exp.</text><text class="small c" x="122" y="74">N</text>
+  </g>
+  <text class="c" x="690" y="430" font-size="18">…</text>
+  <g transform="translate(720,370)">
+    <rect class="box" x="0" y="0" width="150" height="110" rx="10"/><use href="#fire" x="8" y="8" width="14" height="14"/><text x="28" y="19">Router K</text>
+    <rect class="ex on" x="10" y="36" width="36" height="62" rx="5"/><rect class="ex" x="52" y="36" width="46" height="62" rx="5"/><rect class="ex on" x="104" y="36" width="36" height="62" rx="5"/>
+    <text class="small c" x="28" y="60">Exp.</text><text class="small c" x="28" y="74">1</text><text class="c" x="75" y="72">…</text><text class="small c" x="122" y="60">Exp.</text><text class="small c" x="122" y="74">N</text>
+  </g>
+  <g transform="translate(890,370)">
+    <rect class="box" x="0" y="0" width="56" height="110" rx="10" style="fill:#fff6d6;stroke:#f2c94c"/><use href="#fire" x="21" y="8" width="14" height="14"/>
+    <text class="small c" x="28" y="60">Shared</text><text class="small c" x="28" y="74">expert</text>
+  </g>
+</g>
+<!-- fan-out from pretrained BrainViT to routers -->
+<path class="ln" d="M600 342C520 350 440 350 415 368"/><path class="ln" d="M625 342C610 352 600 356 585 368"/><path class="ln" d="M660 342C720 352 770 352 795 368"/><path class="ln" d="M690 342C800 352 880 352 918 368"/>
+<!-- fan-in to gated retrieval -->
+<path class="ln" d="M415 482C440 500 560 504 625 508"/><path class="ln" d="M585 482C600 496 612 500 625 508"/><path class="ln" d="M795 482C770 500 690 504 650 508"/><path class="ln" d="M918 482C880 500 760 506 652 508"/>
+<rect x="340" y="510" width="606" height="30" rx="8" fill="#ffe4ec" stroke="#ffb3c8"/><text class="c" x="643" y="530" style="font-weight:600;fill:#b4123f">Gated retrieval · S = s⁰ + g · Σ πₖ sᵏ</text>
+<text class="m" x="880" y="500">ℒ<tspan font-size="9" dy="3">Distill</tspan></text>
 
-  <g class="arch-panel"><rect x="892" y="8" width="300" height="504" rx="18"/><text class="arch-h" x="908" y="36">c · Reconstruction, frozen generator</text>
-    <g class="arch-box arch-box--frozen" transform="translate(908,60)"><rect width="268" height="40" rx="10"/><text x="134" y="25">❄ BrainViT  h</text></g>
-    <path class="arch-ln" marker-end="url(#arr)" d="M980 100V130M1104 100V130"/>
-    <g class="arch-box" transform="translate(908,132)"><rect width="126" height="48" rx="10"/><text x="63" y="22">Semantic</text><text x="63" y="38">predictor → c_sem</text></g>
-    <g class="arch-box" transform="translate(1050,132)"><rect width="126" height="48" rx="10"/><text x="63" y="22">Spatial</text><text x="63" y="38">predictor → ẑ</text></g>
-    <path class="arch-ln" marker-end="url(#arr)" d="M971 180V218M1113 180V218"/>
-    <g class="arch-box arch-box--frozen" transform="translate(908,220)"><rect width="268" height="64" rx="12"/><text x="134" y="26">❄ SDXL-Turbo + IP-Adapter</text><text x="134" y="48" class="arch-sub">α mixes semantic steps + predicted latent</text></g>
-    <path class="arch-ln" marker-end="url(#arr)" d="M1042 284V318"/>
-    <g class="arch-box arch-box--frozen" transform="translate(908,320)"><rect width="268" height="40" rx="10"/><text x="134" y="25">❄ VAE decoder · optional guidance</text></g>
-    <path class="arch-ln" marker-end="url(#arr)" d="M1042 360V394"/>
-    <g class="arch-box arch-box--out" transform="translate(908,396)"><rect width="268" height="44" rx="12"/><text x="134" y="27">Reconstructed image  ·  3 draws</text></g>
-    <text class="arch-s" x="908" y="470">α = 0.75 · 5 steps · CFG 0</text>
-    <text class="arch-s arch-s--em" x="908" y="494">PixCorr 0.277 · SSIM 0.454 · CLIP 0.830</text>
-  </g>
+<!-- ============ (c) reconstruction ============ -->
+<text class="t" x="20" y="596">(c) Hierarchical conditional embedding training</text>
+<rect class="panel" x="20" y="610" width="960" height="280" rx="16"/>
+<!-- EEG + frozen BrainViT -->
+<path class="sig" d="M40 650c6-12 10 12 16 0s10 12 16 0 10 12 16 0 10 12 16 0 10 12 16 0"/>
+<rect class="box fz" x="40" y="668" width="110" height="40" rx="8"/><use href="#snow" x="48" y="681" width="14" height="14"/><text x="70" y="686">Pretrained</text><text x="70" y="701">BrainViT</text>
+<!-- semantic path (top) -->
+<path class="ln" d="M150 680H214"/>
+<rect class="box tr" x="216" y="662" width="96" height="36" rx="8"/><use href="#fire" x="224" y="673" width="14" height="14"/><text x="245" y="685">LoRA</text>
+<text class="small" x="216" y="656">semantic predictor</text>
+<rect class="box fz" x="360" y="662" width="100" height="36" rx="8"/><use href="#snow" x="368" y="673" width="14" height="14"/><text x="388" y="685">OpenCLIP</text>
+<path class="bk" d="M358 680H316"/><text class="mr" x="322" y="652">ℒ<tspan font-size="9" dy="3">Distill</tspan></text>
+<g transform="translate(476,650)">
+  <image href="assets/showcase/cheetah_gt.jpg" x="14" y="-6" width="56" height="56" clip-path="url(#fwc1)" opacity=".55"/>
+  <image href="assets/showcase/strawberry_gt.jpg" x="7" y="-3" width="56" height="56" clip-path="url(#fwc1)" opacity=".8"/>
+  <image href="assets/showcase/raspberry_gt.jpg" x="0" y="0" width="56" height="56" clip-path="url(#fwc1)"/>
+</g>
+<path class="ln2" d="M474 678H462"/>
+<text class="small" x="474" y="724">seen images</text>
+<path class="ln" d="M264 700v14"/>
+<rect class="box fz" x="216" y="716" width="96" height="28" rx="8"/><use href="#snow" x="224" y="723" width="14" height="14"/><text x="244" y="735">IP-Adapter</text>
+<path class="dash" d="M312 730C332 730 340 740 340 758" style="marker-end:url(#fwa)"/><text class="small" x="352" y="753" style="font-size:10px">conditioning</text>
+<!-- spatial path (bottom) -->
+<path class="ln" d="M95 710v58"/>
+<rect class="box tr" x="40" y="770" width="110" height="40" rx="8"/><use href="#fire" x="48" y="783" width="14" height="14"/><text x="70" y="788">Upsampler</text><text x="70" y="803">CNN</text>
+<text class="small" x="40" y="830">spatial predictor</text>
+<path class="ln" d="M150 790H176"/>
+<rect x="178" y="780" width="60" height="20" rx="4" fill="#dbe8ff" stroke="#9cb6ff"/><text class="small c" x="208" y="818">brain latent ẑ</text>
+<path class="ln" d="M238 790H262"/>
+<g transform="translate(264,776)"><rect width="28" height="28" rx="4" fill="#9aa0b8"/><rect x="4" y="4" width="6" height="6" fill="#d9dce6"/><rect x="16" y="10" width="6" height="6" fill="#d9dce6"/><rect x="8" y="18" width="6" height="6" fill="#d9dce6"/></g>
+<text class="small c" x="278" y="818">+ ε at t<tspan font-size="8" dy="2">α</tspan></text>
+<path class="ln" d="M294 790H318"/>
+<rect x="320" y="760" width="220" height="76" rx="10" fill="#fff0f3" stroke="#ffc0cf"/><use href="#snow" x="328" y="768" width="14" height="14"/><text class="small" x="346" y="779">Denoising · SDXL-Turbo</text>
+<g fill="#ffb088"><rect x="340" y="790" width="18" height="38" rx="3"/><rect x="376" y="790" width="18" height="38" rx="3"/><text class="c" x="430" y="815" style="fill:#23263a;font-size:16px">…</text><rect x="466" y="790" width="18" height="38" rx="3"/><rect x="502" y="790" width="18" height="38" rx="3"/></g>
+<path class="ln" d="M540 798H564"/>
+<rect class="box fz" x="566" y="776" width="90" height="44" rx="8"/><use href="#snow" x="574" y="791" width="14" height="14"/><text x="596" y="794">VAE</text><text x="596" y="809">decoder</text>
+<path class="ln" d="M656 798H680"/>
+<g transform="translate(684,768)">
+  <image href="assets/showcase/cheetah_gen0.jpg" x="14" y="-6" width="56" height="56" clip-path="url(#fwc1)" opacity=".55"/>
+  <image href="assets/showcase/strawberry_gen0.jpg" x="7" y="-3" width="56" height="56" clip-path="url(#fwc1)" opacity=".8"/>
+  <image href="assets/showcase/raspberry_gen0.jpg" x="0" y="0" width="56" height="56" clip-path="url(#fwc1)"/>
+</g>
+<text class="small" x="684" y="842">decoded images</text>
+<!-- VAE encoder target for the spatial predictor -->
+<rect class="box fz" x="566" y="662" width="90" height="44" rx="8"/><use href="#snow" x="574" y="677" width="14" height="14"/><text x="596" y="680">VAE</text><text x="596" y="695">encoder</text>
+<path class="ln" d="M548 684H564"/>
+<rect x="566" y="722" width="60" height="18" rx="4" fill="#dbe8ff" stroke="#9cb6ff"/><text class="small" x="632" y="736">image latent</text>
+<path class="ln" d="M611 706v14"/>
+<path class="bk" d="M566 731C500 731 420 748 330 748L300 748C260 748 212 752 210 776"/><text class="mr" x="440" y="740">ℒ<tspan font-size="9" dy="3">MSE</tspan></text>
+<!-- formula + legend -->
+<text class="small" x="40" y="868" style="font-family:'JetBrains Mono',monospace;font-size:11px">z_tα = √ᾱ_tα · a·ẑ + √(1 − ᾱ_tα) · ε &#160;&#160;·&#160;&#160; α = 0.75 · 5 steps · CFG 0 &#160;&#160;·&#160;&#160; nothing in the generator is fine-tuned</text>
+<g transform="translate(760,648)">
+  <rect x="0" y="0" width="200" height="86" rx="10" fill="#fff" stroke="#cfd4e3" stroke-dasharray="4 3"/>
+  <use href="#fire" x="12" y="10" width="14" height="14"/><text class="small" x="32" y="22">Trainable</text>
+  <use href="#snow" x="110" y="10" width="14" height="14"/><text class="small" x="130" y="22">Frozen</text>
+  <path class="ln" d="M12 48h24"/><text class="small" x="44" y="52">Forward</text>
+  <path class="bk" d="M110 48h24"/><text class="small" x="142" y="52">Backward</text>
+  <text class="k" x="12" y="76" style="font-size:9.5px">redrawn from the manuscript figure</text>
+</g>
 </svg>
-<figcaption>(a) BrainViT maps sensors to a physical grid, extracts multiscale features, mixes them with a local–global sensor convolution and projects to a 1,024-d embedding. (b) Stage 1 learns the encoder and a fused target from four teachers jointly; Stage 2 freezes both and trains an adapter, a shared readout and four teacher-specific readouts whose scores are composed with learned weights. (c) Separate semantic and spatial predictors condition a frozen SDXL-Turbo / IP-Adapter pipeline; nothing in the generator is fine-tuned.</figcaption></figure>
+
+<figcaption><b>Figure 1. BHA learns shared representations and task-specific predictions.</b> (a) BrainViT combines channel attention and feature–sensor convolutions into one 1,024-d embedding. (b) Stage 1 jointly learns BrainViT and the visual fusion head against four frozen teachers; Stage 2 freezes both and trains shared and teacher-specific expert readouts, visual adapters and routing, composed into one gated retrieval score. (c) Semantic and spatial predictors condition the frozen diffusion generator, VAE and IP-Adapter; the schematic uses a scaled latent z = a·ẑ. Redrawn from the manuscript’s framework figure in the page’s style; every block is one that exists in the released code.</figcaption></figure>
 
           <h3>3.1 BrainViT encoder</h3>
           <p>Inputs are \(63\times250\) (EEG) or \(271\times250\) (MEG) windows. A parameter-free sensor mapping places channels on a physical grid, a multiscale feature convolution with pooling extracts \(64\times63\times36\) features, a local–global sensor convolution with pointwise projection reduces to \(40\times36\), and a residual projection with LayerNorm yields a 1,024-d embedding \(\mathbf{h}_i=f_\theta(\mathbf{X}_i,s_i)\). Total: 3.17 M parameters. Among five readouts searched, local–global sensor convolution gave the best within-subject accuracy (83.1 ± 5.4% Raw Top-1); the main results use the default feature–sensor readout (80.9 ± 7.0%).</p>

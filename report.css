@@ -423,7 +423,7 @@ body.rp {
 .rp-hero .grad { display: inline-block; }
 
 /* architecture diagram */
-.rp-fig--arch svg { width: 100%; height: auto; display: block; border-radius: 16px; background: #fff; border: 1px solid var(--line); padding: 6px; box-sizing: border-box; }
+.rp-fig--arch svg { width: 100%; height: auto; display: block; border-radius: 16px; background: #fff; border: 1px solid var(--line); padding: 10px 6px; box-sizing: border-box; }
 .arch-panel > rect { fill: #f6f7fb; stroke: var(--line-2); }
 .arch-h { font-family: var(--head); font-weight: 800; font-size: 15px; fill: var(--ink); letter-spacing: -0.01em; }
 .arch-tag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; fill: #7c3aed; }
@@ -452,7 +452,7 @@ body.rp {
 .rp .table-wrap { background: #fff; }
 .arch-sub { font-size: 9.5px; }
 .rp-fig--arch { overflow-x: auto; }
-.rp-fig--arch svg { min-width: 760px; }
+.rp-fig--arch svg { min-width: 700px; }
 
 .rp-main { min-width: 0; }
 .rp-eq { max-width: 100%; }
