@@ -8,7 +8,7 @@
     o = o || {};
     return '<text x="' + x + '" y="' + y + '" text-anchor="' + (o.a || "start") + '" style="font-family:' + (o.mono ? MONO : FONT) + ';font-size:' + (o.fs || 12.5) + 'px;fill:' + (o.c || C.muted) + ';font-weight:' + (o.w || 400) + ';letter-spacing:' + (o.ls || 0) + 'em">' + esc(str) + "</text>";
   }
-  function svg(w, h, label, body) { return '<svg class="ch' + (w >= 900 ? " ch--w" : "") + '" viewBox="0 0 ' + w + " " + h + '" role="img" aria-label="' + esc(label) + '">' + body + "</svg>"; }
+  function svg(w, h, label, body) { return '<svg class="ch' + (w >= 900 ? " ch--w" : w >= 600 ? " ch--m" : "") + '" viewBox="0 0 ' + w + " " + h + '" role="img" aria-label="' + esc(label) + '">' + body + "</svg>"; }
   function put(id, html) { var el = document.getElementById(id); if (el) el.innerHTML = html; }
   function title(x, y, s) { return T(x, y, s, { fs: 11, c: C.muted, mono: true, ls: 0.08 }); }
 
@@ -183,37 +183,26 @@
       { n: "Teacher experts only", v: 79.6, note: "CSLS-2 87.7" }, { n: "Shared expert only", v: 82.05, note: "91.4" }, { n: "MLP heads", v: 83.2, note: "92.2" }, { n: "Linear heads", v: 85.0, note: "93.5" }, { n: "Experts + shared (BHA)", v: 87.0, c: C.blue, note: "93.9" }] }));
   })();
 
-  /* budget grouped bars */
-  (function () {
-    var ranks = [4, 16, 64, 256], D = [["Group MoE", [86.8, 86.5, 86.5, 86.7], C.violet], ["MLP", [86.5, 86.6, 86.6, 85.9], C.blue], ["Low-rank linear", [86.7, 86.6, 86.5, 86.4], C.cyan]];
-    var W = 960, H = 240, L = 46, R = 16, Tp = 40, B = 44, ymin = 84, ymax = 88, gw = (W - L - R) / 4, bw = gw / 4.2;
-    var Y = function (v) { return Tp + (1 - (v - ymin) / (ymax - ymin)) * (H - Tp - B); }, s = "";
-    for (var g = ymin; g <= ymax; g += 1) s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(g) + '" y2="' + Y(g) + '" stroke="' + C.grid + '"/>' + T(L - 8, Y(g) + 4, g, { a: "end", fs: 11.5 });
-    ranks.forEach(function (r, i) {
-      var x0 = L + i * gw + gw * 0.14;
-      D.forEach(function (d, j) { var v = d[1][i], x = x0 + j * bw * 1.12; s += '<rect x="' + x + '" y="' + Y(v) + '" width="' + bw + '" height="' + (Y(ymin) - Y(v)) + '" rx="3" fill="' + d[2] + '" opacity=".9"/>' + T(x + bw / 2, Y(v) - 6, v.toFixed(1), { a: "middle", fs: 10.5 }); });
-      s += T(L + i * gw + gw / 2, H - B + 18, "r = " + r, { a: "middle", fs: 11.5, c: C.ink });
-    });
-    var lx = L; D.forEach(function (d) { s += '<rect x="' + lx + '" y="' + (H - 13) + '" width="11" height="11" rx="3" fill="' + d[2] + '"/>' + T(lx + 16, H - 4, d[0], { fs: 11.5, c: C.ink }); lx += 30 + d[0].length * 7; });
-    s += title(L, 16, "Composed Raw Top-1 (%) · 10 participants × 3 seeds");
-    put("fig-budget", svg(W, H, "Readout families at equal parameter budgets", s));
-  })();
-
   /* Figure 9: data scale */
   (function () {
-    var X = [25, 50, 75, 100], S = [["BHA (composed)", C.blue, [53.25, 74.95, 82.45, 87.0]], ["Shared expert", C.violet, [45.5, 68.2, 77.9, 82.2]], ["Pretrained backbone", C.grey2, [42.7, 65.3, 75.55, 80.8]]];
-    var W = 960, H = 360, L = 50, R = 190, Tp = 30, B = 46, ymin = 35, ymax = 92;
+    var X = [25, 50, 75, 100], S = [["BHA (composed scores)", C.blue, [53.25, 74.95, 82.45, 87.0]], ["Shared readout only", C.violet, [45.5, 68.2, 77.9, 82.2]], ["Pretrained backbone", C.grey2, [42.7, 65.3, 75.55, 80.8]]];
+    var W = 720, H = 400, L = 54, R = 30, Tp = 36, B = 52, ymin = 36, ymax = 92;
     var px = function (x) { return L + ((x - 25) / 75) * (W - L - R); }, py = function (y) { return Tp + (1 - (y - ymin) / (ymax - ymin)) * (H - Tp - B); }, s = "";
-    for (var g = 40; g <= 90; g += 10) s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + py(g) + '" y2="' + py(g) + '" stroke="' + C.grid + '"/>' + T(L - 8, py(g) + 4, g, { a: "end", fs: 11.5 });
-    X.forEach(function (x) { s += T(px(x), H - B + 20, x + "%", { a: "middle", fs: 11.5, c: C.ink }); });
-    s += T(W - R, H - 8, "fraction of training data", { a: "end", fs: 11.5 }) + title(L, 16, "Raw Top-1 (%)");
-    var lys = S.map(function (ser) { return py(ser[2][3]); }); for (var k = 1; k < lys.length; k++) if (lys[k] - lys[k - 1] < 18) lys[k] = lys[k - 1] + 18;
-    S.slice().reverse().forEach(function (ser, ri) {
-      var d = ""; ser[2].forEach(function (v, i) { d += (i ? "L" : "M") + px(X[i]) + " " + py(v) + " "; });
-      s += '<path d="' + d + '" fill="none" stroke="' + ser[1] + '" stroke-width="' + (ser[1] === C.blue ? 3 : 2) + '" stroke-linejoin="round" stroke-linecap="round"/>';
-      ser[2].forEach(function (v, i) { s += '<circle cx="' + px(X[i]) + '" cy="' + py(v) + '" r="4.5" fill="#fff" stroke="' + ser[1] + '" stroke-width="2.5"/>'; if (ser[1] !== C.violet && !(ser[1] === C.grey2 && i === 3)) s += T(px(X[i]) + (ser[1] === C.blue ? 0 : 12), py(v) + (ser[1] === C.blue ? -11 : 19), v.toFixed(1), { a: "middle", fs: 11.5, c: ser[1], w: 600 }); });
-      var ly = lys[S.length - 1 - ri]; s += '<line x1="' + (px(100) + 8) + '" x2="' + (W - R + 8) + '" y1="' + py(ser[2][3]) + '" y2="' + ly + '" stroke="' + ser[1] + '" opacity=".5"/>' + T(W - R + 12, ly + 4, ser[0], { fs: 12, c: ser[1], w: 600 });
+    for (var g = 40; g <= 90; g += 10) s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + py(g) + '" y2="' + py(g) + '" stroke="' + C.grid + '"/>' + T(L - 9, py(g) + 4, g, { a: "end", fs: 11.5 });
+    X.forEach(function (x) { s += T(px(x), H - B + 22, x + "%", { a: "middle", fs: 12, c: C.ink, w: 600 }); });
+    s += T((L + W - R) / 2, H - 10, "fraction of the THINGS-EEG2 training set", { a: "middle", fs: 11.5 }) + title(L, 16, "Raw Top-1 (%) · within participant · ten-participant means");
+    S.slice().reverse().forEach(function (ser) {
+      var d = "", blue = ser[1] === C.blue, grey = ser[1] === C.grey2;
+      ser[2].forEach(function (v, i) { d += (i ? "L" : "M") + px(X[i]) + " " + py(v) + " "; });
+      s += '<path d="' + d + '" fill="none" stroke="' + ser[1] + '" stroke-width="' + (blue ? 3.5 : 2.5) + '" stroke-linejoin="round" stroke-linecap="round"/>';
+      ser[2].forEach(function (v, i) {
+        s += '<circle cx="' + px(X[i]) + '" cy="' + py(v) + '" r="5" fill="#fff" stroke="' + ser[1] + '" stroke-width="2.5"/>';
+        if (blue) s += T(px(X[i]) + (i === 0 ? 14 : 0), py(v) - 13, v.toFixed(1), { a: "middle", fs: 12, c: ser[1], w: 600 });
+        if (grey) s += T(px(X[i]) + (i === 0 ? 16 : i === 3 ? -14 : 0), py(v) + 21, v.toFixed(1), { a: "middle", fs: 11.5, c: ser[1], w: 600 });
+      });
     });
+    var lx = L + 22, ly = Tp + 22;
+    S.forEach(function (ser, i) { var y = ly + i * 22; s += '<line x1="' + lx + '" x2="' + (lx + 26) + '" y1="' + y + '" y2="' + y + '" stroke="' + ser[1] + '" stroke-width="' + (i === 0 ? 3.5 : 2.5) + '" stroke-linecap="round"/><circle cx="' + (lx + 13) + '" cy="' + y + '" r="4" fill="#fff" stroke="' + ser[1] + '" stroke-width="2"/>' + T(lx + 36, y + 4, ser[0], { fs: 12, c: C.ink, w: i === 0 ? 600 : 500 }); });
     put("fig-scale", svg(W, H, "Accuracy versus training-data fraction", s));
   })();
 
@@ -256,7 +245,7 @@
 
   /* Figure 12: attribution */
   (function () {
-    var IM = ["bonnet", "snowshoe", "gondola", "bok_choy", "goose", "pocketknife"], HAS = ["bonnet", "snowshoe", "gondola", "bok_choy", "goose"];
+    var IM = ["bok_choy", "bonnet", "snowshoe", "gondola", "goose"], HAS = IM;
     var GROUPS = ["openclip", "dfn", "mae", "dinov2l", "shared_fusion"], GLAB = { openclip: "OpenCLIP", dfn: "DFN-6", mae: "MAE-18", dinov2l: "DINOv2-12", shared_fusion: "Shared" };
     var picks = document.getElementById("rp-attr-picks"), row = document.getElementById("rp-attr"), ATTR = null;
     if (!picks || !row) return;
@@ -288,7 +277,7 @@
         b.innerHTML = HAS.indexOf(id) >= 0 ? '<img src="assets/insight/img/' + id + '.jpg" alt="' + id + '">' : "<b>" + id.replace(/_/g, " ") + "</b>";
         b.addEventListener("click", function () { render(id); }); picks.appendChild(b);
       });
-      render("bonnet");
+      render("bok_choy");
       var lg = document.createElement("div"); lg.className = "attr__legend"; lg.innerHTML = "<span>lowers match</span><i></i><span>raises match</span>"; row.parentNode.insertBefore(lg, row.nextSibling);
     });
   })();
@@ -305,7 +294,7 @@
       return '<div class="rp-unit"><div><div class="rp-unit__id">unit ' + u.id + '</div><div class="rp-unit__c">' + u.concept + '</div><div class="rp-unit__s">top-5 held-out activations</div></div><div class="rp-unit__imgs">' +
         u.imgs.map(function (x) { return '<div class="rp-unit__img"><img src="assets/insight/img/' + x[0] + '.jpg" alt="' + x[0] + '"><b>' + x[0].replace(/_/g, " ") + " · " + x[1].toFixed(3) + '</b><i style="width:' + (x[1] / mx) * 100 + '%"></i></div>'; }).join("") + "</div></div>";
     }).join("");
-    put("fig-concept", hbars({ w: 960, left: 130, right: 60, rowH: 24, title: "Brain–visual concept-profile cosine · 27 THINGS categories · held-out images", max: 1.0, fmt: f3, rows: [
+    put("fig-concept", hbars({ w: 1000, left: 150, right: 150, rowH: 26, title: "Brain–visual concept-profile cosine · 27 THINGS categories · held-out images", max: 1.0, fmt: f3, rows: [
       { n: "OpenCLIP", v: 0.612, c: C.grey2 }, { n: "DFN-6", v: 0.726, c: C.grey2 }, { n: "MAE-18", v: 0.796, c: C.grey2 }, { n: "DINOv2-12", v: 0.812, c: C.grey2 }, { n: "Shared", v: 0.814, c: C.violet }, { n: "Neuron shuffle", v: 0.004 }] }));
   })();
 

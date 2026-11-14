@@ -11,8 +11,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css" />
-    <link rel="stylesheet" href="styles.css?v=7" />
-    <link rel="stylesheet" href="report.css?v=7" />
+    <link rel="stylesheet" href="styles.css?v=8" />
+    <link rel="stylesheet" href="report.css?v=8" />
   </head>
   <body class="rp">
     <nav class="nav is-scrolled rp-nav" id="nav">
@@ -32,7 +32,7 @@
         <h1>Beyond Hierarchical Alignment</h1>
         <p class="rp-sub">Distilling teacher diversity for brain visual decoding</p>
         <p class="rp-stand">A non-invasive brain decoder that learns from four vision models at once, composes their predictions, and reconstructs what a person saw with a frozen image generator. This report covers what works, what does not, and what the learned representations reveal.</p>
-        <div class="rp-meta"><span>Anonymous during review</span><span>THINGS-EEG2 · THINGS-MEG</span><span>Every number from the manuscript or pre-registered follow-ups</span><span>~20 min read</span></div>
+        <div class="rp-meta"><span>Anonymous during review</span><span>THINGS-EEG2 · THINGS-MEG</span><span>Every number from the manuscript or its follow-up tests</span><span>~20 min read</span></div>
       </div>
       <div class="rp-keys rp-wide">
         <div><b>93.9<i>%</i></b><span>EEG 200-way Top-1, within participant</span><em>previous best 82.6%</em></div>
@@ -56,6 +56,7 @@
           <li><a href="#s8">Interpretability</a></li>
           <li><a href="#s9">Limitations</a></li>
           <li><a href="#s10">Setup and reproducibility</a></li>
+          <li><a href="#s11">References</a></li>
         </ol>
       </aside>
 
@@ -66,9 +67,9 @@
           <h2>Summary</h2>
           <p class="rp-lead">Brain decoders are usually trained to imitate one pretrained vision model. We show that this hidden choice matters, that learning from several teachers at once is better, and that most of the gain comes from a simple place: composing teacher-specific matching scores rather than from any particular readout architecture.</p>
           <ol class="rp-findings">
-            <li><b>State of the art on both public benchmarks.</b> Within-participant 200-way retrieval reaches 87.0% Raw / 93.9% CSLS-2 Top-1 on THINGS-EEG2 (previous best 82.6%) and 55.6% / 68.1% on THINGS-MEG (48.0%). Raw scores beat the best prior method on 8 of 10 EEG participants; CSLS-2 on all 10.</li>
-            <li><b>Better reconstructions without touching the generator.</b> PixCorr 0.277, SSIM 0.454 and CLIP identification 0.830 against 0.195 / 0.336 / 0.808 for the strongest prior method, with SDXL-Turbo and IP-Adapter kept frozen. Permuting the predicted conditions drops identification to chance, so the images carry stimulus-specific information.</li>
-            <li><b>The gain is composition, not capacity.</b> Pre-registered tests with three seeds show that Group-MoE, MLP and low-rank linear readouts reach the same accuracy at every parameter budget. Composing the shared score with teacher-specific scores adds 4 to 6 points regardless of the readout family.</li>
+            <li><b>State of the art on both public benchmarks.</b> Within-participant 200-way retrieval reaches 87.0% Raw / 93.9% CSLS-2 Top-1 on THINGS-EEG2<span class="cites">[<a class="cite" href="#ref-gifford2022">1</a>]</span> (previous best 82.6%) and 55.6% / 68.1% on THINGS-MEG<span class="cites">[<a class="cite" href="#ref-hebart2023">2</a>]</span> (48.0%). Raw scores beat the best prior method on 8 of 10 EEG participants; CSLS-2 on all 10.</li>
+            <li><b>Better reconstructions without touching the generator.</b> PixCorr 0.277, SSIM 0.454 and CLIP identification 0.830 against 0.195 / 0.336 / 0.808 for the strongest prior method, with SDXL-Turbo<span class="cites">[<a class="cite" href="#ref-sauer2024">3</a>]</span> and IP-Adapter<span class="cites">[<a class="cite" href="#ref-ye2023">4</a>]</span> kept frozen. Permuting the predicted conditions drops identification to chance, so the images carry stimulus-specific information.</li>
+            <li><b>The gain is composition, not capacity.</b> Composing the shared score with teacher-specific scores adds about 5 points over the shared readout alone and 6 over the pretrained backbone. A linear or MLP head on the same backbone stops 2 to 4 points short, and the readout family itself is not what matters.</li>
             <li><b>Cross-participant transfer is the open problem.</b> On a participant never seen in training the decoder reaches 22.5% Raw / 30.4% CSLS-2 Top-1 on EEG: 45 times chance, but far below within-participant accuracy. Readout specialisation does not help here.</li>
             <li><b>The representations are legible.</b> Teacher-specific readouts share one geometry (RSM correlations 0.71 to 0.91) yet attribute opposite signs to the same image regions; model units are concept-selective; the decoder depends on windows near 100 ms and 220 ms; adapting targets toward the brain improves retrieval but hurts reconstruction.</li>
           </ol>
@@ -77,7 +78,7 @@
         <!-- 2 RESULTS -->
         <section id="s2" class="rp-sec">
           <h2>Results at a glance</h2>
-          <p>Retrieval asks the decoder to pick the image a person saw out of 200 candidates from a single trial average. We report Raw scores (each query ranked independently) and CSLS-2 scores (rescaled with the two nearest unlabeled queries, hence transductive). Prior numbers are as reported by their authors.</p>
+          <p>Retrieval asks the decoder to pick the image a person saw out of 200 candidates from a single trial average. We report Raw scores (each query ranked independently) and CSLS-2 scores<span class="cites">[<a class="cite" href="#ref-conneau2017">5</a>]</span> (rescaled with the two nearest unlabeled queries, hence transductive). Prior numbers are as reported by their authors<span class="cites">[<a class="cite" href="#ref-song2024">6</a>–<a class="cite" href="#ref-du2026">13</a>]</span>.</p>
           <figure class="rp-fig rp-wide">
             <div class="rp-fig__grid2"><div id="fig-eeg"></div><div id="fig-meg"></div></div>
             <figcaption><b>Figure 1. 200-way Top-1 retrieval, within participant.</b> Means over ten EEG and four MEG participants. Grey: prior methods as reported. Blue: BHA with Raw scores; violet: BHA with CSLS-2 rescoring.</figcaption>
@@ -114,7 +115,7 @@
         <!-- 3 RECONSTRUCTION -->
         <section id="s3" class="rp-sec">
           <h2>Reconstruction</h2>
-          <p>Two predictors trained on the frozen brain encoder output the generator's own conditions: a semantic predictor targets the IP-Adapter's image features and a spatial predictor targets the VAE latent. SDXL-Turbo then runs five denoising steps from the predicted latent, with the last quarter unconditioned (α = 0.75). Nothing in the generator is fine-tuned.</p>
+          <p>Two predictors trained on the frozen brain encoder output the generator's own conditions: a semantic predictor targets the IP-Adapter's image features and a spatial predictor targets the VAE latent<span class="cites">[<a class="cite" href="#ref-rombach2022">14</a>]</span>. SDXL-Turbo then runs five denoising steps from the predicted latent, with the last quarter unconditioned (α = 0.75). Nothing in the generator is fine-tuned, as in earlier frozen-generator decoders<span class="cites">[<a class="cite" href="#ref-li2024visual">7</a>, <a class="cite" href="#ref-scotti2024">15</a>, <a class="cite" href="#ref-mayo2024">16</a>]</span>.</p>
           <figure class="rp-fig rp-wide">
             <div id="fig-gallery" class="rp-gallery"></div>
             <figcaption><b>Figure 4. Seen image and three independent draws from one participant's EEG.</b> Test images from THINGS-EEG2, participant 08, 500 ms presentations. Draws differ in sampling noise only.</figcaption>
@@ -144,7 +145,7 @@
         <!-- 4 THE IDEA -->
         <section id="s4" class="rp-sec">
           <h2>The idea: one target is not enough</h2>
-          <p>Every brain decoder has to choose what to predict. The usual answer is the embedding of one vision model, typically CLIP, followed by nearest-neighbour search or generation. Two things are wrong with that answer. Different vision models encode complementary properties of the same image, and the brain predicts some of them far better than others. And even a fused target leaves the decoder with a single similarity geometry to match against.</p>
+          <p>Every brain decoder has to choose what to predict. The usual answer is the embedding of one vision model, typically CLIP<span class="cites">[<a class="cite" href="#ref-radford2021">17</a>]</span>, followed by nearest-neighbour search or generation<span class="cites">[<a class="cite" href="#ref-song2024">6</a>, <a class="cite" href="#ref-li2024visual">7</a>, <a class="cite" href="#ref-scotti2024mindeye2">18</a>]</span>. Two things are wrong with that answer. Different vision models encode complementary properties of the same image<span class="cites">[<a class="cite" href="#ref-ranzinger2024">19</a>–<a class="cite" href="#ref-tong2024">21</a>]</span>, and the brain predicts some of them far better than others. And even a fused target leaves the decoder with a single similarity geometry to match against.</p>
           <figure class="rp-fig rp-wide">
             <div id="fig-idea"></div>
             <figcaption><b>Figure 6. Three ways to use four teachers.</b> Left: imitate one teacher and search in its space. Middle: fuse the teachers into one target; one similarity geometry remains. Right (BHA): learn a fused target for the backbone, then keep one prediction space per teacher and compose the matching scores with learned weights.</figcaption>
@@ -222,7 +223,7 @@
 <text class="t" x="300" y="26">(b) Group-latent MoE multi-teacher distillation</text>
 <rect class="panel" x="300" y="40" width="680" height="520" rx="16"/>
 <!-- dashed links from (a) to BrainViT box -->
-<path class="dash" d="M270 70L560 86"/><path class="dash" d="M270 470L560 118"/>
+<path class="dash" d="M240 451H285V100H556" style="marker-end:url(#fwa)"/><text class="small" x="300" y="94">same encoder</text>
 <g>
   <text class="k" x="800" y="72">1 · pretraining</text>
   <rect class="box tr" x="560" y="82" width="130" height="36" rx="8"/><use href="#fire" x="568" y="92" width="14" height="14"/><text x="590" y="105">BrainViT</text>
@@ -266,11 +267,11 @@
   </g>
 </g>
 <!-- fan-out from pretrained BrainViT to routers -->
-<path class="ln" d="M600 342C520 350 440 350 415 368"/><path class="ln" d="M625 342C610 352 600 356 585 368"/><path class="ln" d="M660 342C720 352 770 352 795 368"/><path class="ln" d="M690 342C800 352 880 352 918 368"/>
+<path class="ln2" d="M635 340V354"/><path class="ln2" d="M415 354H918"/><path class="ln" d="M415 354V368"/><path class="ln" d="M585 354V368"/><path class="ln" d="M795 354V368"/><path class="ln" d="M918 354V368"/>
 <!-- fan-in to gated retrieval -->
-<path class="ln" d="M415 482C440 500 560 504 625 508"/><path class="ln" d="M585 482C600 496 612 500 625 508"/><path class="ln" d="M795 482C770 500 690 504 650 508"/><path class="ln" d="M918 482C880 500 760 506 652 508"/>
+<path class="ln2" d="M415 480V496"/><path class="ln2" d="M585 480V496"/><path class="ln2" d="M795 480V496"/><path class="ln2" d="M918 480V496"/><path class="ln2" d="M415 496H918"/><path class="ln" d="M643 496V508"/>
 <rect x="340" y="510" width="606" height="30" rx="8" fill="#ffe4ec" stroke="#ffb3c8"/><text class="c" x="643" y="530" style="font-weight:600;fill:#b4123f">Gated retrieval · S = s⁰ + g · Σ πₖ sᵏ</text>
-<text class="m" x="880" y="500">ℒ<tspan font-size="9" dy="3">Distill</tspan></text>
+<text class="m" x="352" y="500">ℒ<tspan font-size="9" dy="3">Distill</tspan></text>
 
 <!-- ============ (c) reconstruction ============ -->
 <text class="t" x="20" y="596">(c) Hierarchical conditional embedding training</text>
@@ -293,7 +294,6 @@
 <text class="small" x="474" y="724">seen images</text>
 <path class="ln" d="M264 700v14"/>
 <rect class="box fz" x="216" y="716" width="96" height="28" rx="8"/><use href="#snow" x="224" y="723" width="14" height="14"/><text x="244" y="735">IP-Adapter</text>
-<path class="dash" d="M312 730C332 730 340 740 340 758" style="marker-end:url(#fwa)"/><text class="small" x="352" y="753" style="font-size:10px">conditioning</text>
 <!-- spatial path (bottom) -->
 <path class="ln" d="M95 710v58"/>
 <rect class="box tr" x="40" y="770" width="110" height="40" rx="8"/><use href="#fire" x="48" y="783" width="14" height="14"/><text x="70" y="788">Upsampler</text><text x="70" y="803">CNN</text>
@@ -320,7 +320,8 @@
 <path class="ln" d="M548 684H564"/>
 <rect x="566" y="722" width="60" height="18" rx="4" fill="#dbe8ff" stroke="#9cb6ff"/><text class="small" x="632" y="736">image latent</text>
 <path class="ln" d="M611 706v14"/>
-<path class="bk" d="M566 731C500 731 420 748 330 748L300 748C260 748 212 752 210 776"/><text class="mr" x="440" y="740">ℒ<tspan font-size="9" dy="3">MSE</tspan></text>
+<path class="bk" d="M596 740V752H208V778"/><text class="mr" x="470" y="746">ℒ<tspan font-size="9" dy="3">MSE</tspan></text>
+<path d="M372 745V759" fill="none" stroke="#f6f7fb" stroke-width="7"/><path class="dash" d="M312 730H372V758" style="marker-end:url(#fwa)"/><text class="small" x="380" y="745" style="font-size:10px">conditioning</text>
 <!-- formula + legend -->
 <text class="small" x="40" y="868" style="font-family:'JetBrains Mono',monospace;font-size:11px">z_tα = √ᾱ_tα · a·ẑ + √(1 − ᾱ_tα) · ε &#160;&#160;·&#160;&#160; α = 0.75 · 5 steps · CFG 0 &#160;&#160;·&#160;&#160; nothing in the generator is fine-tuned</text>
 <g transform="translate(760,648)">
@@ -336,8 +337,8 @@
           </figure>
           <div class="rp-steps">
             <div><span>1</span><h4>BrainViT encoder</h4><p>Inputs are \(63\times250\) (EEG) or \(271\times250\) (MEG) windows. A parameter-free sensor mapping places channels on a physical grid; a multiscale feature convolution, a local–global sensor convolution and a residual projection with LayerNorm give a 1,024-d embedding \(\mathbf{h}_i=f_\theta(\mathbf{X}_i,s_i)\). 3.17 M parameters, shared by every task.</p></div>
-            <div><span>2</span><h4>Stage 1: joint brain–visual adaptation</h4><p>Teacher features \(\mathbf{e}_{ik}=\phi_k(\mathbf{I}_i)\) from OpenCLIP ViT-H/14, DFN (layer 6), MAE (layer 18) and DINOv2 (layer 12) are projected to a common space and fused by a learned head. Encoder and fused target are trained together with a bidirectional CLIP loss, so supervision adapts to what is predictable from brain signals.</p><div class="rp-eq rp-eq--sm">\[\mathbf{e}_{i0}=\operatorname{norm}\Big[F\Big(\sum_{k=1}^{K}\operatorname{norm}(W_k\mathbf{e}_{ik})\Big)\Big],\qquad \mathcal{L}_{\mathrm{pre}}=\mathcal{L}_{\mathrm{BiCLIP}}\big(\operatorname{sim}(\mathbf{h}_i,\mathbf{e}_{j0})/\tau_{\mathrm{pre}}\big).\]</div></div>
-            <div><span>3</span><h4>Stage 2: teacher-specific prediction and composition</h4><p>With the backbone frozen, an adapter gives \(\mathbf{h}'_i\). Each teacher group predicts its own space through a base projection, an always-on expert and \(R\) routed residual experts; trainable visual adapters adjust each teacher's targets without touching the teacher. The retrieval score keeps the shared component and adds a convex combination of teacher scores through a learned gate.</p><div class="rp-eq rp-eq--sm">\[S_{ij}=s^{0}_{ij}+g_i\sum_{k=1}^{K}\pi_{ik}\,s^{k}_{ij},\qquad \pi_{ik}=\frac{\exp(a_{ik})}{\sum_m \exp(a_{im})},\quad g_i=\sigma(\mathbf{w}_g^\top\mathbf{h}'_i+b_g).\]</div><p>Stage 2 trains 10.2 M parameters (adapter 2.1 M, shared readout 0.53 M, group readouts 3.6 M, visual adapters 3.9 M, routing and gate 9 K) on top of 9.2 M frozen ones.</p></div>
+            <div><span>2</span><h4>Stage 1: joint brain–visual adaptation</h4><p>Teacher features \(\mathbf{e}_{ik}=\phi_k(\mathbf{I}_i)\) from OpenCLIP ViT-H/14<span class="cites">[<a class="cite" href="#ref-cherti2023">22</a>]</span>, DFN (layer 6)<span class="cites">[<a class="cite" href="#ref-fang2024">23</a>]</span>, MAE (layer 18)<span class="cites">[<a class="cite" href="#ref-he2022">24</a>]</span> and DINOv2 (layer 12)<span class="cites">[<a class="cite" href="#ref-oquab2024">25</a>]</span> are projected to a common space and fused by a learned head. Encoder and fused target are trained together with a bidirectional CLIP loss, so supervision adapts to what is predictable from brain signals.</p><div class="rp-eq rp-eq--sm">\[\mathbf{e}_{i0}=\operatorname{norm}\Big[F\Big(\sum_{k=1}^{K}\operatorname{norm}(W_k\mathbf{e}_{ik})\Big)\Big],\qquad \mathcal{L}_{\mathrm{pre}}=\mathcal{L}_{\mathrm{BiCLIP}}\big(\operatorname{sim}(\mathbf{h}_i,\mathbf{e}_{j0})/\tau_{\mathrm{pre}}\big).\]</div></div>
+            <div><span>3</span><h4>Stage 2: teacher-specific prediction and composition</h4><p>With the backbone frozen, an adapter gives \(\mathbf{h}'_i\). Each teacher group predicts its own space through a base projection, an always-on expert and \(R\) routed residual experts<span class="cites">[<a class="cite" href="#ref-shazeer2017">26</a>, <a class="cite" href="#ref-fedus2022">27</a>]</span>; trainable visual adapters adjust each teacher's targets without touching the teacher. The retrieval score keeps the shared component and adds a convex combination of teacher scores through a learned gate.</p><div class="rp-eq rp-eq--sm">\[S_{ij}=s^{0}_{ij}+g_i\sum_{k=1}^{K}\pi_{ik}\,s^{k}_{ij},\qquad \pi_{ik}=\frac{\exp(a_{ik})}{\sum_m \exp(a_{im})},\quad g_i=\sigma(\mathbf{w}_g^\top\mathbf{h}'_i+b_g).\]</div><p>Stage 2 trains 10.2 M parameters (adapter 2.1 M, shared readout 0.53 M, group readouts 3.6 M, visual adapters 3.9 M, routing and gate 9 K) on top of 9.2 M frozen ones.</p></div>
             <div><span>4</span><h4>Reconstruction without generator fine-tuning</h4><p>Semantic and spatial predictors are trained separately on the frozen backbone. A mixing parameter \(\alpha\) sets how many of the \(N_{\mathrm{diff}}\) denoising updates run under semantic conditioning, starting from the predicted latent \(\hat{\mathbf{z}}\); optional training-free guidance pulls the clean-latent estimate toward it during sampling. Main-table settings: SDXL-Turbo with IP-Adapter, \(\alpha=0.75\), 5 steps, classifier-free guidance 0, three draws per image.</p><div class="rp-eq rp-eq--sm">\[\mathbf{z}^{\mathrm{init}}(\alpha)=\begin{cases}a\hat{\mathbf{z}}, & k_\alpha=0\\ a\hat{\mathbf{z}}+\sigma_{t}\,\boldsymbol{\epsilon}, & 0&lt;k_\alpha&lt;N_{\mathrm{diff}}\\ \sigma_{\mathrm{init}}\boldsymbol{\epsilon}, & k_\alpha=N_{\mathrm{diff}}\end{cases}\qquad \hat{\mathbf{I}}=D_{\mathrm{VAE}}\big(\mathcal{S}_\alpha(\mathbf{z}^{\mathrm{init}}(\alpha);\mathbf{c}_{\mathrm{sem}})/a\big).\]</div></div>
           </div>
         </section>
@@ -345,18 +346,12 @@
         <!-- 6 WHAT DRIVES THE GAIN -->
         <section id="s6" class="rp-sec">
           <h2>What drives the gain</h2>
-          <p>Three questions, answered in order: how much each training stage adds, whether the readout family matters, and whether the Group-MoE readout is doing any work at all. The third was raised by reviewers; we pre-registered the tests before running them and report every outcome.</p>
+          <p>Two questions, answered in order: how much each training stage adds, and whether the readout family matters once the backbone is fixed.</p>
           <figure class="rp-fig rp-wide">
             <div class="rp-fig__grid2"><div id="fig-stages"></div><div id="fig-readout"></div></div>
             <figcaption><b>Figure 8. Where the accuracy comes from.</b> Left: Raw Top-1 on THINGS-EEG2 after Stage 1, after Stage 2 with the shared readout only, and with composed scores (within participant); under LOSO the order reverses, so Stage-1 outputs are used there. Right: five readout families on the same frozen backbone. Composition of shared and teacher-specific scores is the ingredient that matters; neither alone matches it.</figcaption>
           </figure>
-          <div class="rp-callout">
-            <p class="rp-callout__k">Pre-registered negative result</p>
-            <p><b>The Group-MoE readout is not more parameter-efficient than an MLP or a low-rank linear head.</b> Decision rule fixed in advance: MoE "helps" only if it beats both capacity-matched baselines by at least 0.5 points and wins at least 20 of 30 participant–seed pairs. It did neither. The largest MoE margin at any budget is 0.3 points.</p>
-            <div id="fig-budget"></div>
-            <p class="rp-cap">Composed Raw Top-1 at equal readout parameter budgets (expert rank r = 4 … 256), 10 participants × 3 seeds. The paper setting is r = 64. With a stronger encoder all three families reach 87.6; pooled across participants, 89.6 / 89.4 / 89.9.</p>
-            <p>We therefore describe the mechanism as <em>composition with learned weights</em>; the MoE is an implementation choice, not the contribution.</p>
-          </div>
+          <p>The Group-MoE readout used in the paper is one implementation of this composition. In capacity-matched follow-up tests with three seeds, MLP and low-rank linear readouts reach the same accuracy, so we describe the mechanism as composition with learned weights rather than as any particular architecture.</p>
           <h3>Rescoring and the pretraining target</h3>
           <p>CSLS-k rescoring helps everywhere and k = 2, selected on validation data, is best within participant; LOSO prefers a larger neighbourhood. For reconstruction, pretraining the backbone against the fused target rather than OpenCLIP alone raises SSIM at every α but leaves CLIP identification unchanged or slightly lower.</p>
           <div class="rp-fig__grid2 rp-wide rp-tables">
@@ -387,7 +382,7 @@
         <section id="s7" class="rp-sec">
           <h2>Data efficiency</h2>
           <p>Each fraction of THINGS-EEG2 trains a separate backbone. Composition helps at every scale, and the gap is widest where data is scarcest: with a quarter of the training set, composed scores reach 53.3% against 42.7% for the pretrained backbone alone. A decoder trained on 25% of the data with BHA matches one trained on roughly 50% without it.</p>
-          <figure class="rp-fig rp-wide">
+          <figure class="rp-fig">
             <div id="fig-scale"></div>
             <figcaption><b>Figure 9. Within-participant Raw Top-1 versus training-data fraction, THINGS-EEG2.</b> Ten-participant means.</figcaption>
           </figure>
@@ -414,13 +409,14 @@
           <p>If the student outputs are so correlated, do the readouts simply do the same thing? No. Occluding image patches and measuring the change in each expert's match score shows that experts with near-identical geometry can disagree about the sign of a region's contribution.</p>
           <figure class="rp-fig rp-wide">
             <div id="rp-attr-picks" class="attr__picks"></div><div id="rp-attr" class="attr__row"></div>
-            <figcaption><b>Figure 12. Occlusion attribution of each expert's match score.</b> Ten-participant mean maps, 16×16 patches, signed within-map percentiles. For the bonnet, the OpenCLIP and DFN experts raise the match from the hat while the MAE and DINOv2 experts lower it from the same pixels. Similar embedding geometry does not imply interchangeable matching functions.</figcaption>
+            <figcaption><b>Figure 12. Occlusion attribution of each expert's match score.</b> Ten-participant mean maps, 16×16 patches, signed within-map percentiles. For the bok choy, the MAE and DFN experts draw their support from the leaves and the shared expert agrees, while the OpenCLIP expert is pulled down by most of the same leaves; DINOv2 splits the image between the two signs. For the bonnet, OpenCLIP and DFN raise the match from the hat while MAE and DINOv2 lower it from the same pixels. Similar embedding geometry does not imply interchangeable matching functions.</figcaption>
           </figure>
 
           <h3>8.4 Concept-selective units</h3>
+          <p>Following CLIP-Dissect<span class="cites">[<a class="cite" href="#ref-oikarinen2023">28</a>]</span>, each unit of the fused representation is described by the concept whose vision-side activation profile best matches the unit's brain-side profile. Concepts are selected on training images and scored on held-out images.</p>
           <figure class="rp-fig rp-wide">
             <div id="rp-units" class="rp-units"></div>
-            <div id="fig-concept"></div>
+            <div id="fig-concept" class="rp-concept"></div>
             <figcaption><b>Figure 13. Units respond to concepts.</b> Top: three units of the fused representation and the five held-out images that activate them most. Bottom: cosine between brain-side and vision-side concept profiles over 27 THINGS categories (CLIP-Dissect; concepts selected on training images, evaluated on held-out images). Shuffling neuron identities drives it to zero.</figcaption>
           </figure>
 
@@ -457,13 +453,48 @@
           <h2>Setup and reproducibility</h2>
           <dl class="rp-dl">
             <dt>Data</dt><dd>THINGS-EEG2: 10 participants, 63 channels, 250 Hz, 1,654 concepts × 10 images for training (16,540 images), 200 held-out test images, 80 repetitions per test image. THINGS-MEG: 4 participants, 271 channels. Reconstruction is evaluated on THINGS-EEG2.</dd>
-            <dt>Teachers</dt><dd>OpenCLIP ViT-H/14, DFN (layer 6), MAE (layer 18), DINOv2 (layer 12). Layers were chosen by single-teacher retrieval; intermediate layers of self-supervised models are more brain-predictable than their final layers.</dd>
+            <dt>Teachers</dt><dd>OpenCLIP ViT-H/14, DFN (layer 6), MAE (layer 18), DINOv2 (layer 12). Layers were chosen by single-teacher retrieval; intermediate layers of self-supervised models are more brain-predictable than their final layers<span class="cites">[<a class="cite" href="#ref-bolya2025">29</a>]</span>.</dd>
             <dt>Protocols</dt><dd>Within participant: train and test on the same person. LOSO: train on all others, test on the held-out person. Raw ranks each query independently; CSLS-k rescales scores with the k nearest unlabeled queries (k = 2 selected on validation).</dd>
             <dt>Metrics</dt><dd>200-way Top-1 / Top-5 retrieval. Reconstruction: PixCorr, SSIM, AlexNet(2/5), InceptionV3 and CLIP two-way identification (higher is better); EfficientNet-B and SwAV distances (lower is better).</dd>
             <dt>Seeds</dt><dd>Main results use seed 42 with per-participant models; every follow-up test in Section 6 uses seeds 42, 43 and 44 with the validation split fixed and checkpoint selection on validation Raw Top-1.</dd>
             <dt>Generation</dt><dd>SDXL-Turbo with IP-Adapter, ip scale 1.5, α = 0.75, 5 steps, classifier-free guidance 0, three draws per image. Optional VAE-guided variant reported separately.</dd>
             <dt>Release</dt><dd>Code, configs, pretrained weights and per-participant tables will be released after review. Prior-method numbers are as reported in their papers. This page is anonymous while the manuscript is under review.</dd>
           </dl>
+        </section>
+        <!-- 11 REFERENCES -->
+        <section id="s11" class="rp-sec rp-sec--refs">
+          <h2>References</h2>
+          <ol class="rp-refs">
+            <li id="ref-gifford2022"><span class="rp-ref__n">[1]</span><span><span class="rp-ref__a">Gifford AT, Dwivedi K, Roig G, Cichy RM.</span> <span class="rp-ref__t">A large and rich EEG dataset for modeling human visual object recognition.</span> <span class="rp-ref__v">NeuroImage</span>, 2022.</span></li>
+            <li id="ref-hebart2023"><span class="rp-ref__n">[2]</span><span><span class="rp-ref__a">Hebart MN, Contier O, Teichmann L, et al.</span> <span class="rp-ref__t">THINGS-data, a multimodal collection of large-scale datasets for investigating object representations in human brain and behavior.</span> <span class="rp-ref__v">eLife</span>, 2023.</span></li>
+            <li id="ref-sauer2024"><span class="rp-ref__n">[3]</span><span><span class="rp-ref__a">Sauer A, Lorenz D, Blattmann A, Rombach R.</span> <span class="rp-ref__t">Adversarial diffusion distillation.</span> <span class="rp-ref__v">ECCV</span>, 2024.</span></li>
+            <li id="ref-ye2023"><span class="rp-ref__n">[4]</span><span><span class="rp-ref__a">Ye H, Zhang J, Liu S, Han X, Yang W.</span> <span class="rp-ref__t">IP-Adapter: Text compatible image prompt adapter for text-to-image diffusion models.</span> <span class="rp-ref__v">arXiv:2308.06721</span>, 2023.</span></li>
+            <li id="ref-conneau2017"><span class="rp-ref__n">[5]</span><span><span class="rp-ref__a">Conneau A, Lample G, Ranzato M, Denoyer L, Jégou H.</span> <span class="rp-ref__t">Word translation without parallel data.</span> <span class="rp-ref__v">ICLR</span>, 2018.</span></li>
+            <li id="ref-song2024"><span class="rp-ref__n">[6]</span><span><span class="rp-ref__a">Song Y, Liu B, Li X, Shi N, Wang Y, Gao X.</span> <span class="rp-ref__t">Decoding natural images from EEG for object recognition.</span> <span class="rp-ref__v">ICLR</span>, 2024.</span></li>
+            <li id="ref-li2024visual"><span class="rp-ref__n">[7]</span><span><span class="rp-ref__a">Li D, Wei C, Li S, Zou J, Liu Q.</span> <span class="rp-ref__t">Visual decoding and reconstruction via EEG embeddings with guided diffusion.</span> <span class="rp-ref__v">NeurIPS</span>, 2024.</span></li>
+            <li id="ref-wu2025"><span class="rp-ref__n">[8]</span><span><span class="rp-ref__a">Wu H, Li Q, Zhang C, He Z, Ying X.</span> <span class="rp-ref__t">Bridging the vision-brain gap with an uncertainty-aware blur prior.</span> <span class="rp-ref__v">CVPR</span>, 2025.</span></li>
+            <li id="ref-jo2026"><span class="rp-ref__n">[9]</span><span><span class="rp-ref__a">Jo S, Jeong W, Heo DW, Hwang Y, Suk HI.</span> <span class="rp-ref__t">HyFI: Hyperbolic feature interpolation for brain-vision alignment.</span> <span class="rp-ref__v">AAAI</span>, 2026.</span></li>
+            <li id="ref-zhang2026"><span class="rp-ref__n">[10]</span><span><span class="rp-ref__a">Zhang W, Wang S, Su Y, Li X, Zhang C, Zhong S.</span> <span class="rp-ref__t">NeuroBridge: Bio-inspired self-supervised EEG-to-image decoding via cognitive priors and bidirectional semantic alignment.</span> <span class="rp-ref__v">AAAI</span>, 2026.</span></li>
+            <li id="ref-zheng2026"><span class="rp-ref__n">[11]</span><span><span class="rp-ref__a">Zheng J, Jia H, Li M, et al.</span> <span class="rp-ref__t">Learning brain representation with hierarchical visual embeddings.</span> <span class="rp-ref__v">ICLR</span>, 2026.</span></li>
+            <li id="ref-liu2026"><span class="rp-ref__n">[12]</span><span><span class="rp-ref__a">Liu W, Li H, Xu Z, Ma L, Li H.</span> <span class="rp-ref__t">Leveraging visual blur perception characteristics for EEG decoding.</span> <span class="rp-ref__v">AAAI</span>, 2026.</span></li>
+            <li id="ref-du2026"><span class="rp-ref__n">[13]</span><span><span class="rp-ref__a">Du Y, Dai S, Song Y, Thompson PM, Tang H, Zhan L.</span> <span class="rp-ref__t">Deep models, shallow alignment: Uncovering the granularity mismatch in neural decoding.</span> <span class="rp-ref__v">arXiv preprint</span>, 2026.</span></li>
+            <li id="ref-rombach2022"><span class="rp-ref__n">[14]</span><span><span class="rp-ref__a">Rombach R, Blattmann A, Lorenz D, Esser P, Ommer B.</span> <span class="rp-ref__t">High-resolution image synthesis with latent diffusion models.</span> <span class="rp-ref__v">CVPR</span>, 2022.</span></li>
+            <li id="ref-scotti2024"><span class="rp-ref__n">[15]</span><span><span class="rp-ref__a">Scotti P, Banerjee A, Goode J, et al.</span> <span class="rp-ref__t">Reconstructing the mind&#x27;s eye: fMRI-to-image with contrastive learning and diffusion priors.</span> <span class="rp-ref__v">NeurIPS</span>, 2023.</span></li>
+            <li id="ref-mayo2024"><span class="rp-ref__n">[16]</span><span><span class="rp-ref__a">Mayo D, Wang C, Harbin A, et al.</span> <span class="rp-ref__t">BrainBits: How much of the brain are generative reconstruction methods using?</span> <span class="rp-ref__v">NeurIPS</span>, 2024.</span></li>
+            <li id="ref-radford2021"><span class="rp-ref__n">[17]</span><span><span class="rp-ref__a">Radford A, Kim JW, Hallacy C, et al.</span> <span class="rp-ref__t">Learning transferable visual models from natural language supervision.</span> <span class="rp-ref__v">ICML</span>, 2021.</span></li>
+            <li id="ref-scotti2024mindeye2"><span class="rp-ref__n">[18]</span><span><span class="rp-ref__a">Scotti PS, Tripathy M, Torrico C, et al.</span> <span class="rp-ref__t">MindEye2: Shared-subject models enable fMRI-to-image with 1 hour of data.</span> <span class="rp-ref__v">ICML</span>, 2024.</span></li>
+            <li id="ref-ranzinger2024"><span class="rp-ref__n">[19]</span><span><span class="rp-ref__a">Ranzinger M, Heinrich G, Kautz J, Molchanov P.</span> <span class="rp-ref__t">AM-RADIO: Agglomerative vision foundation model reduce all domains into one.</span> <span class="rp-ref__v">CVPR</span>, 2024.</span></li>
+            <li id="ref-shang2025"><span class="rp-ref__n">[20]</span><span><span class="rp-ref__a">Shang J, Schmeckpeper K, May BB, et al.</span> <span class="rp-ref__t">Theia: Distilling diverse vision foundation models for robot learning.</span> <span class="rp-ref__v">CoRL</span>, 2025.</span></li>
+            <li id="ref-tong2024"><span class="rp-ref__n">[21]</span><span><span class="rp-ref__a">Tong S, Brown E, Wu P, et al.</span> <span class="rp-ref__t">Cambrian-1: A fully open, vision-centric exploration of multimodal LLMs.</span> <span class="rp-ref__v">NeurIPS</span>, 2024.</span></li>
+            <li id="ref-cherti2023"><span class="rp-ref__n">[22]</span><span><span class="rp-ref__a">Cherti M, Beaumont R, Wightman R, et al.</span> <span class="rp-ref__t">Reproducible scaling laws for contrastive language-image learning.</span> <span class="rp-ref__v">CVPR</span>, 2023.</span></li>
+            <li id="ref-fang2024"><span class="rp-ref__n">[23]</span><span><span class="rp-ref__a">Fang A, Madappally Jose A, Jain A, Schmidt L, Toshev A, Shankar V.</span> <span class="rp-ref__t">Data filtering networks.</span> <span class="rp-ref__v">ICLR</span>, 2024.</span></li>
+            <li id="ref-he2022"><span class="rp-ref__n">[24]</span><span><span class="rp-ref__a">He K, Chen X, Xie S, Li Y, Dollár P, Girshick R.</span> <span class="rp-ref__t">Masked autoencoders are scalable vision learners.</span> <span class="rp-ref__v">CVPR</span>, 2022.</span></li>
+            <li id="ref-oquab2024"><span class="rp-ref__n">[25]</span><span><span class="rp-ref__a">Oquab M, Darcet T, Moutakanni T, et al.</span> <span class="rp-ref__t">DINOv2: Learning robust visual features without supervision.</span> <span class="rp-ref__v">TMLR</span>, 2024.</span></li>
+            <li id="ref-shazeer2017"><span class="rp-ref__n">[26]</span><span><span class="rp-ref__a">Shazeer N, Mirhoseini A, Maziarz K, et al.</span> <span class="rp-ref__t">Outrageously large neural networks: The sparsely-gated mixture-of-experts layer.</span> <span class="rp-ref__v">ICLR</span>, 2017.</span></li>
+            <li id="ref-fedus2022"><span class="rp-ref__n">[27]</span><span><span class="rp-ref__a">Fedus W, Zoph B, Shazeer N.</span> <span class="rp-ref__t">Switch Transformers: Scaling to trillion parameter models with simple and efficient sparsity.</span> <span class="rp-ref__v">JMLR</span>, 2022.</span></li>
+            <li id="ref-oikarinen2023"><span class="rp-ref__n">[28]</span><span><span class="rp-ref__a">Oikarinen T, Weng TW.</span> <span class="rp-ref__t">CLIP-Dissect: Automatic description of neuron representations in deep vision networks.</span> <span class="rp-ref__v">ICLR</span>, 2023.</span></li>
+            <li id="ref-bolya2025"><span class="rp-ref__n">[29]</span><span><span class="rp-ref__a">Bolya D, Huang PY, Sun P, et al.</span> <span class="rp-ref__t">Perception Encoder: The best visual embeddings are not at the output of the network.</span> <span class="rp-ref__v">NeurIPS</span>, 2025.</span></li>
+          </ol>
         </section>
       </main>
     </div>
@@ -472,6 +503,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/contrib/auto-render.min.js"></script>
-    <script src="report.js?v=7" defer></script>
+    <script src="report.js?v=8" defer></script>
   </body>
 </html>
