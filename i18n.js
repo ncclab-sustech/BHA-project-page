@@ -33,7 +33,7 @@
 
       "film.kicker": "The film",
       "film.title": "Every second, <span class=\"grad\">your brain is drawing.</span>",
-      "film.lede": "An 84-second brand film built only from real material: one participant’s EEG, the pictures they saw, the pictures BHA decoded, and the model’s own attribution maps. Sound on.",
+      "film.lede": "A 78-second brand film built only from real material: one participant’s EEG, the pictures they saw, the pictures BHA decoded, and the model’s own attribution maps. Sound on.",
 
       "dec.kicker": "Live decoder",
       "dec.title": "From brainwaves <span class=\"grad\">to pictures.</span>",
@@ -189,7 +189,7 @@
 
       "film.kicker": "短片",
       "film.title": "每一秒，<span class=\"grad\">你的大脑都在作画。</span>",
-      "film.lede": "一支 84 秒的品牌短片，素材全部真实：一名被试的 EEG、她看到的图片、BHA 解码出的图片，以及模型自己的归因图。请开声音。",
+      "film.lede": "一支 78 秒的品牌短片，素材全部真实：一名被试的 EEG、她看到的图片、BHA 解码出的图片，以及模型自己的归因图。请开声音。",
 
       "dec.kicker": "实时解码",
       "dec.title": "从脑电波<span class=\"grad\">到图像。</span>",
