@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>BHA — Brain Hierarchical Alignment for Visual Decoding</title>
+    <title>BHA — Beyond Hierarchical Alignment for Brain Visual Decoding</title>
     <meta
       name="description"
-      content="BHA aligns hierarchical brain signals to visual semantics via bridge priors for generalizable EEG/MEG-to-image decoding."
+      content="BHA decodes what a person sees from non-invasive brain recordings (EEG, MEG, fMRI) by distilling several vision foundation models into one brain model, with state-of-the-art retrieval and reconstruction."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,13 +22,14 @@
         <span class="site-nav__brand">BHA</span>
         <div class="site-nav__right">
           <div class="site-nav__links">
-            <a href="#abstract" data-i18n="nav.abstract">Abstract</a>
+            <a href="#overview" data-i18n="nav.overview">Overview</a>
             <a href="#method" data-i18n="nav.method">Method</a>
             <a href="#results" data-i18n="nav.results">Results</a>
-            <a href="#quantitative" data-i18n="nav.quantitative">Quantitative</a>
-            <a href="#subjects" data-i18n="nav.subjects">Subjects</a>
-            <a href="#code" data-i18n="nav.code">Code</a>
-            <a href="#bibtex" data-i18n="nav.bibtex">BibTeX</a>
+            <a href="#fmri" data-i18n="nav.fmri">fMRI</a>
+            <a href="#analysis" data-i18n="nav.analysis">Interpretability</a>
+            <a href="#examples" data-i18n="nav.examples">Examples</a>
+            <a href="#why" data-i18n="nav.why">Why it matters</a>
+            <a href="#status" data-i18n="nav.status">Status</a>
           </div>
           <div class="lang-switch" role="group" data-i18n-attr="aria-label:lang.label">
             <button type="button" class="lang-switch__btn is-active" data-set-lang="en" aria-pressed="true" data-i18n="lang.en">EN</button>
@@ -44,84 +45,152 @@
       <div class="hero__content">
         <p class="hero__badge">
           <span class="hero__badge-dot" aria-hidden="true"></span>
-          <span data-i18n="hero.badge">Brain-to-image decoding</span>
+          <span data-i18n="hero.badge">Non-invasive brain-to-image decoding</span>
         </p>
         <h1>
-          Brain Hierarchical Alignment Improves Generalizable Visual Decoding via Bridge Priors
+          Beyond Hierarchical Alignment
+          <span class="hero__tagline" data-i18n="hero.tagline">Distilling teacher diversity for brain visual decoding</span>
         </h1>
         <p class="hero__subtitle" data-i18n="hero.subtitle">
-          We align multi-level neural activity to hierarchical visual representations and transport
-          them through bridge priors—linking retrieval, high-level semantics, and low-level appearance
-          in a unified framework.
+          BHA turns non-invasive brain recordings into image retrieval and image reconstruction. One brain
+          model learns from several vision foundation models at once, composes their complementary notions
+          of visual similarity, and drives a frozen image generator — no generator fine-tuning required.
         </p>
         <div class="hero__cta">
-          <a class="btn btn--primary" href="#abstract" data-i18n="hero.cta.read">Read overview</a>
+          <a class="btn btn--primary" href="#overview" data-i18n="hero.cta.read">Read overview</a>
+          <a class="btn btn--ghost" href="#results" data-i18n="hero.cta.results">See results</a>
         </div>
         <div class="hero__meta">
-          <span><strong data-i18n="hero.meta.modalities">Modalities</strong> · EEG (63-ch) · MEG (271-ch)</span>
-          <span><strong data-i18n="hero.meta.tasks">Tasks</strong> · Retrieval · Reconstruction</span>
-          <span><strong data-i18n="hero.meta.datasets">Datasets</strong> · THINGS-EEG2 · THINGS-MEG</span>
+          <span><strong data-i18n="hero.meta.modalities">Modalities</strong> · EEG (63-ch) · MEG (271-ch) · 7T fMRI</span>
+          <span><strong data-i18n="hero.meta.tasks">Tasks</strong> · <span data-i18n="hero.meta.tasks.val">Retrieval · Reconstruction</span></span>
+          <span><strong data-i18n="hero.meta.datasets">Datasets</strong> · THINGS-EEG2 · THINGS-MEG · NSD</span>
         </div>
       </div>
     </header>
 
     <main>
-      <section id="abstract" class="section section--alt">
+      <section class="section section--stats" aria-label="Headline numbers">
         <div class="section__inner">
-          <p class="section__label" data-i18n="abstract.label">Overview</p>
-          <h2 data-i18n="abstract.title">From neural hierarchies to images</h2>
-          <p class="lead" data-i18n-html="abstract.lead1">
-            <strong>BHA (Brain Hierarchical Alignment)</strong> is a decoding framework that maps
-            hierarchical brain representations to visual semantics using
-            <em>bridge priors</em>—including Schrödinger-bridge, diffusion-prior, and cascade-bridge
-            variants—so that models trained on one subject or setting can better transfer to new
-            subjects and modalities.
+          <div class="stats">
+            <div class="stat">
+              <div class="stat__value">93.9<span class="stat__unit">%</span></div>
+              <div class="stat__label" data-i18n="stat.eeg.label">EEG · 200-way Top-1 retrieval</div>
+              <div class="stat__note" data-i18n="stat.eeg.note">Within-subject, CSLS-2 · prior best 82.6%</div>
+            </div>
+            <div class="stat">
+              <div class="stat__value">68.1<span class="stat__unit">%</span></div>
+              <div class="stat__label" data-i18n="stat.meg.label">MEG · 200-way Top-1 retrieval</div>
+              <div class="stat__note" data-i18n="stat.meg.note">Within-subject, CSLS-2 · prior best 48.0%</div>
+            </div>
+            <div class="stat">
+              <div class="stat__value">+42<span class="stat__unit">%</span></div>
+              <div class="stat__label" data-i18n="stat.rec.label">Reconstruction fidelity (PixCorr)</div>
+              <div class="stat__note" data-i18n="stat.rec.note">0.277 vs. 0.195 for the strongest prior EEG method</div>
+            </div>
+            <div class="stat">
+              <div class="stat__value">4</div>
+              <div class="stat__label" data-i18n="stat.teachers.label">Vision teachers in one brain model</div>
+              <div class="stat__note">OpenCLIP · DFN · MAE · DINOv2</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="overview" class="section section--alt">
+        <div class="section__inner">
+          <p class="section__label" data-i18n="overview.label">Overview</p>
+          <h2 data-i18n="overview.title">A strong vision model is not automatically a good decoding target</h2>
+          <p class="lead" data-i18n-html="overview.lead1">
+            Modern brain decoders do not predict pixels. They predict the <em>features</em> a pretrained
+            vision model would compute for the image a person is looking at, then search or generate
+            from those features. Which vision model to imitate is therefore a central design decision —
+            and different models (CLIP-style, self-supervised, masked autoencoders) capture different,
+            complementary aspects of an image.
           </p>
-          <p class="lead" style="margin-bottom: 0" data-i18n="abstract.lead2">
-            The codebase supports end-to-end pipelines: brain encoder training, high-level
-            reconstruction with IP-Adapter and SDXL-Turbo, low-level latent regression with optional
-            bridge refinement, and dual-path evaluation that blends semantic and appearance pathways.
+          <p class="lead" data-i18n-html="overview.lead2">
+            <strong>BHA (Beyond Hierarchical Alignment)</strong> stops choosing. It learns one shared brain
+            representation while letting several vision “teachers” supervise it, and it keeps the
+            teachers’ distinct notions of similarity alive at decision time instead of collapsing them
+            into a single fused space. The same backbone then feeds a frozen image generator for
+            reconstruction, with no generator fine-tuning.
           </p>
 
           <ul class="checklist">
-            <li data-i18n="abstract.item1">Intra-subject and leave-one-subject-out (LOSO) evaluation on standard THINGS splits</li>
-            <li data-i18n="abstract.item2">Multiple encoder backbones and prior families in one reproducible shell workflow</li>
-            <li data-i18n="abstract.item3">Rich metrics: PixCorr, SSIM, deep feature similarity, and bidirectional retrieval</li>
+            <li data-i18n="overview.item1">Joint brain–visual adaptation: the brain encoder and the fused visual target are learned together, so supervision adapts to what is actually predictable from noisy recordings.</li>
+            <li data-i18n="overview.item2">Teacher-specific readouts with learned, query-dependent score composition: complementary notions of visual similarity all contribute to retrieval.</li>
+            <li data-i18n="overview.item3">Semantic and spatial adapters condition a frozen latent-diffusion generator, so the generator can be upgraded without retraining the brain model.</li>
           </ul>
+
+          <figure class="figure-block">
+            <img
+              src="imgs/fig-overview.png"
+              alt="Left: similarity maps between brain predictions and image patches for three example images. Right: within-subject versus cross-subject retrieval accuracy for single vision models and for BHA, which sits far to the upper right."
+              width="2000"
+              height="538"
+              loading="lazy"
+            />
+            <figcaption class="figure-caption" data-i18n-html="overview.figcap1">
+              <strong>Visual representations shape brain–image alignment.</strong> Left: where the brain
+              prediction matches image patches (BHA column) versus a random query. Right: retrieval accuracy
+              of single vision-model layers against BHA on THINGS-EEG2 — BHA (star) moves both within-subject
+              and cross-subject accuracy to a new regime.
+            </figcaption>
+          </figure>
+
+          <figure class="figure-block">
+            <img
+              src="imgs/fig-conceptualization.png"
+              alt="Conceptual diagram: several vision models define distinct embedding spaces; BHA aligns one brain representation to all of them and keeps teacher-specific clusters."
+              width="2000"
+              height="756"
+              loading="lazy"
+            />
+            <figcaption class="figure-caption" data-i18n-html="overview.figcap2">
+              <strong>Shared alignment need not erase teacher-specific structure.</strong> (a) Each vision
+              model defines its own geometry; fusion merges them into one target. (b) Multi-teacher supervision
+              lets one brain representation predict several visual spaces. (c) Teacher-specific readouts keep
+              distinct brain–image correspondences, which BHA composes at retrieval time.
+            </figcaption>
+          </figure>
         </div>
       </section>
 
       <section id="method" class="section">
         <div class="section__inner">
           <p class="section__label" data-i18n="method.label">Method</p>
-          <h2 data-i18n="method.title">Hierarchical alignment with bridge transport</h2>
+          <h2 data-i18n="method.title">One backbone, task-specific prediction spaces</h2>
           <p class="lead" data-i18n="method.lead">
-            High-level tracks align brain signals to OpenCLIP-style vision features and decode
-            through a learned prior; low-level tracks regress SDXL VAE latents with optional bridge
-            refinement. A dual-path evaluator blends the two for sharper, more faithful
-            reconstructions.
+            Retrieval and reconstruction ask different things of a brain representation: features that
+            discriminate images need not preserve the structure a pretrained generator expects. BHA keeps a
+            single shared backbone and attaches purpose-built prediction heads for each task.
           </p>
 
           <div class="cards">
             <article class="card">
               <div class="card__icon" aria-hidden="true">◇</div>
-              <h3 data-i18n="method.card1.title">Hierarchical visual fusion (multi-model, multi-layer)</h3>
+              <h3 data-i18n="method.card1.title">Stage 1 · Shared representation</h3>
               <p data-i18n="method.card1.body">
-                Fuses semantic and appearance features from multiple vision encoders and network layers into a multi-scale representation space aligned with brain signals.
+                A geometry-aware BrainViT encoder (channel attention plus feature–sensor convolution) is trained
+                jointly with a learnable fusion of four vision foundation models. The visual target adapts to
+                the brain signal rather than being fixed in advance.
               </p>
             </article>
             <article class="card">
               <div class="card__icon" aria-hidden="true">◎</div>
-              <h3 data-i18n="method.card2.title">Hierarchical alignment loss (pre/post projection)</h3>
+              <h3 data-i18n="method.card2.title">Stage 2 · Composed retrieval</h3>
               <p data-i18n="method.card2.body">
-                Applies hierarchical alignment constraints before and after projection into a shared embedding space, jointly optimizing cross-modal matching and representation geometry.
+                With the backbone frozen, teacher-specific Group Mixture-of-Experts readouts map the brain
+                representation into each teacher’s native space. A learned gate and query-dependent weights
+                combine their matching scores with the shared score.
               </p>
             </article>
             <article class="card">
               <div class="card__icon" aria-hidden="true">▣</div>
-              <h3 data-i18n="method.card3.title">Hierarchical high–low fusion for reconstruction</h3>
+              <h3 data-i18n="method.card3.title">Reconstruction · Frozen generator</h3>
               <p data-i18n="method.card3.body">
-                Fuses high-level semantic and low-level appearance pathways with a tunable blend weight to balance semantic accuracy and fine-grained visual fidelity.
+                Separate semantic and spatial adapters predict the generator’s own conditioning features and VAE
+                latents. A single mixing parameter trades predicted layout against semantic generation, and an
+                optional training-free guidance step keeps the output close to the predicted structure.
               </p>
             </article>
           </div>
@@ -129,14 +198,16 @@
           <figure class="figure-block">
             <img
               src="imgs/fig-framework.png"
-              alt="Diagram of the BHA framework: brain encoder, hierarchical alignment, bridge priors, and image decoding paths."
-              width="1600"
-              height="900"
+              alt="BHA architecture: (a) BrainViT encoder, (b) two-stage training with a fusion head and group mixture-of-experts readouts feeding gated retrieval, (c) semantic and spatial adapters conditioning a frozen diffusion generator."
+              width="2000"
+              height="824"
               loading="lazy"
             />
-            <figcaption class="figure-caption" data-i18n="method.figcap">
-              Framework overview: hierarchical brain representations are aligned to visual features
-              and transported through bridge priors for retrieval and reconstruction.
+            <figcaption class="figure-caption" data-i18n-html="method.figcap">
+              <strong>BHA learns shared representations and task-specific predictions.</strong> (a) BrainViT
+              encoder. (b) Stage 1 jointly learns BrainViT and visual fusion; Stage 2 freezes both and trains
+              shared and teacher-specific readouts, visual adapters, and routing. (c) Semantic and spatial
+              predictors condition the frozen diffusion generator, VAE, and IP-Adapter.
             </figcaption>
           </figure>
         </div>
@@ -144,395 +215,307 @@
 
       <section id="results" class="section section--alt">
         <div class="section__inner">
-          <p class="section__label" data-i18n="results.label">Qualitative</p>
-          <h2 data-i18n="results.title">Reconstruction preview</h2>
+          <p class="section__label" data-i18n="results.label">Results</p>
+          <h2 data-i18n="results.title">State of the art on EEG and MEG benchmarks</h2>
           <p class="lead" data-i18n="results.lead">
-            Representative decoded images from our pipeline (quantitative benchmarks in the paper).
+            All numbers are averages over ten EEG and four MEG participants on the public THINGS benchmarks.
+            “Within-subject” trains and tests on the same person; “LOSO” (leave-one-subject-out) tests on a
+            person never seen during training. Raw scores rank each query independently; CSLS-2 re-scores
+            against the unlabeled query set.
+          </p>
+
+          <div class="results-table-wrap">
+            <table class="results-table">
+              <caption data-i18n-html="results.t1cap">
+                <strong>200-way brain-to-image retrieval (Top-1 / Top-5, %).</strong> Higher is better.
+                Best in bold.
+              </caption>
+              <thead>
+                <tr>
+                  <th rowspan="2" data-i18n="results.th.method">Method</th>
+                  <th colspan="4">EEG</th>
+                  <th colspan="4">MEG</th>
+                </tr>
+                <tr>
+                  <th colspan="2" data-i18n="results.th.within">Within-subject</th>
+                  <th colspan="2">LOSO</th>
+                  <th colspan="2" data-i18n="results.th.within">Within-subject</th>
+                  <th colspan="2">LOSO</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>NICE</td><td>16.1</td><td>43.6</td><td>6.2</td><td>21.4</td><td>12.8</td><td>36.0</td><td>–</td><td>–</td></tr>
+                <tr><td>ATM-S</td><td>28.5</td><td>60.4</td><td>11.9</td><td>33.8</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+                <tr><td>UBP</td><td>50.9</td><td>79.7</td><td>12.4</td><td>33.4</td><td>26.7</td><td>55.2</td><td>2.2</td><td>10.4</td></tr>
+                <tr><td>HyFI</td><td>68.2</td><td>91.9</td><td>15.1</td><td>37.2</td><td>35.8</td><td>64.6</td><td>3.2</td><td>11.5</td></tr>
+                <tr><td>NeuroBridge</td><td>63.2</td><td>89.9</td><td>19.0</td><td>45.9</td><td>32.2</td><td>60.8</td><td>3.4</td><td>12.8</td></tr>
+                <tr><td>MBP</td><td>75.7</td><td>94.6</td><td>20.0</td><td>44.1</td><td>33.9</td><td>60.7</td><td><strong>5.4</strong></td><td>15.2</td></tr>
+                <tr><td>LVBP</td><td>80.0</td><td>96.9</td><td>20.0</td><td>48.0</td><td>44.0</td><td>72.0</td><td>5.3</td><td>15.9</td></tr>
+                <tr><td>DMSA</td><td>82.6</td><td>97.7</td><td>21.8</td><td>49.4</td><td>48.0</td><td>74.4</td><td>3.7</td><td>13.0</td></tr>
+                <tr class="is-ours"><td><strong>BHA</strong> · Raw</td><td>87.0</td><td>98.5</td><td>22.5</td><td>51.6</td><td>55.6</td><td>85.8</td><td>3.6</td><td>12.8</td></tr>
+                <tr class="is-ours"><td><strong>BHA</strong> · CSLS-2</td><td><strong>93.9</strong></td><td><strong>99.7</strong></td><td><strong>30.4</strong></td><td><strong>63.4</strong></td><td><strong>68.1</strong></td><td><strong>91.4</strong></td><td>5.3</td><td><strong>16.5</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="results-table-wrap">
+            <table class="results-table">
+              <caption data-i18n-html="results.t2cap">
+                <strong>Image reconstruction from EEG (THINGS-EEG2, ten-participant mean).</strong> Low-level
+                metrics measure pixel and structural fidelity; high-level metrics measure semantic
+                identification. ↑ higher is better, ↓ lower is better.
+              </caption>
+              <thead>
+                <tr>
+                  <th rowspan="2" data-i18n="results.th.method">Method</th>
+                  <th colspan="4" data-i18n="results.th.low">Low-level</th>
+                  <th colspan="4" data-i18n="results.th.high">High-level</th>
+                </tr>
+                <tr>
+                  <th>PixCorr ↑</th><th>SSIM ↑</th><th>AlexNet(2) ↑</th><th>AlexNet(5) ↑</th>
+                  <th>Inception ↑</th><th>CLIP ↑</th><th>EffNet-B ↓</th><th>SwAV ↓</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>ATM-S</td><td>0.130</td><td>0.339</td><td>0.740</td><td>0.822</td><td>0.685</td><td>0.716</td><td>–</td><td>0.599</td></tr>
+                <tr><td>CC-All</td><td>0.143</td><td>0.347</td><td>0.754</td><td>0.623</td><td>0.669</td><td>0.715</td><td>–</td><td>0.590</td></tr>
+                <tr><td>AVDE</td><td>0.147</td><td>0.366</td><td>0.766</td><td>0.835</td><td>0.724</td><td>0.747</td><td>–</td><td>0.587</td></tr>
+                <tr><td>MBP</td><td>0.195</td><td>0.336</td><td>0.843</td><td>0.905</td><td>0.756</td><td>0.808</td><td>–</td><td>0.554</td></tr>
+                <tr class="is-ours"><td><strong>BHA</strong></td><td>0.277</td><td>0.454</td><td><strong>0.874</strong></td><td><strong>0.922</strong></td><td><strong>0.791</strong></td><td><strong>0.830</strong></td><td><strong>0.845</strong></td><td>0.516</td></tr>
+                <tr class="is-ours"><td><strong>BHA</strong> + VAE-guided diffusion</td><td><strong>0.283</strong></td><td><strong>0.464</strong></td><td><strong>0.874</strong></td><td>0.921</td><td>0.790</td><td><strong>0.830</strong></td><td><strong>0.845</strong></td><td><strong>0.515</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="split">
+            <div class="split__text">
+              <h3 data-i18n="results.data.title">Gains persist with a quarter of the training data</h3>
+              <p data-i18n="results.data.body">
+                Composing teacher-specific scores on top of the shared representation lifts within-subject
+                EEG accuracy at every training-data scale. With only 25% of a participant’s data, the gated
+                readout reaches 53.3% Top-1 against 42.7% for the pretrained backbone alone — a practical
+                advantage when recording sessions are short and expensive.
+              </p>
+              <p data-i18n="results.data.body2">
+                Permuting the predicted conditions drives reconstruction identification to chance, confirming
+                that the generated images carry stimulus-specific information rather than generator priors.
+              </p>
+            </div>
+            <figure class="figure-block split__figure">
+              <img
+                src="imgs/fig-data_scale_withinsubject.png"
+                alt="Line chart of within-subject Top-1 accuracy versus training-data fraction for three readouts; the gated readout is highest at every fraction."
+                width="1832"
+                height="1246"
+                loading="lazy"
+              />
+              <figcaption class="figure-caption" data-i18n="results.data.figcap">
+                THINGS-EEG2 within-subject Raw Top-1 (%) as a function of training-data fraction; ten-participant means.
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section id="fmri" class="section">
+        <div class="section__inner">
+          <p class="section__label" data-i18n="fmri.label">Beyond EEG and MEG</p>
+          <h2 data-i18n="fmri.title">The same recipe transfers to 7T fMRI</h2>
+          <p class="lead" data-i18n="fmri.lead">
+            To test whether BHA is tied to scalp recordings, we ported it unchanged — except for the input
+            tokenizer, a per-participant linear voxel adapter — to the Natural Scenes Dataset (NSD), the
+            largest public 7T fMRI dataset. A single model is trained jointly on all eight participants and
+            evaluated on the four with complete test data.
+          </p>
+          <div class="stats stats--compact">
+            <div class="stat">
+              <div class="stat__value">94.1<span class="stat__unit">%</span></div>
+              <div class="stat__label" data-i18n="fmri.stat1.label">300-way brain→image Top-1 (raw)</div>
+              <div class="stat__note" data-i18n="fmri.stat1.note">96.6% with CSLS-2 · four-participant mean</div>
+            </div>
+            <div class="stat">
+              <div class="stat__value">87.2<span class="stat__unit">%</span></div>
+              <div class="stat__label" data-i18n="fmri.stat2.label">1000-way brain→image Top-1 (raw)</div>
+              <div class="stat__note" data-i18n="fmri.stat2.note">91.1% with CSLS-2 · four-participant mean</div>
+            </div>
+            <div class="stat">
+              <div class="stat__value">0.947</div>
+              <div class="stat__label" data-i18n="fmri.stat3.label">Reconstruction CLIP identification</div>
+              <div class="stat__note" data-i18n="fmri.stat3.note">Inception 0.941 · AlexNet(5) 0.959 · three-seed mean</div>
+            </div>
+          </div>
+          <p class="note" data-i18n="fmri.note">
+            Preliminary: fMRI numbers come from an ongoing extension and have not yet been through peer review.
+            They are reported here to show that the architecture is modality-agnostic, not as a benchmark claim.
+          </p>
+        </div>
+      </section>
+
+      <section id="analysis" class="section section--alt">
+        <div class="section__inner">
+          <p class="section__label" data-i18n="analysis.label">Interpretability</p>
+          <h2 data-i18n="analysis.title">We can see what each expert is matching on</h2>
+          <p class="lead" data-i18n="analysis.lead">
+            Because BHA keeps teacher-specific prediction spaces, its decisions can be attributed. Occlusion
+            analysis shows which image regions each expert uses to match a brain response, and concept analysis
+            shows that individual model neurons become selective for semantic categories such as food, clothing
+            and animals.
+          </p>
+
+          <figure class="figure-block">
+            <img
+              src="imgs/fig-rsa.png"
+              alt="Five-panel analysis: alignment density per teacher, representation correlation, representational similarity matrices, visual sensitivity maps, and occlusion attribution maps per expert."
+              width="2000"
+              height="942"
+              loading="lazy"
+            />
+            <figcaption class="figure-caption" data-i18n-html="analysis.figcap1">
+              <strong>Shared geometry with distinct matching contributions.</strong> (a–c) Student outputs share
+              a common geometry across teachers. (d) Visual sensitivity maps. (e) Occlusion attributions per
+              expert: red regions raise the match score, blue regions lower it — experts can disagree on the same
+              image region, which is exactly what score composition exploits.
+            </figcaption>
+          </figure>
+
+          <figure class="figure-block">
+            <img
+              src="imgs/fig-concept_analysis.png"
+              alt="Concept analysis: brain-image alignment per teacher, concept correlation of the shared expert, concept alignment across teachers, and galleries of images that most activate food-, clothing- and animal-selective neurons."
+              width="2000"
+              height="1004"
+              loading="lazy"
+            />
+            <figcaption class="figure-caption" data-i18n-html="analysis.figcap2">
+              <strong>Feature alignment and semantic selectivity capture different structure.</strong> (a) Trainable
+              visual adapters raise brain–image alignment for every teacher. (b–c) Concept profiles of brain
+              predictions track those of the visual models far above a shuffled baseline. (d–e) Example neurons
+              and the test images that activate them most strongly.
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="examples" class="section">
+        <div class="section__inner">
+          <p class="section__label" data-i18n="examples.label">Qualitative</p>
+          <h2 data-i18n="examples.title">Reconstructions from EEG</h2>
+          <p class="lead" data-i18n="examples.lead">
+            Images generated from a single participant’s EEG responses to held-out stimuli. Each panel below
+            sweeps the mixing parameter from pure predicted layout to pure semantic generation; click any panel
+            for the full-resolution version.
           </p>
           <figure class="figure-block figure-block--teaser">
             <img
               src="imgs/fig-preview_imgs.png"
-              alt="Grid of reconstructed images compared to ground truth."
+              alt="Grid of reconstructed images compared with the images participants actually saw."
               width="2780"
               height="1468"
               loading="lazy"
             />
-            <figcaption class="figure-caption" data-i18n="results.figcap">
-              Teaser reconstructions from the dual-path evaluation (high-level + low-level blend).
+            <figcaption class="figure-caption" data-i18n="examples.figcap">
+              Seen images (top of each pair) and EEG-driven reconstructions.
             </figcaption>
           </figure>
-
-          <div class="metrics" aria-label="Evaluation highlights">
-            <div class="metric">
-              <div class="metric__name" data-i18n="results.metric.sim">Similarity</div>
-              <div class="metric__desc" data-i18n="results.metric.sim.desc">
-                AlexNet, InceptionV3, CLIP, EfficientNet, SwAV feature metrics
-              </div>
-            </div>
-            <div class="metric">
-              <div class="metric__name" data-i18n="results.metric.qual">Image quality</div>
-              <div class="metric__desc" data-i18n="results.metric.qual.desc">PixCorr and SSIM against held-out stimuli</div>
-            </div>
-            <div class="metric">
-              <div class="metric__name" data-i18n="results.metric.ret">Retrieval</div>
-              <div class="metric__desc" data-i18n="results.metric.ret.desc">EEG↔image and image↔EEG top-k accuracy (high-level track)</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="quantitative" class="section">
-        <div class="section__inner">
-          <p class="section__label" data-i18n="quant.label">Quantitative</p>
-          <h2 data-i18n="quant.title">Main results from the paper</h2>
-          <p class="lead" data-i18n="quant.lead">
-            Key tables and Figure&nbsp;3 from our NeurIPS submission: reconstruction benchmarks on
-            THINGS-EEG2, cross-modality retrieval, and the effect of high-/low-level blending
-            coefficient&nbsp;α. Click any panel to view at full resolution.
-          </p>
-
-          <div class="paper-figures">
-            <figure class="figure-block paper-figure">
-              <a
-                class="paper-figure__link"
-                href="assets/paper/table1_reconstruction.png"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img
-                  src="assets/paper/table1_reconstruction.png"
-                  alt="Table 1: Visual reconstruction performance on THINGS-EEG2."
-                  width="1290"
-                  height="876"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <span class="paper-figure__open" data-i18n="quant.open">Open full size</span>
-              </a>
-              <figcaption class="figure-caption" data-i18n-html="quant.t1cap">
-                <strong>Table 1.</strong> Visual reconstruction performance on THINGS-EEG2 (low- and
-                high-level metrics). Oracle rows report real-image CLS / VAE-latent conditioning and
-                their α&nbsp;=&nbsp;0.5 blend; bold and underline mark best and second-best results.
-              </figcaption>
-            </figure>
-
-            <figure class="figure-block paper-figure">
-              <a
-                class="paper-figure__link"
-                href="assets/paper/table2_retrieval.png"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img
-                  src="assets/paper/table2_retrieval.png"
-                  alt="Table 2: Average Top-1 and Top-5 retrieval accuracy on THINGS-EEG2 and THINGS-MEG."
-                  width="1290"
-                  height="618"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <span class="paper-figure__open" data-i18n="quant.open">Open full size</span>
-              </a>
-              <figcaption class="figure-caption" data-i18n-html="quant.t2cap">
-                <strong>Table 2.</strong> Average Top-1 / Top-5 accuracy (%) for 200-way zero-shot
-                retrieval on THINGS-EEG2 and THINGS-MEG (subject-wise averages).
-              </figcaption>
-            </figure>
-
-            <figure class="figure-block paper-figure">
-              <a
-                class="paper-figure__link"
-                href="assets/paper/figure3_alpha_blend.png"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img
-                  src="assets/paper/figure3_alpha_blend.png"
-                  alt="Figure 3: Effect of blending coefficient alpha on reconstruction metrics per subject."
-                  width="1290"
-                  height="666"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <span class="paper-figure__open" data-i18n="quant.open">Open full size</span>
-              </a>
-              <figcaption class="figure-caption" data-i18n-html="quant.f3cap">
-                <strong>Figure 3.</strong> Effect of high-/low-level blending coefficient α on
-                reconstruction quality. Metrics are plotted per subject as α varies from the VAE branch
-                (α&nbsp;=&nbsp;0) to the IP-Adapter branch (α&nbsp;=&nbsp;1); α&nbsp;=&nbsp;0.5 offers
-                the best overall compromise.
-              </figcaption>
-            </figure>
-          </div>
-        </div>
-      </section>
-
-      <section id="subjects" class="section section--alt">
-        <div class="section__inner">
-          <p class="section__label" data-i18n="subjects.label">Per-subject</p>
-          <h2 data-i18n="subjects.title">Reconstruction detail by participant</h2>
-          <p class="lead" data-i18n="subjects.lead">
-            Each panel summarizes reconstructions for one participant (α sweep). Previews are
-            scaled to fit your screen; click any panel to open the full-resolution PNG.
-          </p>
 
           <div class="subject-grid">
             <figure class="subject-card">
               <div class="subject-card__head">
-                <h3 class="subject-card__title">Subject 01</h3>
+                <h3 class="subject-card__title" data-i18n="subjects.name" data-i18n-vars='{"n":"01"}'>Participant 01</h3>
                 <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
               </div>
-              <a
-                class="subject-card__link"
-                href="reconst_imgs_display/reconst_alpha_sweep_sub-01.png"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-i18n-attr="aria-label:subjects.aria"
-                data-i18n-vars='{"n":"01"}'
-                aria-label="Open subject 01 reconstruction panel at full resolution"
-              >
-                <img
-                  src="reconst_imgs_display/reconst_alpha_sweep_sub-01.png"
-                  alt="Reconstruction alpha sweep panel for subject 01."
-                  width="3448"
-                  height="3425"
-                  loading="lazy"
-                  decoding="async"
-                />
+              <a class="subject-card__link" href="reconst_imgs_display/reconst_alpha_sweep_sub-01.png" target="_blank" rel="noopener noreferrer" data-i18n-attr="aria-label:subjects.aria" data-i18n-vars='{"n":"01"}' aria-label="Open participant 01 reconstruction panel at full resolution">
+                <img src="reconst_imgs_display/reconst_alpha_sweep_sub-01.png" alt="Reconstruction panel for participant 01." width="3448" height="3425" loading="lazy" decoding="async" />
                 <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
               </a>
             </figure>
-
             <figure class="subject-card">
               <div class="subject-card__head">
-                <h3 class="subject-card__title">Subject 02</h3>
+                <h3 class="subject-card__title" data-i18n="subjects.name" data-i18n-vars='{"n":"02"}'>Participant 02</h3>
                 <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
               </div>
-              <a
-                class="subject-card__link"
-                href="reconst_imgs_display/reconst_alpha_sweep_sub-02.png"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-i18n-attr="aria-label:subjects.aria"
-                data-i18n-vars='{"n":"02"}'
-                aria-label="Open subject 02 reconstruction panel at full resolution"
-              >
-                <img
-                  src="reconst_imgs_display/reconst_alpha_sweep_sub-02.png"
-                  alt="Reconstruction alpha sweep panel for subject 02."
-                  width="3448"
-                  height="3425"
-                  loading="lazy"
-                  decoding="async"
-                />
+              <a class="subject-card__link" href="reconst_imgs_display/reconst_alpha_sweep_sub-02.png" target="_blank" rel="noopener noreferrer" data-i18n-attr="aria-label:subjects.aria" data-i18n-vars='{"n":"02"}' aria-label="Open participant 02 reconstruction panel at full resolution">
+                <img src="reconst_imgs_display/reconst_alpha_sweep_sub-02.png" alt="Reconstruction panel for participant 02." width="3448" height="3425" loading="lazy" decoding="async" />
                 <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
               </a>
             </figure>
-
             <figure class="subject-card">
               <div class="subject-card__head">
-                <h3 class="subject-card__title">Subject 03</h3>
+                <h3 class="subject-card__title" data-i18n="subjects.name" data-i18n-vars='{"n":"03"}'>Participant 03</h3>
                 <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
               </div>
-              <a
-                class="subject-card__link"
-                href="reconst_imgs_display/reconst_alpha_sweep_sub-03.png"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-i18n-attr="aria-label:subjects.aria"
-                data-i18n-vars='{"n":"03"}'
-                aria-label="Open subject 03 reconstruction panel at full resolution"
-              >
-                <img
-                  src="reconst_imgs_display/reconst_alpha_sweep_sub-03.png"
-                  alt="Reconstruction alpha sweep panel for subject 03."
-                  width="3448"
-                  height="3425"
-                  loading="lazy"
-                  decoding="async"
-                />
+              <a class="subject-card__link" href="reconst_imgs_display/reconst_alpha_sweep_sub-03.png" target="_blank" rel="noopener noreferrer" data-i18n-attr="aria-label:subjects.aria" data-i18n-vars='{"n":"03"}' aria-label="Open participant 03 reconstruction panel at full resolution">
+                <img src="reconst_imgs_display/reconst_alpha_sweep_sub-03.png" alt="Reconstruction panel for participant 03." width="3448" height="3425" loading="lazy" decoding="async" />
                 <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
               </a>
             </figure>
-
             <figure class="subject-card">
               <div class="subject-card__head">
-                <h3 class="subject-card__title">Subject 04</h3>
+                <h3 class="subject-card__title" data-i18n="subjects.name" data-i18n-vars='{"n":"04"}'>Participant 04</h3>
                 <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
               </div>
-              <a
-                class="subject-card__link"
-                href="reconst_imgs_display/reconst_alpha_sweep_sub-04.png"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-i18n-attr="aria-label:subjects.aria"
-                data-i18n-vars='{"n":"04"}'
-                aria-label="Open subject 04 reconstruction panel at full resolution"
-              >
-                <img
-                  src="reconst_imgs_display/reconst_alpha_sweep_sub-04.png"
-                  alt="Reconstruction alpha sweep panel for subject 04."
-                  width="3448"
-                  height="3425"
-                  loading="lazy"
-                  decoding="async"
-                />
+              <a class="subject-card__link" href="reconst_imgs_display/reconst_alpha_sweep_sub-04.png" target="_blank" rel="noopener noreferrer" data-i18n-attr="aria-label:subjects.aria" data-i18n-vars='{"n":"04"}' aria-label="Open participant 04 reconstruction panel at full resolution">
+                <img src="reconst_imgs_display/reconst_alpha_sweep_sub-04.png" alt="Reconstruction panel for participant 04." width="3448" height="3425" loading="lazy" decoding="async" />
                 <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
               </a>
             </figure>
-
             <figure class="subject-card">
               <div class="subject-card__head">
-                <h3 class="subject-card__title">Subject 05</h3>
+                <h3 class="subject-card__title" data-i18n="subjects.name" data-i18n-vars='{"n":"05"}'>Participant 05</h3>
                 <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
               </div>
-              <a
-                class="subject-card__link"
-                href="reconst_imgs_display/reconst_alpha_sweep_sub-05.png"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-i18n-attr="aria-label:subjects.aria"
-                data-i18n-vars='{"n":"05"}'
-                aria-label="Open subject 05 reconstruction panel at full resolution"
-              >
-                <img
-                  src="reconst_imgs_display/reconst_alpha_sweep_sub-05.png"
-                  alt="Reconstruction alpha sweep panel for subject 05."
-                  width="3448"
-                  height="3425"
-                  loading="lazy"
-                  decoding="async"
-                />
+              <a class="subject-card__link" href="reconst_imgs_display/reconst_alpha_sweep_sub-05.png" target="_blank" rel="noopener noreferrer" data-i18n-attr="aria-label:subjects.aria" data-i18n-vars='{"n":"05"}' aria-label="Open participant 05 reconstruction panel at full resolution">
+                <img src="reconst_imgs_display/reconst_alpha_sweep_sub-05.png" alt="Reconstruction panel for participant 05." width="3448" height="3425" loading="lazy" decoding="async" />
                 <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
               </a>
             </figure>
-
             <figure class="subject-card">
               <div class="subject-card__head">
-                <h3 class="subject-card__title">Subject 06</h3>
+                <h3 class="subject-card__title" data-i18n="subjects.name" data-i18n-vars='{"n":"06"}'>Participant 06</h3>
                 <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
               </div>
-              <a
-                class="subject-card__link"
-                href="reconst_imgs_display/reconst_alpha_sweep_sub-06.png"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-i18n-attr="aria-label:subjects.aria"
-                data-i18n-vars='{"n":"06"}'
-                aria-label="Open subject 06 reconstruction panel at full resolution"
-              >
-                <img
-                  src="reconst_imgs_display/reconst_alpha_sweep_sub-06.png"
-                  alt="Reconstruction alpha sweep panel for subject 06."
-                  width="3448"
-                  height="3425"
-                  loading="lazy"
-                  decoding="async"
-                />
+              <a class="subject-card__link" href="reconst_imgs_display/reconst_alpha_sweep_sub-06.png" target="_blank" rel="noopener noreferrer" data-i18n-attr="aria-label:subjects.aria" data-i18n-vars='{"n":"06"}' aria-label="Open participant 06 reconstruction panel at full resolution">
+                <img src="reconst_imgs_display/reconst_alpha_sweep_sub-06.png" alt="Reconstruction panel for participant 06." width="3448" height="3425" loading="lazy" decoding="async" />
                 <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
               </a>
             </figure>
-
             <figure class="subject-card">
               <div class="subject-card__head">
-                <h3 class="subject-card__title">Subject 07</h3>
+                <h3 class="subject-card__title" data-i18n="subjects.name" data-i18n-vars='{"n":"07"}'>Participant 07</h3>
                 <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
               </div>
-              <a
-                class="subject-card__link"
-                href="reconst_imgs_display/reconst_alpha_sweep_sub-07.png"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-i18n-attr="aria-label:subjects.aria"
-                data-i18n-vars='{"n":"07"}'
-                aria-label="Open subject 07 reconstruction panel at full resolution"
-              >
-                <img
-                  src="reconst_imgs_display/reconst_alpha_sweep_sub-07.png"
-                  alt="Reconstruction alpha sweep panel for subject 07."
-                  width="3448"
-                  height="3425"
-                  loading="lazy"
-                  decoding="async"
-                />
+              <a class="subject-card__link" href="reconst_imgs_display/reconst_alpha_sweep_sub-07.png" target="_blank" rel="noopener noreferrer" data-i18n-attr="aria-label:subjects.aria" data-i18n-vars='{"n":"07"}' aria-label="Open participant 07 reconstruction panel at full resolution">
+                <img src="reconst_imgs_display/reconst_alpha_sweep_sub-07.png" alt="Reconstruction panel for participant 07." width="3448" height="3425" loading="lazy" decoding="async" />
                 <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
               </a>
             </figure>
-
             <figure class="subject-card">
               <div class="subject-card__head">
-                <h3 class="subject-card__title">Subject 08</h3>
+                <h3 class="subject-card__title" data-i18n="subjects.name" data-i18n-vars='{"n":"08"}'>Participant 08</h3>
                 <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
               </div>
-              <a
-                class="subject-card__link"
-                href="reconst_imgs_display/reconst_alpha_sweep_sub-08.png"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-i18n-attr="aria-label:subjects.aria"
-                data-i18n-vars='{"n":"08"}'
-                aria-label="Open subject 08 reconstruction panel at full resolution"
-              >
-                <img
-                  src="reconst_imgs_display/reconst_alpha_sweep_sub-08.png"
-                  alt="Reconstruction alpha sweep panel for subject 08."
-                  width="3448"
-                  height="3425"
-                  loading="lazy"
-                  decoding="async"
-                />
+              <a class="subject-card__link" href="reconst_imgs_display/reconst_alpha_sweep_sub-08.png" target="_blank" rel="noopener noreferrer" data-i18n-attr="aria-label:subjects.aria" data-i18n-vars='{"n":"08"}' aria-label="Open participant 08 reconstruction panel at full resolution">
+                <img src="reconst_imgs_display/reconst_alpha_sweep_sub-08.png" alt="Reconstruction panel for participant 08." width="3448" height="3425" loading="lazy" decoding="async" />
                 <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
               </a>
             </figure>
-
             <figure class="subject-card">
               <div class="subject-card__head">
-                <h3 class="subject-card__title">Subject 09</h3>
+                <h3 class="subject-card__title" data-i18n="subjects.name" data-i18n-vars='{"n":"09"}'>Participant 09</h3>
                 <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
               </div>
-              <a
-                class="subject-card__link"
-                href="reconst_imgs_display/reconst_alpha_sweep_sub-09.png"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-i18n-attr="aria-label:subjects.aria"
-                data-i18n-vars='{"n":"09"}'
-                aria-label="Open subject 09 reconstruction panel at full resolution"
-              >
-                <img
-                  src="reconst_imgs_display/reconst_alpha_sweep_sub-09.png"
-                  alt="Reconstruction alpha sweep panel for subject 09."
-                  width="3448"
-                  height="3425"
-                  loading="lazy"
-                  decoding="async"
-                />
+              <a class="subject-card__link" href="reconst_imgs_display/reconst_alpha_sweep_sub-09.png" target="_blank" rel="noopener noreferrer" data-i18n-attr="aria-label:subjects.aria" data-i18n-vars='{"n":"09"}' aria-label="Open participant 09 reconstruction panel at full resolution">
+                <img src="reconst_imgs_display/reconst_alpha_sweep_sub-09.png" alt="Reconstruction panel for participant 09." width="3448" height="3425" loading="lazy" decoding="async" />
                 <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
               </a>
             </figure>
-
             <figure class="subject-card">
               <div class="subject-card__head">
-                <h3 class="subject-card__title">Subject 10</h3>
+                <h3 class="subject-card__title" data-i18n="subjects.name" data-i18n-vars='{"n":"10"}'>Participant 10</h3>
                 <p class="subject-card__hint" data-i18n="subjects.hint">Preview · click for full PNG</p>
               </div>
-              <a
-                class="subject-card__link"
-                href="reconst_imgs_display/reconst_alpha_sweep_sub-10.png"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-i18n-attr="aria-label:subjects.aria"
-                data-i18n-vars='{"n":"10"}'
-                aria-label="Open subject 10 reconstruction panel at full resolution"
-              >
-                <img
-                  src="reconst_imgs_display/reconst_alpha_sweep_sub-10.png"
-                  alt="Reconstruction alpha sweep panel for subject 10."
-                  width="3448"
-                  height="3425"
-                  loading="lazy"
-                  decoding="async"
-                />
+              <a class="subject-card__link" href="reconst_imgs_display/reconst_alpha_sweep_sub-10.png" target="_blank" rel="noopener noreferrer" data-i18n-attr="aria-label:subjects.aria" data-i18n-vars='{"n":"10"}' aria-label="Open participant 10 reconstruction panel at full resolution">
+                <img src="reconst_imgs_display/reconst_alpha_sweep_sub-10.png" alt="Reconstruction panel for participant 10." width="3448" height="3425" loading="lazy" decoding="async" />
                 <span class="subject-card__open" data-i18n="subjects.open">Open full size</span>
               </a>
             </figure>
@@ -540,60 +523,53 @@
         </div>
       </section>
 
-      <section id="code" class="section">
+      <section id="why" class="section section--alt">
         <div class="section__inner">
-          <p class="section__label" data-i18n="code.label">Reproducibility</p>
-          <h2 data-i18n="code.title">Code &amp; scripts</h2>
-          <p class="lead" data-i18n="code.lead">
-            Four entry points mirror the paper’s experimental sections: retrieval benchmarking,
-            high-level reconstruction, low-level latent training, and dual-path evaluation. See the
-            repository README for environment variables and dataset paths.
+          <p class="section__label" data-i18n="why.label">Why it matters</p>
+          <h2 data-i18n="why.title">Built to scale beyond the lab</h2>
+          <p class="lead" data-i18n="why.lead">
+            EEG and MEG are non-invasive, wearable-compatible and inexpensive to record, but their signals are
+            noisy and small in volume. BHA is designed around exactly those constraints.
           </p>
-          <div class="cards">
+          <div class="cards cards--four">
             <article class="card">
-              <h3><code>bench_retrieval.sh</code></h3>
-              <p data-i18n="code.card1">Train encoders; intra-subject + LOSO retrieval on EEG or MEG.</p>
+              <h3 data-i18n="why.card1.title">Data-efficient</h3>
+              <p data-i18n="why.card1.body">Gains hold with a quarter of a participant’s training data, shortening calibration sessions.</p>
             </article>
             <article class="card">
-              <h3><code>bench_reconst.sh</code></h3>
-              <p data-i18n="code.card2">High-level reconstruction with bridge prior + IP-Adapter + SDXL-Turbo.</p>
+              <h3 data-i18n="why.card2.title">Generator-agnostic</h3>
+              <p data-i18n="why.card2.body">The image generator stays frozen. Better generators can be dropped in without retraining the brain model.</p>
             </article>
             <article class="card">
-              <h3><code>train_lowlevel.sh</code></h3>
-              <p data-i18n="code.card3">Direct regression to VAE latents with optional bridge refinement.</p>
+              <h3 data-i18n="why.card3.title">Modality-general</h3>
+              <p data-i18n="why.card3.body">One recipe runs on 63-channel EEG, 271-channel MEG and 7T fMRI; only the input tokenizer changes.</p>
             </article>
             <article class="card">
-              <h3><code>reconstruction_evaluation.sh</code></h3>
-              <p data-i18n="code.card4">Load HL/LL checkpoints, blend paths, sweep α, optional GT ceiling.</p>
+              <h3 data-i18n="why.card4.title">Interpretable</h3>
+              <p data-i18n="why.card4.body">Attribution maps and concept-selective neurons expose what the decoder is relying on, which matters for clinical and consumer use.</p>
             </article>
           </div>
         </div>
       </section>
 
-      <section id="bibtex" class="section section--alt">
+      <section id="status" class="section">
         <div class="section__inner">
-          <p class="section__label" data-i18n="bibtex.label">Citation</p>
-          <h2 data-i18n="bibtex.title">BibTeX</h2>
-          <p class="lead" data-i18n="bibtex.lead">Use this placeholder during anonymous review; swap for the official entry after publication.</p>
-          <pre class="bibtex" id="bibtex-block">@article{anonymous2026bha,
-  title   = {Brain Hierarchical Alignment Improves Generalizable Visual Decoding via Bridge Priors},
-  author  = {Anonymous},
-  journal = {Under review},
-  year    = {2026}
-}</pre>
-          <p class="bibtex-note" data-i18n-html="bibtex.tip">
-            Tip: add a “Copy” button with <code>navigator.clipboard</code> when you are no longer on
-            a strict static host—clipboard often requires HTTPS.
-          </p>
+          <p class="section__label" data-i18n="status.label">Status</p>
+          <h2 data-i18n="status.title">Where the project stands</h2>
+          <ul class="checklist checklist--status">
+            <li data-i18n="status.item1">A full manuscript with theory, benchmarks and analyses is under peer review. This page is kept anonymous for that reason.</li>
+            <li data-i18n="status.item2">A complete pipeline exists end to end: data preprocessing, two-stage training, retrieval and reconstruction, an eight-metric evaluation suite, and ports to EEG, MEG and fMRI.</li>
+            <li data-i18n="status.item3">Open problem: cross-subject transfer. A model trained on other people reaches 30.4% Top-1 on EEG (chance 0.5%) but far below within-subject accuracy; closing this gap is the focus of ongoing work.</li>
+            <li data-i18n="status.item4">Code and pretrained weights will be released after review.</li>
+          </ul>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
       <p data-i18n="footer.body">
-        Built for anonymous release · MIT License · Acknowledgements: THINGS-EEG2/MEG, ATMS-style
-        alignment, I2SB / Schrödinger-bridge literature, IP-Adapter, SDXL-Turbo, DINOv2 / REPA-style
-        alignment — cite upstream work when using this code.
+        Anonymous project page · Built on public datasets (THINGS-EEG2, THINGS-MEG, NSD) and open models
+        (OpenCLIP, DFN, MAE, DINOv2, SDXL-Turbo, IP-Adapter, CLIP-Dissect).
       </p>
     </footer>
 
