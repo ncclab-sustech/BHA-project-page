@@ -475,6 +475,200 @@
     });
   }
 
+
+  /* ---------- insights ---------- */
+  (function insights() {
+    var T = ["OpenCLIP", "DFN-6", "MAE-18", "DINOv2-12"];
+    // L1: brain–image cosine, raw vs adapted (Fig. concept (a))
+    var ALIGN = { raw: [0.204, 0.256, 0.041, 0.050], adapted: [0.399, 0.611, 0.545, 0.474], shared: 0.624 };
+    var ab = document.getElementById("align-bars");
+    function renderAlign(mode) {
+      if (!ab) return;
+      if (!ab.children.length) {
+        T.concat(["Shared"]).forEach(function (n, i) {
+          var el = document.createElement("div");
+          el.className = "bar" + (i === 4 ? " bar--shared" : "");
+          el.innerHTML = '<span class="bar__name">' + n + '</span><span class="bar__track"><span class="bar__fill"></span></span><span class="bar__v">0.00</span>';
+          ab.appendChild(el);
+        });
+      }
+      [].forEach.call(ab.children, function (el, i) {
+        var v = i === 4 ? ALIGN.shared : ALIGN[mode][i];
+        el.querySelector(".bar__fill").style.width = (v / 0.7) * 100 + "%";
+        el.querySelector(".bar__v").textContent = v.toFixed(3);
+      });
+    }
+    document.querySelectorAll(".seg__btn[data-align]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        document.querySelectorAll(".seg__btn[data-align]").forEach(function (x) { x.classList.toggle("is-active", x === b); });
+        renderAlign(b.getAttribute("data-align"));
+      });
+    });
+    renderAlign("raw");
+
+    // L2: RSM correlations (Fig. rsa (c))
+    var N = T.concat(["Shared"]);
+    var VFM = [[1, .334, .069, .191, .349], [.334, 1, .311, .490, .704], [.069, .311, 1, .379, .249], [.191, .490, .379, 1, .363], [.349, .704, .249, .363, 1]];
+    var BHA = [[1, .839, .736, .748, .868], [.839, 1, .768, .793, .895], [.736, .768, 1, .911, .712], [.748, .793, .911, 1, .718], [.868, .895, .712, .718, 1]];
+    var heat = document.getElementById("rsm"), note = document.getElementById("rsm-note");
+    function col(v) { // -1..1 -> blue..green..yellow (viridis-ish)
+      var p = Math.max(0, Math.min(1, (v + 1) / 2));
+      var stops = [[68, 1, 84], [59, 82, 139], [33, 145, 140], [94, 201, 98], [253, 231, 37]];
+      var x = p * (stops.length - 1), i = Math.floor(x), f = x - i, a = stops[i], b = stops[Math.min(i + 1, stops.length - 1)];
+      return "rgb(" + Math.round(a[0] + (b[0] - a[0]) * f) + "," + Math.round(a[1] + (b[1] - a[1]) * f) + "," + Math.round(a[2] + (b[2] - a[2]) * f) + ")";
+    }
+    function renderHeat(mode) {
+      if (!heat) return;
+      var M = mode === "bha" ? BHA : VFM;
+      if (!heat.children.length) {
+        heat.appendChild(document.createElement("div"));
+        N.forEach(function (n) { var d = document.createElement("div"); d.className = "heat__top"; d.textContent = n; heat.appendChild(d); });
+        N.forEach(function (n, i) {
+          var l = document.createElement("div"); l.className = "heat__lab"; l.textContent = n; heat.appendChild(l);
+          N.forEach(function (m, j) {
+            var c = document.createElement("div"); c.className = "heat__cell"; c.dataset.i = i; c.dataset.j = j;
+            c.addEventListener("mouseenter", function () {
+              if (i === j) { note.textContent = n; return; }
+              note.textContent = n + " vs " + m + ": r = " + VFM[i][j].toFixed(2) + " " + t("ins.l2.asAI") + " → " + BHA[i][j].toFixed(2) + " " + t("ins.l2.viaBrain");
+            });
+            heat.appendChild(c);
+          });
+        });
+      }
+      heat.querySelectorAll(".heat__cell").forEach(function (c) {
+        var v = M[c.dataset.i][c.dataset.j];
+        c.style.background = col(v);
+        c.textContent = v.toFixed(2);
+        c.style.color = v > 0.6 ? "#0b1020" : "#fff";
+      });
+    }
+    document.querySelectorAll(".seg__btn[data-rsm]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        document.querySelectorAll(".seg__btn[data-rsm]").forEach(function (x) { x.classList.toggle("is-active", x === b); });
+        renderHeat(b.getAttribute("data-rsm"));
+      });
+    });
+    renderHeat("vfm");
+
+    // L3: occlusion attribution maps, drawn natively from the ten-participant means
+    var IM = ["bonnet", "snowshoe", "gondola"], GROUPS = ["openclip", "dfn", "mae", "dinov2l", "shared_fusion"];
+    var GLAB = { openclip: "OpenCLIP", dfn: "DFN-6", mae: "MAE-18", dinov2l: "DINOv2-12", shared_fusion: "ins.l3.shared" };
+    var picks = document.getElementById("attr-picks"), row = document.getElementById("attr-row"), ATTR = null, curAttr = "bonnet";
+    function divColor(v) { // -1..1 -> blue..white..red
+      var a = Math.abs(v), r, g, b;
+      if (v >= 0) { r = 255; g = Math.round(255 - a * 215); b = Math.round(255 - a * 230); }
+      else { r = Math.round(255 - a * 215); g = Math.round(255 - a * 160); b = 255; }
+      return "rgb(" + r + "," + g + "," + b + ")";
+    }
+    function drawMap(cv, m) { // within-map signed percentile colouring, as in the manuscript
+      var n = m.length, ctx = cv.getContext("2d"), flat = [];
+      for (var i = 0; i < n; i++) for (var j = 0; j < n; j++) flat.push(Math.abs(m[i][j]));
+      var sorted = flat.slice().sort(function (a, b) { return a - b; });
+      var rank = function (v) { var lo = 0, hi = sorted.length; while (lo < hi) { var mid = (lo + hi) >> 1; if (sorted[mid] < v) lo = mid + 1; else hi = mid; } return lo / (sorted.length - 1); };
+      var cell = cv.width / n;
+      for (var y = 0; y < n; y++) for (var x = 0; x < n; x++) { var v = m[y][x]; ctx.fillStyle = divColor((v < 0 ? -1 : 1) * rank(Math.abs(v))); ctx.fillRect(x * cell, y * cell, cell + 0.5, cell + 0.5); }
+    }
+    function renderAttr(id) {
+      if (!row || !ATTR) return;
+      curAttr = id;
+      row.innerHTML = '<div class="attr__tile"><img src="assets/insight/img/' + id + '.jpg" alt="' + id + '" loading="lazy"><span>' + t("ins.l3.seen") + "</span></div>";
+      GROUPS.forEach(function (g, k) {
+        var l = GLAB[g].indexOf("ins.") === 0 ? t(GLAB[g]) : GLAB[g];
+        var d = document.createElement("div"); d.className = "attr__tile";
+        var cv = document.createElement("canvas"); cv.width = 160; cv.height = 160; d.appendChild(cv);
+        var sp = document.createElement("span"); sp.textContent = l; d.appendChild(sp);
+        row.appendChild(d);
+        drawMap(cv, ATTR[id].maps[ATTR[id].groups.indexOf(g)]);
+      });
+      picks.querySelectorAll(".attr__pick").forEach(function (p) { p.classList.toggle("is-active", p.dataset.id === id); });
+    }
+    if (picks) {
+      IM.forEach(function (id) {
+        var b = document.createElement("button"); b.type = "button"; b.className = "attr__pick"; b.dataset.id = id;
+        b.innerHTML = '<img src="assets/insight/img/' + id + '.jpg" alt="' + id + '" loading="lazy">';
+        b.addEventListener("click", function () { renderAttr(id); });
+        picks.appendChild(b);
+      });
+      fetch("assets/insight/attribution_maps.json").then(function (r) { return r.json(); }).then(function (d) { ATTR = d; renderAttr("bonnet"); });
+    }
+
+    // L4: concept-selective units, native cards
+    var UNITS = [
+      { id: "905", concept: "ins.l4.clothing", imgs: [["suit", 0.076], ["gorilla", 0.067], ["chaps", 0.063], ["kneepad", 0.057], ["coat", 0.057]] },
+      { id: "4610", concept: "ins.l4.dessert", imgs: [["dessert", 0.074], ["calamari", 0.069], ["omelet", 0.067], ["crepe", 0.065], ["pie", 0.064]] },
+      { id: "504", concept: "ins.l4.animal", imgs: [["piglet", 0.069], ["lamb", 0.055], ["antelope", 0.047], ["cat", 0.047], ["pajamas", 0.046]] }
+    ];
+    var unitsEl = document.getElementById("units");
+    function renderUnits() {
+      if (!unitsEl) return;
+      unitsEl.innerHTML = UNITS.map(function (u) {
+        var mx = u.imgs[0][1];
+        return '<div class="unit"><div class="unit__tag"><span class="unit__id">' + t("ins.l4.unit") + " " + u.id + '</span><span class="unit__concept">' + t(u.concept) + '</span><span class="unit__sub">' + t("ins.l4.top5") + '</span></div><div class="unit__imgs">' +
+          u.imgs.map(function (x) { return '<div class="unit__img"><img src="assets/insight/img/' + x[0] + '.jpg" alt="' + x[0] + '" loading="lazy"><b>' + x[0].replace(/_/g, " ") + " · " + x[1].toFixed(3) + '</b><i style="width:' + (x[1] / mx) * 100 + '%"></i></div>'; }).join("") + "</div></div>";
+      }).join("");
+    }
+    renderUnits();
+    var cb = document.getElementById("concept-bars");
+    if (cb) {
+      [["OpenCLIP", .612], ["DFN-6", .726], ["MAE-18", .796], ["DINOv2-12", .812], ["Shared", .814], ["shuffle", 0.0]].forEach(function (r) {
+        var el = document.createElement("div"); el.className = "bar" + (r[0] === "Shared" ? " bar--shared" : "");
+        el.innerHTML = '<span class="bar__name">' + r[0] + '</span><span class="bar__track"><span class="bar__fill" data-w="' + (r[1] / 0.9) * 100 + '"></span></span><span class="bar__v">' + r[1].toFixed(2) + "</span>";
+        cb.appendChild(el);
+      });
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver(function (es, o) { es.forEach(function (e) { if (!e.isIntersecting) return; cb.querySelectorAll(".bar__fill").forEach(function (f) { f.style.width = f.getAttribute("data-w") + "%"; }); o.disconnect(); }); }, { threshold: 0.3 }).observe(cb);
+      } else cb.querySelectorAll(".bar__fill").forEach(function (f) { f.style.width = f.getAttribute("data-w") + "%"; });
+    }
+
+    // L5: temporal masking curves, native SVG
+    var TEMP = null, curDs = "eeg";
+    var TCOL = { bha: "#ff3d81", shared_fusion: "#9fd0ff", dfn: "#f59e0b", openclip: "#2b5cff", mae: "#4ade80", dinov2l: "#c084fc" };
+    var TLAB = { bha: "BHA (composed)", shared_fusion: "shared expert", dfn: "DFN-6", openclip: "OpenCLIP", mae: "MAE-18", dinov2l: "DINOv2-12" };
+    function tchart(svg, D, key, sdKey, title, yLabel, chance) {
+      if (!svg) return;
+      var W = 520, H = 300, L = 42, R = 14, Tp = 30, B = 40;
+      var xs = D.centers, xmax = 800;
+      var ymax = 0;
+      Object.keys(D.series).forEach(function (e) { D.series[e][key].forEach(function (v) { ymax = Math.max(ymax, v); }); });
+      ymax = Math.ceil(ymax / 10) * 10 || 10;
+      var X = function (v) { return L + (v / xmax) * (W - L - R); }, Y = function (v) { return Tp + (1 - v / ymax) * (H - Tp - B); };
+      var s = '<text class="ttl" x="' + L + '" y="18">' + title + ' · ' + yLabel + "</text>";
+      for (var g = 0; g <= ymax; g += ymax / 4) s += '<line class="ax" x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(g) + '" y2="' + Y(g) + '"/><text class="tick" x="' + (L - 6) + '" y="' + (Y(g) + 4) + '" text-anchor="end">' + Math.round(g) + "</text>";
+      [0, 200, 400, 600, 800].forEach(function (x) { s += '<text class="tick" x="' + X(x) + '" y="' + (H - B + 18) + '" text-anchor="middle">' + x + "</text>"; });
+      s += '<text class="tick" x="' + (W - R) + '" y="' + (H - 6) + '" text-anchor="end">ms after image onset</text>';
+      [100, 220].forEach(function (m) { s += '<line class="mark" x1="' + X(m) + '" x2="' + X(m) + '" y1="' + Tp + '" y2="' + (H - B) + '"/><text class="mlab" x="' + (X(m) + 4) + '" y="' + (Tp + 12) + '">' + m + " ms</text>"; });
+      if (chance != null) s += '<line class="ax" style="stroke:rgba(255,255,255,.4);stroke-dasharray:2 3" x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(chance) + '" y2="' + Y(chance) + '"/>';
+      // band for composed output
+      var b = D.series.bha, up = "", dn = "";
+      xs.forEach(function (x, i) { up += (i ? "L" : "M") + X(x) + " " + Y(Math.min(ymax, b[key][i] + b[sdKey][i])) + " "; });
+      for (var i = xs.length - 1; i >= 0; i--) dn += "L" + X(xs[i]) + " " + Y(Math.max(0, b[key][i] - b[sdKey][i])) + " ";
+      s += '<path class="band" d="' + up + dn + 'Z" fill="' + TCOL.bha + '"/>';
+      ["dinov2l", "mae", "openclip", "dfn", "shared_fusion", "bha"].forEach(function (e) {
+        var d = "";
+        xs.forEach(function (x, i) { d += (i ? "L" : "M") + X(x).toFixed(1) + " " + Y(Math.max(0, D.series[e][key][i])).toFixed(1) + " "; });
+        s += '<path class="ln" d="' + d + '" stroke="' + TCOL[e] + '" stroke-width="' + (e === "bha" ? 2.6 : 1.6) + '" opacity="' + (e === "bha" || e === "dfn" ? 1 : 0.8) + '"/>';
+      });
+      svg.innerHTML = s;
+    }
+    function renderTemporal() {
+      if (!TEMP) return;
+      var D = TEMP[curDs];
+      tchart(document.getElementById("tchart-del"), D, "del", "delSd", t("ins.l5.delete"), t("ins.l5.pp"), null);
+      tchart(document.getElementById("tchart-keep"), D, "keep", "keepSd", t("ins.l5.keep"), t("ins.l5.top1"), 0.5);
+      var lg = document.getElementById("tlegend");
+      if (lg) lg.innerHTML = ["bha", "shared_fusion", "dfn", "openclip", "mae", "dinov2l"].map(function (e) { return '<span><i style="background:' + TCOL[e] + '"></i>' + TLAB[e] + "</span>"; }).join("");
+    }
+    fetch("assets/insight/temporal.json").then(function (r) { return r.json(); }).then(function (d) { TEMP = d; renderTemporal(); });
+    document.querySelectorAll(".seg__btn[data-temporal]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        document.querySelectorAll(".seg__btn[data-temporal]").forEach(function (x) { x.classList.toggle("is-active", x === b); });
+        curDs = b.getAttribute("data-temporal"); renderTemporal();
+      });
+    });
+
+    if (I18N && I18N.onChange) I18N.onChange(function () { renderAttr(curAttr); renderUnits(); renderTemporal(); });
+  })();
+
   /* ---------- i18n re-render ---------- */
   if (I18N && I18N.onChange) {
     I18N.onChange(function () {
