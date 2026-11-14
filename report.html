@@ -4,15 +4,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>BHA — Technical report</title>
-    <meta name="description" content="Technical report for BHA (Beyond Hierarchical Alignment): model, training, results, ablations, interpretability and analysis for non-invasive brain visual decoding." />
-    <meta name="theme-color" content="#f6f7fb" />
+    <meta name="description" content="Technical report for BHA (Beyond Hierarchical Alignment): results, model, ablations, interpretability and analysis for non-invasive brain visual decoding." />
+    <meta name="theme-color" content="#ffffff" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%2306c7f1'/%3E%3Cstop offset='.5' stop-color='%237c3aed'/%3E%3Cstop offset='1' stop-color='%23ff3d81'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='14' y='14' width='36' height='36' rx='8' transform='rotate(45 32 32)' fill='url(%23g)'/%3E%3C/svg%3E" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css" />
     <link rel="stylesheet" href="styles.css?v=7" />
-    <link rel="stylesheet" href="report.css?v=6" />
+    <link rel="stylesheet" href="report.css?v=7" />
   </head>
   <body class="rp">
     <nav class="nav is-scrolled rp-nav" id="nav">
@@ -27,61 +27,139 @@
     </nav>
 
     <header class="rp-hero">
-      <div class="rp-wrap">
-        <p class="kicker">Technical report · v1 · 2026</p>
-        <h1>Beyond Hierarchical Alignment<br /><span class="grad">Distilling teacher diversity for brain visual decoding</span></h1>
-        <p class="rp-lede">How BHA learns one brain representation from four vision teachers, composes their predictions for retrieval, reconstructs images with a frozen generator, and what the learned representations reveal. Written for practitioners; every number is from the manuscript or from pre-registered follow-up experiments.</p>
-        <div class="rp-stats">
-          <div><b>93.9%</b><span>EEG 200-way Top-1 (CSLS-2)</span></div>
-          <div><b>68.1%</b><span>MEG 200-way Top-1 (CSLS-2)</span></div>
-          <div><b>0.277</b><span>PixCorr, EEG reconstruction</span></div>
-          <div><b>10 + 4</b><span>EEG and MEG participants</span></div>
-        </div>
-        <p class="rp-note">Anonymous during peer review. Datasets: THINGS-EEG2, THINGS-MEG (public). Code and weights will be released after review.</p>
+      <div class="rp-col">
+        <p class="rp-kicker">Technical report · v2 · November 2026</p>
+        <h1>Beyond Hierarchical Alignment</h1>
+        <p class="rp-sub">Distilling teacher diversity for brain visual decoding</p>
+        <p class="rp-stand">A non-invasive brain decoder that learns from four vision models at once, composes their predictions, and reconstructs what a person saw with a frozen image generator. This report covers what works, what does not, and what the learned representations reveal.</p>
+        <div class="rp-meta"><span>Anonymous during review</span><span>THINGS-EEG2 · THINGS-MEG</span><span>Every number from the manuscript or pre-registered follow-ups</span><span>~20 min read</span></div>
+      </div>
+      <div class="rp-keys rp-wide">
+        <div><b>93.9<i>%</i></b><span>EEG 200-way Top-1, within participant</span><em>previous best 82.6%</em></div>
+        <div><b>68.1<i>%</i></b><span>MEG 200-way Top-1, within participant</span><em>previous best 48.0%</em></div>
+        <div><b>0.277</b><span>PixCorr of reconstructions, CLIP identification 0.830</span><em>previous best 0.195 / 0.808</em></div>
+        <div><b>45<i>×</i></b><span>above chance on a participant never seen in training</span><em>22.5% Top-1 vs 0.5% chance</em></div>
       </div>
     </header>
 
-    <div class="rp-layout">
+    <div class="rp-body">
       <aside class="rp-toc" aria-label="Contents">
-        <p class="rp-toc__t">Contents</p>
+        <p class="rp-toc__t">On this page</p>
         <ol>
-          <li><a href="#s1">TL;DR</a></li>
-          <li><a href="#s2">Why one target is not enough</a></li>
-          <li><a href="#s3">Model</a></li>
-          <li><a href="#s4">Setup</a></li>
-          <li><a href="#s5">Results</a></li>
-          <li><a href="#s6">Ablations</a></li>
-          <li><a href="#s7">What the readout does — and doesn’t</a></li>
+          <li><a href="#s1">Summary</a></li>
+          <li><a href="#s2">Results at a glance</a></li>
+          <li><a href="#s3">Reconstruction</a></li>
+          <li><a href="#s4">The idea</a></li>
+          <li><a href="#s5">Model</a></li>
+          <li><a href="#s6">What drives the gain</a></li>
+          <li><a href="#s7">Data efficiency</a></li>
           <li><a href="#s8">Interpretability</a></li>
           <li><a href="#s9">Limitations</a></li>
-          <li><a href="#s10">Reproducibility</a></li>
+          <li><a href="#s10">Setup and reproducibility</a></li>
         </ol>
       </aside>
 
       <main class="rp-main">
+
+        <!-- 1 SUMMARY -->
         <section id="s1" class="rp-sec">
-          <h2><span>01</span>TL;DR</h2>
-          <ul class="rp-ul">
-            <li><b>Problem.</b> Brain decoders predict the features of a pretrained vision model, then search or generate. Which model to imitate is a hidden design choice: different vision models capture complementary stimulus properties, and the brain predicts some far better than others. Fusing them into one target still leaves a single similarity geometry.</li>
-            <li><b>Method.</b> BHA jointly learns a brain encoder (BrainViT) and a fused visual target from four teachers (OpenCLIP ViT-H/14, DFN-6, MAE-18, DINOv2-12). It then freezes the backbone and trains teacher-specific readouts whose matching scores are composed with the shared score by learned weights. For reconstruction, separate semantic and spatial adapters predict the generator’s native conditions; the generator stays frozen.</li>
-            <li><b>Results.</b> Within-subject 200-way retrieval: 87.0% Raw / 93.9% CSLS-2 on THINGS-EEG2 (previous best 82.6%), 55.6% / 68.1% on THINGS-MEG (48.0%). Reconstruction: PixCorr 0.277, SSIM 0.454, CLIP 0.830 vs. 0.195 / 0.336 / 0.808 for the strongest prior method. Gains hold at 25% of the training data.</li>
-            <li><b>What is new, honestly.</b> The gain comes from <em>composing</em> teacher-specific scores, not from the readout’s capacity: pre-registered tests show linear, MLP and Group-MoE readouts reach the same accuracy. Cross-subject transfer remains limited (22.5% Raw / 30.4% CSLS-2 on EEG).</li>
-            <li><b>Analysis.</b> Teacher-specific readouts share one geometry (RSM correlations 0.71–0.91) yet attribute opposite signs to the same image regions; model units are concept-selective; the decoder depends on 100 ms and 220 ms windows; adapting targets toward the brain improves retrieval but hurts reconstruction.</li>
-          </ul>
+          <h2>Summary</h2>
+          <p class="rp-lead">Brain decoders are usually trained to imitate one pretrained vision model. We show that this hidden choice matters, that learning from several teachers at once is better, and that most of the gain comes from a simple place: composing teacher-specific matching scores rather than from any particular readout architecture.</p>
+          <ol class="rp-findings">
+            <li><b>State of the art on both public benchmarks.</b> Within-participant 200-way retrieval reaches 87.0% Raw / 93.9% CSLS-2 Top-1 on THINGS-EEG2 (previous best 82.6%) and 55.6% / 68.1% on THINGS-MEG (48.0%). Raw scores beat the best prior method on 8 of 10 EEG participants; CSLS-2 on all 10.</li>
+            <li><b>Better reconstructions without touching the generator.</b> PixCorr 0.277, SSIM 0.454 and CLIP identification 0.830 against 0.195 / 0.336 / 0.808 for the strongest prior method, with SDXL-Turbo and IP-Adapter kept frozen. Permuting the predicted conditions drops identification to chance, so the images carry stimulus-specific information.</li>
+            <li><b>The gain is composition, not capacity.</b> Pre-registered tests with three seeds show that Group-MoE, MLP and low-rank linear readouts reach the same accuracy at every parameter budget. Composing the shared score with teacher-specific scores adds 4 to 6 points regardless of the readout family.</li>
+            <li><b>Cross-participant transfer is the open problem.</b> On a participant never seen in training the decoder reaches 22.5% Raw / 30.4% CSLS-2 Top-1 on EEG: 45 times chance, but far below within-participant accuracy. Readout specialisation does not help here.</li>
+            <li><b>The representations are legible.</b> Teacher-specific readouts share one geometry (RSM correlations 0.71 to 0.91) yet attribute opposite signs to the same image regions; model units are concept-selective; the decoder depends on windows near 100 ms and 220 ms; adapting targets toward the brain improves retrieval but hurts reconstruction.</li>
+          </ol>
         </section>
 
+        <!-- 2 RESULTS -->
         <section id="s2" class="rp-sec">
-          <h2><span>02</span>Why one target is not enough</h2>
-          <p>Let \(\mathbf{b}\) be brain features and \(\mathbf{y}=\mathbf{M}_\star\mathbf{b}+\boldsymbol{\xi}\) the visual target. Teachers provide noisy views \(\mathbf{t}_k=\mathbf{y}+\boldsymbol{\delta}_k\) with per-teacher error \(\sigma_T^2\) and pairwise correlation \(\rho_T\). Fitting a least-squares predictor to the teacher average gives</p>
-          <div class="rp-eq">\[\sigma_{\mathrm{br}}^2 \le \mathbb{E}\,\mathcal{R}_{\mathrm{vis}}(\hat g_K) \le \sigma_{\mathrm{br}}^2 + \chi_n\Big[\sigma_{\mathrm{br}}^2 + \sigma_T^2\Big(\rho_T + \tfrac{1-\rho_T}{K}\Big)\Big].\]</div>
-          <p>With \(K>1\) the bound is strictly below any single-teacher predictor; with uncorrelated teacher errors the teacher term shrinks by \(K\). This motivates learning from several teachers, but says nothing about <em>which</em> space to predict in. A second result separates alignment from generation: for a frozen \(L_G\)-Lipschitz decoder \(G\), an adapted target \(\mathbf{t}=V(\mathbf{e})\), angular error \(\delta\) and adaptation drift \(\Delta_G=\mathbb{E}\|G(\mathbf{t})-G(\mathbf{e})\|^2\),</p>
-          <div class="rp-eq">\[\big|\sqrt{\mathcal{R}_G}-\sqrt{\Delta_G}\big| \le L_G\sqrt{2\delta}.\]</div>
-          <p>Even perfect alignment to an adapted target leaves \(\mathcal{R}_G=\Delta_G\): what helps discrimination can move the features away from what the generator expects. BHA therefore keeps one prediction space per task.</p>
+          <h2>Results at a glance</h2>
+          <p>Retrieval asks the decoder to pick the image a person saw out of 200 candidates from a single trial average. We report Raw scores (each query ranked independently) and CSLS-2 scores (rescaled with the two nearest unlabeled queries, hence transductive). Prior numbers are as reported by their authors.</p>
+          <figure class="rp-fig rp-wide">
+            <div class="rp-fig__grid2"><div id="fig-eeg"></div><div id="fig-meg"></div></div>
+            <figcaption><b>Figure 1. 200-way Top-1 retrieval, within participant.</b> Means over ten EEG and four MEG participants. Grey: prior methods as reported. Blue: BHA with Raw scores; violet: BHA with CSLS-2 rescoring.</figcaption>
+          </figure>
+          <figure class="rp-fig rp-wide">
+            <div id="fig-subj"></div>
+            <figcaption><b>Figure 2. Per-participant Top-1 on THINGS-EEG2.</b> Each column is one participant. BHA Raw beats DMSA, the strongest prior method, on 8 of 10 participants (participants 2 and 10 are within 2 points); CSLS-2 beats it on all 10, by 2.5 to 23 points.</figcaption>
+          </figure>
+          <h3>Transfer to a participant never seen in training</h3>
+          <p>In the leave-one-subject-out (LOSO) protocol the model is trained on nine participants and tested on the tenth with no target-participant data in training or model selection. BHA transfers better than any prior method, but the gap to within-participant accuracy is the largest effect in this report.</p>
+          <figure class="rp-fig rp-wide">
+            <div id="fig-loso"></div>
+            <figcaption><b>Figure 3. Within-participant versus LOSO Top-1 on THINGS-EEG2.</b> Each line connects a method's LOSO score (left dot) to its within-participant score (right dot). BHA uses Stage-1 outputs under LOSO because readout specialisation does not transfer (Section 6).</figcaption>
+          </figure>
+          <details class="rp-details"><summary>Full retrieval table (Top-1 / Top-5, EEG and MEG, within and LOSO)</summary>
+            <div class="table-wrap"><table class="rt">
+              <thead><tr><th rowspan="3">Method</th><th colspan="4">EEG</th><th colspan="4">MEG</th></tr><tr><th colspan="2">Within</th><th colspan="2">LOSO</th><th colspan="2">Within</th><th colspan="2">LOSO</th></tr><tr><th>Top-1</th><th>Top-5</th><th>Top-1</th><th>Top-5</th><th>Top-1</th><th>Top-5</th><th>Top-1</th><th>Top-5</th></tr></thead>
+              <tbody>
+                <tr><td>NICE</td><td>16.1</td><td>43.6</td><td>6.2</td><td>21.4</td><td>12.8</td><td>36.0</td><td>–</td><td>–</td></tr>
+                <tr><td>ATM-S</td><td>28.5</td><td>60.4</td><td>11.9</td><td>33.8</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+                <tr><td>CC-All</td><td>35.6</td><td>80.2</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+                <tr><td>UBP</td><td>50.9</td><td>79.7</td><td>12.4</td><td>33.4</td><td>26.7</td><td>55.2</td><td>2.2</td><td>10.4</td></tr>
+                <tr><td>HyFI</td><td>68.2</td><td>91.9</td><td>15.1</td><td>37.2</td><td>35.8</td><td>64.6</td><td>3.2</td><td>11.5</td></tr>
+                <tr><td>NeuroBridge</td><td>63.2</td><td>89.9</td><td>19.0</td><td>45.9</td><td>32.2</td><td>60.8</td><td>3.4</td><td>12.8</td></tr>
+                <tr><td>MBP</td><td>75.7</td><td>94.6</td><td>20.0</td><td>44.1</td><td>33.9</td><td>60.7</td><td><b>5.4</b></td><td>15.2</td></tr>
+                <tr><td>LVBP</td><td>80.0</td><td>96.9</td><td>20.0</td><td>48.0</td><td>44.0</td><td>72.0</td><td>5.3</td><td>15.9</td></tr>
+                <tr><td>DMSA</td><td>82.6</td><td>97.7</td><td>21.8</td><td>49.4</td><td>48.0</td><td>74.4</td><td>3.7</td><td>13.0</td></tr>
+                <tr class="ours"><td>BHA · Raw</td><td>87.0</td><td>98.5</td><td>22.5</td><td>51.6</td><td>55.6</td><td>85.8</td><td>3.6</td><td>12.8</td></tr>
+                <tr class="ours"><td>BHA · CSLS-2</td><td><b>93.9</b></td><td><b>99.7</b></td><td><b>30.4</b></td><td><b>63.4</b></td><td><b>68.1</b></td><td><b>91.4</b></td><td>5.3</td><td><b>16.5</b></td></tr>
+              </tbody></table></div>
+          </details>
         </section>
 
+        <!-- 3 RECONSTRUCTION -->
         <section id="s3" class="rp-sec">
-          <h2><span>03</span>Model</h2>
-          <figure class="rp-fig rp-fig--arch">
+          <h2>Reconstruction</h2>
+          <p>Two predictors trained on the frozen brain encoder output the generator's own conditions: a semantic predictor targets the IP-Adapter's image features and a spatial predictor targets the VAE latent. SDXL-Turbo then runs five denoising steps from the predicted latent, with the last quarter unconditioned (α = 0.75). Nothing in the generator is fine-tuned.</p>
+          <figure class="rp-fig rp-wide">
+            <div id="fig-gallery" class="rp-gallery"></div>
+            <figcaption><b>Figure 4. Seen image and three independent draws from one participant's EEG.</b> Test images from THINGS-EEG2, participant 08, 500 ms presentations. Draws differ in sampling noise only.</figcaption>
+          </figure>
+          <figure class="rp-fig rp-wide">
+            <div id="fig-recon"></div>
+            <figcaption><b>Figure 5. Reconstruction quality against prior methods.</b> Ten-participant means. Dashed marks are controls: conditioning the generator on the ground-truth image feature sets the ceiling for this generator; permuting the predicted conditions across images gives chance. Higher is better.</figcaption>
+          </figure>
+          <details class="rp-details"><summary>Full reconstruction table (eight metrics, controls and baselines)</summary>
+            <div class="table-wrap"><table class="rt">
+              <thead><tr><th rowspan="2">Method</th><th colspan="4">Low-level</th><th colspan="4">High-level</th></tr><tr><th>PixCorr ↑</th><th>SSIM ↑</th><th>Alex(2) ↑</th><th>Alex(5) ↑</th><th>Incep. ↑</th><th>CLIP ↑</th><th>EffNet ↓</th><th>SwAV ↓</th></tr></thead>
+              <tbody>
+                <tr class="ctl"><td>GT image feature (α=1)</td><td>0.288</td><td>0.443</td><td>0.947</td><td>0.992</td><td>0.999</td><td>1.000</td><td>0.406</td><td>0.265</td></tr>
+                <tr class="ctl"><td>GT latent (α=0)</td><td>0.997</td><td>0.959</td><td>1.000</td><td>1.000</td><td>1.000</td><td>1.000</td><td>0.017</td><td>0.012</td></tr>
+                <tr class="ctl"><td>Chance (permuted conditions)</td><td>0.112</td><td>0.400</td><td>0.501</td><td>0.475</td><td>0.498</td><td>0.491</td><td>0.978</td><td>0.670</td></tr>
+                <tr><td>ATM-S</td><td>0.130</td><td>0.339</td><td>0.740</td><td>0.822</td><td>0.685</td><td>0.716</td><td>–</td><td>0.599</td></tr>
+                <tr><td>CC-All</td><td>0.143</td><td>0.347</td><td>0.754</td><td>0.623</td><td>0.669</td><td>0.715</td><td>–</td><td>0.590</td></tr>
+                <tr><td>AVDE</td><td>0.147</td><td>0.366</td><td>0.766</td><td>0.835</td><td>0.724</td><td>0.747</td><td>–</td><td>0.587</td></tr>
+                <tr><td>MBP</td><td>0.195</td><td>0.336</td><td>0.843</td><td>0.905</td><td>0.756</td><td>0.808</td><td>–</td><td>0.554</td></tr>
+                <tr class="ours"><td>BHA</td><td>0.277</td><td>0.454</td><td><b>0.874</b></td><td><b>0.922</b></td><td><b>0.791</b></td><td><b>0.830</b></td><td><b>0.845</b></td><td>0.516</td></tr>
+                <tr class="ours"><td>BHA + VAE-guided</td><td><b>0.283</b></td><td><b>0.464</b></td><td><b>0.874</b></td><td>0.921</td><td>0.790</td><td><b>0.830</b></td><td><b>0.845</b></td><td><b>0.515</b></td></tr>
+              </tbody></table></div>
+          </details>
+          <p>Two caveats. These are system-level comparisons: prior methods keep their own generators and sampling settings. And the metrics disagree about what "better" means. Richer pretraining of the backbone raises structural fidelity (SSIM 0.448 → 0.459 at α = 0.75) but not CLIP identification (0.841 → 0.831), which is why we report structure and semantics separately rather than as one score.</p>
+        </section>
+
+        <!-- 4 THE IDEA -->
+        <section id="s4" class="rp-sec">
+          <h2>The idea: one target is not enough</h2>
+          <p>Every brain decoder has to choose what to predict. The usual answer is the embedding of one vision model, typically CLIP, followed by nearest-neighbour search or generation. Two things are wrong with that answer. Different vision models encode complementary properties of the same image, and the brain predicts some of them far better than others. And even a fused target leaves the decoder with a single similarity geometry to match against.</p>
+          <figure class="rp-fig rp-wide">
+            <div id="fig-idea"></div>
+            <figcaption><b>Figure 6. Three ways to use four teachers.</b> Left: imitate one teacher and search in its space. Middle: fuse the teachers into one target; one similarity geometry remains. Right (BHA): learn a fused target for the backbone, then keep one prediction space per teacher and compose the matching scores with learned weights.</figcaption>
+          </figure>
+          <p>Two short results motivate the design. First, with \(K\) teachers whose errors have variance \(\sigma_T^2\) and pairwise correlation \(\rho_T\), the expected risk of a predictor fitted to the teacher average obeys</p>
+          <div class="rp-eq">\[\sigma_{\mathrm{br}}^2 \le \mathbb{E}\,\mathcal{R}_{\mathrm{vis}}(\hat g_K) \le \sigma_{\mathrm{br}}^2 + \chi_n\Big[\sigma_{\mathrm{br}}^2 + \sigma_T^2\Big(\rho_T + \tfrac{1-\rho_T}{K}\Big)\Big],\]</div>
+          <p>so the bound is strictly below any single-teacher predictor whenever \(K>1\), and the teacher term shrinks by \(K\) when their errors are uncorrelated. Second, alignment is not generation: for a frozen \(L_G\)-Lipschitz decoder \(G\), an adapted target \(\mathbf{t}=V(\mathbf{e})\) with angular error \(\delta\) and drift \(\Delta_G=\mathbb{E}\|G(\mathbf{t})-G(\mathbf{e})\|^2\),</p>
+          <div class="rp-eq">\[\big|\sqrt{\mathcal{R}_G}-\sqrt{\Delta_G}\big| \le L_G\sqrt{2\delta}.\]</div>
+          <p>Even perfect alignment to an adapted target leaves \(\mathcal{R}_G=\Delta_G\): whatever helps discrimination can move features away from what the generator expects. BHA therefore keeps separate prediction spaces for retrieval and for reconstruction, and Section 8.6 shows the trade-off empirically.</p>
+        </section>
+
+        <!-- 5 MODEL -->
+        <section id="s5" class="rp-sec">
+          <h2>Model</h2>
+          <figure class="rp-fig rp-fig--arch rp-wide">
 <svg class="fw" viewBox="0 0 1000 905" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="BHA framework: BrainViT encoder, two-stage multi-teacher distillation with group MoE readouts, and frozen-generator reconstruction">
 <defs>
   <linearGradient id="fwg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#06c7f1"/><stop offset=".5" stop-color="#2b5cff"/><stop offset="1" stop-color="#7c3aed"/></linearGradient>
@@ -254,182 +332,138 @@
   <text class="k" x="12" y="76" style="font-size:9.5px">redrawn from the manuscript figure</text>
 </g>
 </svg>
-
-<figcaption><b>Figure 1. BHA learns shared representations and task-specific predictions.</b> (a) BrainViT combines channel attention and feature–sensor convolutions into one 1,024-d embedding. (b) Stage 1 jointly learns BrainViT and the visual fusion head against four frozen teachers; Stage 2 freezes both and trains shared and teacher-specific expert readouts, visual adapters and routing, composed into one gated retrieval score. (c) Semantic and spatial predictors condition the frozen diffusion generator, VAE and IP-Adapter; the schematic uses a scaled latent z = a·ẑ. Redrawn from the manuscript’s framework figure in the page’s style; every block is one that exists in the released code.</figcaption></figure>
-
-          <h3>3.1 BrainViT encoder</h3>
-          <p>Inputs are \(63\times250\) (EEG) or \(271\times250\) (MEG) windows. A parameter-free sensor mapping places channels on a physical grid, a multiscale feature convolution with pooling extracts \(64\times63\times36\) features, a local–global sensor convolution with pointwise projection reduces to \(40\times36\), and a residual projection with LayerNorm yields a 1,024-d embedding \(\mathbf{h}_i=f_\theta(\mathbf{X}_i,s_i)\). Total: 3.17 M parameters. Among five readouts searched, local–global sensor convolution gave the best within-subject accuracy (83.1 ± 5.4% Raw Top-1); the main results use the default feature–sensor readout (80.9 ± 7.0%).</p>
-
-          <h3>3.2 Stage 1 — joint brain–visual adaptation</h3>
-          <p>Teacher features \(\mathbf{e}_{ik}=\phi_k(\mathbf{I}_i)\) are projected to a common space and fused by a learned \(F\):</p>
-          <div class="rp-eq">\[\mathbf{e}_{i0}=\operatorname{norm}\Big[F\Big(\sum_{k=1}^{K}\operatorname{norm}(W_k\mathbf{e}_{ik})\Big)\Big],\qquad \mathcal{L}_{\mathrm{pre}}=\mathcal{L}_{\mathrm{BiCLIP}}\big(\operatorname{sim}(\mathbf{h}_i,\mathbf{e}_{j0})/\tau_{\mathrm{pre}}\big).\]</div>
-          <p>The encoder and the fused target are learned together, so supervision adapts to what is predictable from brain signals.</p>
-
-          <h3>3.3 Stage 2 — teacher-specific prediction and composition</h3>
-          <p>With BrainViT and fusion frozen, a retrieval adapter gives \(\mathbf{h}'_i=A(\operatorname{sg}(\mathbf{h}_i))\). Each teacher group \(k\) predicts its own space through a base projection, an always-on expert and \(R\) routed residual experts:</p>
-          <div class="rp-eq">\[\hat{\mathbf{e}}_{ik}=P_k\mathbf{h}'_i+U_k(\mathbf{h}'_i)+\sum_{r=1}^{R} w_{ikr}E_{kr}(\mathbf{h}'_i),\qquad \ell^{k}_{ij}=\operatorname{sim}(\hat{\mathbf{e}}_{ik},\tilde{\mathbf{e}}_{jk})/\tau_k.\]</div>
-          <p>Trainable visual adapters \(\tilde{\mathbf{e}}_{ik}=V_k(\operatorname{sg}(\mathbf{e}_{ik}))\) adjust each teacher’s targets without touching the teacher. The composed retrieval score keeps the shared component and adds a convex combination of teacher scores with a learned gate:</p>
-          <div class="rp-eq">\[S_{ij}=s^{0}_{ij}+g_i\sum_{k=1}^{K}\pi_{ik}\,s^{k}_{ij},\qquad \pi_{ik}=\frac{\exp(a_{ik})}{\sum_m \exp(a_{im})},\quad g_i=\sigma(\mathbf{w}_g^\top\mathbf{h}'_i+b_g).\]</div>
-          <p>Stage 2 trains 10.2 M parameters (adapter 2.1 M, shared readout 0.53 M, group readouts 3.6 M, visual adapters 3.9 M, routing and gate 9 K) on top of 9.2 M frozen ones. Section 7 shows the choice of readout family does not matter for accuracy.</p>
-
-          <h3>3.4 Reconstruction without generator fine-tuning</h3>
-          <p>Semantic and spatial predictors are trained separately on the frozen backbone to output the generator’s own conditioning features and VAE latents. A mixing parameter \(\alpha\in[0,1]\) sets how many of the \(N_{\mathrm{diff}}\) denoising updates run under semantic conditioning, starting from the predicted latent \(\hat{\mathbf{z}}\):</p>
-          <div class="rp-eq">\[\mathbf{z}^{\mathrm{init}}(\alpha)=\begin{cases}a\hat{\mathbf{z}}, & k_\alpha=0\\ a\hat{\mathbf{z}}+\sigma_{t}\,\boldsymbol{\epsilon}, & 0&lt;k_\alpha&lt;N_{\mathrm{diff}}\\ \sigma_{\mathrm{init}}\boldsymbol{\epsilon}, & k_\alpha=N_{\mathrm{diff}}\end{cases}\qquad \hat{\mathbf{I}}=D_{\mathrm{VAE}}\big(\mathcal{S}_\alpha(\mathbf{z}^{\mathrm{init}}(\alpha);\mathbf{c}_{\mathrm{sem}})/a\big).\]</div>
-          <p>Optional training-free guidance pulls the estimated clean latent toward the brain-predicted latent during sampling. Main-table settings: SDXL-Turbo with IP-Adapter, \(\alpha=0.75\), 5 steps, classifier-free guidance 0, three draws per image.</p>
-        </section>
-
-        <section id="s4" class="rp-sec">
-          <h2><span>04</span>Setup</h2>
-          <div class="rp-grid2">
-            <div class="rp-card"><h4>Data</h4><p>THINGS-EEG2: 10 participants, 63 channels, 250 Hz, 1,654 concepts × 10 images for training (16,540), 200 held-out test images, 80 repetitions per test image. THINGS-MEG: 4 participants, 271 channels. Image reconstruction is evaluated on THINGS-EEG2.</p></div>
-            <div class="rp-card"><h4>Teachers</h4><p>OpenCLIP ViT-H/14, DFN (layer 6), MAE (layer 18), DINOv2 (layer 12). Layers were chosen by single-teacher retrieval; intermediate layers of self-supervised models are more brain-predictable than their final layers.</p></div>
-            <div class="rp-card"><h4>Protocols</h4><p>Within-subject: train and test on the same participant. LOSO: train on all others, test on the held-out participant. Raw scores rank each query independently; CSLS-\(k\) rescales scores with the \(k\) nearest unlabeled queries and is therefore transductive (\(k=2\) selected on validation data).</p></div>
-            <div class="rp-card"><h4>Metrics</h4><p>200-way Top-1 / Top-5 retrieval. Reconstruction: PixCorr, SSIM, AlexNet(2/5), InceptionV3, CLIP two-way identification (higher is better); EfficientNet-B and SwAV distances (lower is better). Three seeds for all follow-up tests.</p></div>
+            <figcaption><b>Figure 7. BHA learns shared representations and task-specific predictions.</b> (a) BrainViT combines channel attention and feature–sensor convolutions into one 1,024-d embedding. (b) Stage 1 jointly learns BrainViT and the visual fusion head against four frozen teachers; Stage 2 freezes both and trains shared and teacher-specific expert readouts, visual adapters and routing, composed into one gated retrieval score. (c) Semantic and spatial predictors condition the frozen diffusion generator, VAE and IP-Adapter. Redrawn from the manuscript's framework figure.</figcaption>
+          </figure>
+          <div class="rp-steps">
+            <div><span>1</span><h4>BrainViT encoder</h4><p>Inputs are \(63\times250\) (EEG) or \(271\times250\) (MEG) windows. A parameter-free sensor mapping places channels on a physical grid; a multiscale feature convolution, a local–global sensor convolution and a residual projection with LayerNorm give a 1,024-d embedding \(\mathbf{h}_i=f_\theta(\mathbf{X}_i,s_i)\). 3.17 M parameters, shared by every task.</p></div>
+            <div><span>2</span><h4>Stage 1: joint brain–visual adaptation</h4><p>Teacher features \(\mathbf{e}_{ik}=\phi_k(\mathbf{I}_i)\) from OpenCLIP ViT-H/14, DFN (layer 6), MAE (layer 18) and DINOv2 (layer 12) are projected to a common space and fused by a learned head. Encoder and fused target are trained together with a bidirectional CLIP loss, so supervision adapts to what is predictable from brain signals.</p><div class="rp-eq rp-eq--sm">\[\mathbf{e}_{i0}=\operatorname{norm}\Big[F\Big(\sum_{k=1}^{K}\operatorname{norm}(W_k\mathbf{e}_{ik})\Big)\Big],\qquad \mathcal{L}_{\mathrm{pre}}=\mathcal{L}_{\mathrm{BiCLIP}}\big(\operatorname{sim}(\mathbf{h}_i,\mathbf{e}_{j0})/\tau_{\mathrm{pre}}\big).\]</div></div>
+            <div><span>3</span><h4>Stage 2: teacher-specific prediction and composition</h4><p>With the backbone frozen, an adapter gives \(\mathbf{h}'_i\). Each teacher group predicts its own space through a base projection, an always-on expert and \(R\) routed residual experts; trainable visual adapters adjust each teacher's targets without touching the teacher. The retrieval score keeps the shared component and adds a convex combination of teacher scores through a learned gate.</p><div class="rp-eq rp-eq--sm">\[S_{ij}=s^{0}_{ij}+g_i\sum_{k=1}^{K}\pi_{ik}\,s^{k}_{ij},\qquad \pi_{ik}=\frac{\exp(a_{ik})}{\sum_m \exp(a_{im})},\quad g_i=\sigma(\mathbf{w}_g^\top\mathbf{h}'_i+b_g).\]</div><p>Stage 2 trains 10.2 M parameters (adapter 2.1 M, shared readout 0.53 M, group readouts 3.6 M, visual adapters 3.9 M, routing and gate 9 K) on top of 9.2 M frozen ones.</p></div>
+            <div><span>4</span><h4>Reconstruction without generator fine-tuning</h4><p>Semantic and spatial predictors are trained separately on the frozen backbone. A mixing parameter \(\alpha\) sets how many of the \(N_{\mathrm{diff}}\) denoising updates run under semantic conditioning, starting from the predicted latent \(\hat{\mathbf{z}}\); optional training-free guidance pulls the clean-latent estimate toward it during sampling. Main-table settings: SDXL-Turbo with IP-Adapter, \(\alpha=0.75\), 5 steps, classifier-free guidance 0, three draws per image.</p><div class="rp-eq rp-eq--sm">\[\mathbf{z}^{\mathrm{init}}(\alpha)=\begin{cases}a\hat{\mathbf{z}}, & k_\alpha=0\\ a\hat{\mathbf{z}}+\sigma_{t}\,\boldsymbol{\epsilon}, & 0&lt;k_\alpha&lt;N_{\mathrm{diff}}\\ \sigma_{\mathrm{init}}\boldsymbol{\epsilon}, & k_\alpha=N_{\mathrm{diff}}\end{cases}\qquad \hat{\mathbf{I}}=D_{\mathrm{VAE}}\big(\mathcal{S}_\alpha(\mathbf{z}^{\mathrm{init}}(\alpha);\mathbf{c}_{\mathrm{sem}})/a\big).\]</div></div>
           </div>
         </section>
 
-        <section id="s5" class="rp-sec">
-          <h2><span>05</span>Results</h2>
-          <h3>5.1 Retrieval</h3>
-          <div class="table-wrap"><table class="tbl tbl--light">
-            <caption><strong>200-way brain-to-image retrieval (Top-1 / Top-5, %).</strong> Means over ten EEG and four MEG participants. BHA uses Stage-2 composed scores within subject and Stage-1 outputs under LOSO.</caption>
-            <thead><tr><th rowspan="3">Method</th><th colspan="4">EEG</th><th colspan="4">MEG</th></tr><tr><th colspan="2">Within</th><th colspan="2">LOSO</th><th colspan="2">Within</th><th colspan="2">LOSO</th></tr><tr><th>Top-1</th><th>Top-5</th><th>Top-1</th><th>Top-5</th><th>Top-1</th><th>Top-5</th><th>Top-1</th><th>Top-5</th></tr></thead>
-            <tbody>
-              <tr><td>NICE</td><td>16.1</td><td>43.6</td><td>6.2</td><td>21.4</td><td>12.8</td><td>36.0</td><td>–</td><td>–</td></tr>
-              <tr><td>ATM-S</td><td>28.5</td><td>60.4</td><td>11.9</td><td>33.8</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
-              <tr><td>CC-All</td><td>35.6</td><td>80.2</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
-              <tr><td>UBP</td><td>50.9</td><td>79.7</td><td>12.4</td><td>33.4</td><td>26.7</td><td>55.2</td><td>2.2</td><td>10.4</td></tr>
-              <tr><td>HyFI</td><td>68.2</td><td>91.9</td><td>15.1</td><td>37.2</td><td>35.8</td><td>64.6</td><td>3.2</td><td>11.5</td></tr>
-              <tr><td>NeuroBridge</td><td>63.2</td><td>89.9</td><td>19.0</td><td>45.9</td><td>32.2</td><td>60.8</td><td>3.4</td><td>12.8</td></tr>
-              <tr><td>MBP</td><td>75.7</td><td>94.6</td><td>20.0</td><td>44.1</td><td>33.9</td><td>60.7</td><td><b>5.4</b></td><td>15.2</td></tr>
-              <tr><td>LVBP</td><td>80.0</td><td>96.9</td><td>20.0</td><td>48.0</td><td>44.0</td><td>72.0</td><td>5.3</td><td>15.9</td></tr>
-              <tr><td>DMSA</td><td>82.6</td><td>97.7</td><td>21.8</td><td>49.4</td><td>48.0</td><td>74.4</td><td>3.7</td><td>13.0</td></tr>
-              <tr class="ours"><td>BHA · Raw</td><td>87.0</td><td>98.5</td><td>22.5</td><td>51.6</td><td>55.6</td><td>85.8</td><td>3.6</td><td>12.8</td></tr>
-              <tr class="ours"><td>BHA · CSLS-2</td><td><b>93.9</b></td><td><b>99.7</b></td><td><b>30.4</b></td><td><b>63.4</b></td><td><b>68.1</b></td><td><b>91.4</b></td><td>5.3</td><td><b>16.5</b></td></tr>
-            </tbody></table></div>
-          <p>Raw scores exceed every reported within-subject baseline in both modalities. Under LOSO the pretrained BrainViT reaches 22.5% (EEG) and 3.6% (MEG) Raw Top-1 — far above chance (0.5%) but far below within-subject, which identifies cross-subject transfer as the main open problem.</p>
-
-          <h3>5.2 Reconstruction</h3>
-          <div class="table-wrap"><table class="tbl tbl--light">
-            <caption><strong>Visual reconstruction on THINGS-EEG2, ten-participant means.</strong> Controls (grey) condition the generator on ground-truth features/latents or permute the predicted conditions.</caption>
-            <thead><tr><th rowspan="2">Method</th><th colspan="4">Low-level</th><th colspan="4">High-level</th></tr><tr><th>PixCorr ↑</th><th>SSIM ↑</th><th>Alex(2) ↑</th><th>Alex(5) ↑</th><th>Incep. ↑</th><th>CLIP ↑</th><th>EffNet ↓</th><th>SwAV ↓</th></tr></thead>
-            <tbody>
-              <tr class="ctl"><td>GT image feature (α=1)</td><td>0.288</td><td>0.443</td><td>0.947</td><td>0.992</td><td>0.999</td><td>1.000</td><td>0.406</td><td>0.265</td></tr>
-              <tr class="ctl"><td>GT latent (α=0)</td><td>0.997</td><td>0.959</td><td>1.000</td><td>1.000</td><td>1.000</td><td>1.000</td><td>0.017</td><td>0.012</td></tr>
-              <tr class="ctl"><td>Chance (permuted conditions)</td><td>0.112</td><td>0.400</td><td>0.501</td><td>0.475</td><td>0.498</td><td>0.491</td><td>0.978</td><td>0.670</td></tr>
-              <tr><td>ATM-S</td><td>0.130</td><td>0.339</td><td>0.740</td><td>0.822</td><td>0.685</td><td>0.716</td><td>–</td><td>0.599</td></tr>
-              <tr><td>CC-All</td><td>0.143</td><td>0.347</td><td>0.754</td><td>0.623</td><td>0.669</td><td>0.715</td><td>–</td><td>0.590</td></tr>
-              <tr><td>AVDE</td><td>0.147</td><td>0.366</td><td>0.766</td><td>0.835</td><td>0.724</td><td>0.747</td><td>–</td><td>0.587</td></tr>
-              <tr><td>MBP</td><td>0.195</td><td>0.336</td><td>0.843</td><td>0.905</td><td>0.756</td><td>0.808</td><td>–</td><td>0.554</td></tr>
-              <tr class="ours"><td>BHA</td><td>0.277</td><td>0.454</td><td><b>0.874</b></td><td><b>0.922</b></td><td><b>0.791</b></td><td><b>0.830</b></td><td><b>0.845</b></td><td>0.516</td></tr>
-              <tr class="ours"><td>BHA + VAE-guided</td><td><b>0.283</b></td><td><b>0.464</b></td><td><b>0.874</b></td><td>0.921</td><td>0.790</td><td><b>0.830</b></td><td><b>0.845</b></td><td><b>0.515</b></td></tr>
-            </tbody></table></div>
-          <p>Permuting the predicted conditions drives identification to chance, so the generations carry stimulus-specific information rather than generator priors. These are system-level comparisons: baselines keep their own generators and sampling settings.</p>
-
-          <h3>5.3 Data efficiency</h3>
-          <div class="rp-figbox"><svg id="rp-scale" viewBox="0 0 640 340" role="img" aria-label="Within-subject Top-1 versus training-data fraction for three readouts."></svg>
-          <p class="rp-cap">THINGS-EEG2 within-subject Raw Top-1 (%) versus training-data fraction; each fraction trains a separate backbone. Composition helps at every scale: 53.3% vs 42.7% at 25%.</p></div>
-        </section>
-
+        <!-- 6 WHAT DRIVES THE GAIN -->
         <section id="s6" class="rp-sec">
-          <h2><span>06</span>Ablations</h2>
-          <h3>6.1 Stages and readouts</h3>
-          <div class="table-wrap"><table class="tbl tbl--light">
-            <caption><strong>Retrieval readouts across training stages, THINGS-EEG2 (Top-1 / Top-5, %).</strong></caption>
-            <thead><tr><th rowspan="2">Stage / readout</th><th colspan="3">Within-subject</th><th colspan="3">LOSO</th></tr><tr><th>Raw</th><th>CSLS-2</th><th>CSLS-10</th><th>Raw</th><th>CSLS-2</th><th>CSLS-10</th></tr></thead>
-            <tbody>
-              <tr><td>Stage 1 / pretrained</td><td>80.80 / 96.25</td><td>90.95 / 99.05</td><td>87.85 / 98.55</td><td><b>22.50</b> / 51.60</td><td>30.35 / <b>63.35</b></td><td><b>31.65</b> / 63.40</td></tr>
-              <tr><td>Stage 2 / shared expert</td><td>82.20 / 96.80</td><td>91.95 / 99.05</td><td>88.65 / 98.60</td><td>22.05 / 50.15</td><td><b>30.50</b> / 61.15</td><td>31.55 / 61.40</td></tr>
-              <tr class="ours"><td>Stage 2 / composed</td><td><b>87.00</b> / <b>98.45</b></td><td><b>93.90</b> / <b>99.70</b></td><td><b>91.35</b> / <b>99.30</b></td><td>20.20 / 48.35</td><td>28.15 / 60.25</td><td>29.90 / 60.50</td></tr>
-            </tbody></table></div>
-          <p>Composition improves within-subject retrieval and slightly hurts LOSO: readout specialization sharpens within-person discrimination but does not transfer. We therefore report Stage-1 outputs under LOSO.</p>
-
-          <h3>6.2 Readout architecture</h3>
-          <div class="table-wrap"><table class="tbl tbl--light">
-            <caption><strong>Retrieval readout ablation on THINGS-EEG2 (Top-1 / Top-5, %).</strong> Same frozen backbone; only the Stage-2 heads change.</caption>
-            <thead><tr><th>Architecture</th><th>Raw Top-1</th><th>Raw Top-5</th><th>CSLS-2 Top-1</th><th>CSLS-2 Top-5</th></tr></thead>
-            <tbody>
-              <tr><td>Linear heads</td><td>85.00</td><td>98.30</td><td>93.45</td><td>99.60</td></tr>
-              <tr><td>MLP heads</td><td>83.20</td><td>97.90</td><td>92.15</td><td>99.45</td></tr>
-              <tr><td>Shared expert only</td><td>82.05</td><td>96.95</td><td>91.40</td><td>99.15</td></tr>
-              <tr><td>Gated teacher experts only</td><td>79.60</td><td>97.05</td><td>87.70</td><td>98.55</td></tr>
-              <tr class="ours"><td>Teacher MoEs + shared expert (BHA)</td><td><b>87.00</b></td><td><b>98.45</b></td><td><b>93.90</b></td><td><b>99.70</b></td></tr>
-            </tbody></table></div>
-
-          <h3>6.3 CSLS neighbourhood size</h3>
-          <div class="table-wrap"><table class="tbl tbl--light">
-            <caption><strong>CSLS-k ablation (Top-1 / Top-5, %).</strong> \(k=2\) was selected on validation data.</caption>
-            <thead><tr><th>Setting</th><th>Raw</th><th>k=2</th><th>k=4</th><th>k=10</th><th>k=20</th></tr></thead>
-            <tbody>
-              <tr><td>EEG · within</td><td>87.00 / 98.45</td><td><b>93.90 / 99.70</b></td><td>92.95 / 99.55</td><td>91.35 / 99.30</td><td>90.45 / 99.15</td></tr>
-              <tr><td>EEG · LOSO</td><td>22.50 / 51.60</td><td>30.35 / 63.35</td><td>31.40 / 63.45</td><td><b>31.65</b> / 63.40</td><td>31.50 / <b>63.55</b></td></tr>
-              <tr><td>MEG · within</td><td>55.63 / 85.75</td><td><b>68.13 / 91.38</b></td><td>66.63 / 90.75</td><td>65.13 / 90.25</td><td>63.25 / 89.25</td></tr>
-              <tr><td>MEG · LOSO</td><td>3.63 / 12.75</td><td>5.25 / 16.50</td><td>5.63 / 16.63</td><td>5.50 / 17.25</td><td><b>5.88 / 17.38</b></td></tr>
-            </tbody></table></div>
-
-          <h3>6.4 Pretraining target for reconstruction</h3>
-          <div class="table-wrap"><table class="tbl tbl--light">
-            <caption><strong>OpenCLIP vs. fused-VFM pretraining of the backbone used for reconstruction.</strong> Ten-subject means; α=0 decodes the predicted latent only, α=1 starts from noise.</caption>
-            <thead><tr><th>α</th><th>Pretraining</th><th>PixCorr</th><th>SSIM</th><th>Alex(2)</th><th>Alex(5)</th><th>Incep.</th><th>CLIP</th><th>EffNet ↓</th><th>SwAV ↓</th></tr></thead>
-            <tbody>
-              <tr><td>0</td><td>OpenCLIP</td><td>0.333</td><td>0.580</td><td>0.604</td><td>0.565</td><td>0.507</td><td>0.514</td><td>0.985</td><td>0.689</td></tr>
-              <tr><td>0</td><td>Fused VFM</td><td>0.335</td><td>0.583</td><td>0.599</td><td>0.561</td><td>0.507</td><td>0.515</td><td>0.984</td><td>0.687</td></tr>
-              <tr><td>0.75</td><td>OpenCLIP</td><td>0.274</td><td>0.448</td><td>0.873</td><td>0.922</td><td>0.798</td><td>0.841</td><td>0.835</td><td>0.516</td></tr>
-              <tr><td>0.75</td><td>Fused VFM</td><td>0.274</td><td>0.459</td><td>0.872</td><td>0.921</td><td>0.794</td><td>0.831</td><td>0.843</td><td>0.515</td></tr>
-              <tr><td>1</td><td>OpenCLIP</td><td>0.189</td><td>0.413</td><td>0.849</td><td>0.915</td><td>0.799</td><td>0.839</td><td>0.837</td><td>0.519</td></tr>
-              <tr><td>1</td><td>Fused VFM</td><td>0.185</td><td>0.427</td><td>0.845</td><td>0.910</td><td>0.790</td><td>0.828</td><td>0.844</td><td>0.520</td></tr>
-            </tbody></table></div>
-          <p>Richer pretraining raises structural fidelity (SSIM) but not CLIP identification at stronger generation settings — reconstruction benefits are metric-dependent, which is why we report structure and semantics separately.</p>
-        </section>
-
-        <section id="s7" class="rp-sec rp-sec--hl">
-          <h2><span>07</span>What the readout does — and doesn’t</h2>
-          <p>Reviewers asked whether the Group-MoE readout is doing the work. We pre-registered four tests before running them (frozen backbone, 10 participants × 3 seeds, decision rule: MoE “helps” only if it beats both capacity-matched baselines by ≥ 0.5 points and wins ≥ 20 of 30 subject–seed pairs). All results are reported regardless of outcome.</p>
-          <div class="rp-figbox"><div id="rp-budget" class="rp-bars"></div><p class="rp-cap">Composed Raw Top-1 (%) at equal readout parameter budgets (expert rank r = 4 … 256). Group MoE, MLP and low-rank linear readouts are indistinguishable at every budget; the paper setting is r = 64.</p></div>
-          <div class="rp-grid2">
-            <div class="rp-card"><h4>Parameter budget</h4><p>At r = 4 / 16 / 64 / 256 the composed score reaches 86.8 / 86.5 / 86.5 / 86.7 (MoE), 86.5 / 86.6 / 86.6 / 85.9 (MLP) and 86.7 / 86.6 / 86.5 / 86.4 (linear). Largest MoE margin: 0.3 points. Verdict: not more parameter-efficient.</p></div>
-            <div class="rp-card"><h4>Stronger encoder</h4><p>With the local–global sensor-convolution encoder (Stage 1: 81.5 vs 81.1), the three readouts reach 87.6 / 87.6 / 87.6. Composition gain over the shared expert: +4.3 points for all three.</p></div>
-            <div class="rp-card"><h4>Pooled model</h4><p>One model trained on all ten participants, evaluated per participant: 89.6 (MoE) / 89.4 (MLP) / 89.9 (linear).</p></div>
-            <div class="rp-card"><h4>Conclusion</h4><p>The gain is in <em>composing teacher-specific scores with the shared score</em>, not in the readout family. We now describe the mechanism as composition with learned weights; the MoE is an implementation choice.</p></div>
+          <h2>What drives the gain</h2>
+          <p>Three questions, answered in order: how much each training stage adds, whether the readout family matters, and whether the Group-MoE readout is doing any work at all. The third was raised by reviewers; we pre-registered the tests before running them and report every outcome.</p>
+          <figure class="rp-fig rp-wide">
+            <div class="rp-fig__grid2"><div id="fig-stages"></div><div id="fig-readout"></div></div>
+            <figcaption><b>Figure 8. Where the accuracy comes from.</b> Left: Raw Top-1 on THINGS-EEG2 after Stage 1, after Stage 2 with the shared readout only, and with composed scores (within participant); under LOSO the order reverses, so Stage-1 outputs are used there. Right: five readout families on the same frozen backbone. Composition of shared and teacher-specific scores is the ingredient that matters; neither alone matches it.</figcaption>
+          </figure>
+          <div class="rp-callout">
+            <p class="rp-callout__k">Pre-registered negative result</p>
+            <p><b>The Group-MoE readout is not more parameter-efficient than an MLP or a low-rank linear head.</b> Decision rule fixed in advance: MoE "helps" only if it beats both capacity-matched baselines by at least 0.5 points and wins at least 20 of 30 participant–seed pairs. It did neither. The largest MoE margin at any budget is 0.3 points.</p>
+            <div id="fig-budget"></div>
+            <p class="rp-cap">Composed Raw Top-1 at equal readout parameter budgets (expert rank r = 4 … 256), 10 participants × 3 seeds. The paper setting is r = 64. With a stronger encoder all three families reach 87.6; pooled across participants, 89.6 / 89.4 / 89.9.</p>
+            <p>We therefore describe the mechanism as <em>composition with learned weights</em>; the MoE is an implementation choice, not the contribution.</p>
+          </div>
+          <h3>Rescoring and the pretraining target</h3>
+          <p>CSLS-k rescoring helps everywhere and k = 2, selected on validation data, is best within participant; LOSO prefers a larger neighbourhood. For reconstruction, pretraining the backbone against the fused target rather than OpenCLIP alone raises SSIM at every α but leaves CLIP identification unchanged or slightly lower.</p>
+          <div class="rp-fig__grid2 rp-wide rp-tables">
+            <div class="table-wrap"><table class="rt rt--sm">
+              <caption>CSLS-k ablation, Top-1 (%). k = 2 selected on validation.</caption>
+              <thead><tr><th>Setting</th><th>Raw</th><th>k=2</th><th>k=4</th><th>k=10</th><th>k=20</th></tr></thead>
+              <tbody>
+                <tr><td>EEG · within</td><td>87.0</td><td><b>93.9</b></td><td>93.0</td><td>91.4</td><td>90.5</td></tr>
+                <tr><td>EEG · LOSO</td><td>22.5</td><td>30.4</td><td>31.4</td><td><b>31.7</b></td><td>31.5</td></tr>
+                <tr><td>MEG · within</td><td>55.6</td><td><b>68.1</b></td><td>66.6</td><td>65.1</td><td>63.3</td></tr>
+                <tr><td>MEG · LOSO</td><td>3.6</td><td>5.3</td><td>5.6</td><td>5.5</td><td><b>5.9</b></td></tr>
+              </tbody></table></div>
+            <div class="table-wrap"><table class="rt rt--sm">
+              <caption>Backbone pretraining target for reconstruction. Ten-participant means.</caption>
+              <thead><tr><th>α</th><th>Target</th><th>PixCorr</th><th>SSIM</th><th>CLIP</th></tr></thead>
+              <tbody>
+                <tr><td>0</td><td>OpenCLIP</td><td>0.333</td><td>0.580</td><td>0.514</td></tr>
+                <tr><td>0</td><td>Fused</td><td>0.335</td><td><b>0.583</b></td><td>0.515</td></tr>
+                <tr><td>0.75</td><td>OpenCLIP</td><td>0.274</td><td>0.448</td><td><b>0.841</b></td></tr>
+                <tr><td>0.75</td><td>Fused</td><td>0.274</td><td><b>0.459</b></td><td>0.831</td></tr>
+                <tr><td>1</td><td>OpenCLIP</td><td>0.189</td><td>0.413</td><td><b>0.839</b></td></tr>
+                <tr><td>1</td><td>Fused</td><td>0.185</td><td><b>0.427</b></td><td>0.828</td></tr>
+              </tbody></table></div>
           </div>
         </section>
 
+        <!-- 7 DATA EFFICIENCY -->
+        <section id="s7" class="rp-sec">
+          <h2>Data efficiency</h2>
+          <p>Each fraction of THINGS-EEG2 trains a separate backbone. Composition helps at every scale, and the gap is widest where data is scarcest: with a quarter of the training set, composed scores reach 53.3% against 42.7% for the pretrained backbone alone. A decoder trained on 25% of the data with BHA matches one trained on roughly 50% without it.</p>
+          <figure class="rp-fig rp-wide">
+            <div id="fig-scale"></div>
+            <figcaption><b>Figure 9. Within-participant Raw Top-1 versus training-data fraction, THINGS-EEG2.</b> Ten-participant means.</figcaption>
+          </figure>
+        </section>
+
+        <!-- 8 INTERPRETABILITY -->
         <section id="s8" class="rp-sec">
-          <h2><span>08</span>Interpretability and analysis</h2>
+          <h2>Interpretability and analysis</h2>
+          <p>Because BHA keeps one readout per teacher, the model can be asked questions a single-target decoder cannot: which teachers the brain predicts, whether the teacher-specific readouts agree, where in the image each one looks, what the units respond to, and when in time the decision is made. All of these describe the learned model, not neurons in cortex.</p>
+
           <h3>8.1 Which teachers are brain-predictable</h3>
-          <div class="rp-figbox"><div class="seg seg--light"><button type="button" class="seg__btn is-active" data-align="raw">Raw teacher features</button><button type="button" class="seg__btn" data-align="adapted">With trainable visual adapter</button></div><div id="rp-align" class="rp-bars"></div><p class="rp-cap">Paired brain–image cosine on THINGS-EEG2 test images, ten-participant means. Raw: OpenCLIP 0.204, DFN-6 0.256, MAE-18 0.041, DINOv2-12 0.050. Adapted: 0.399 / 0.611 / 0.545 / 0.474. Shared target: 0.624. Non-paired baseline ≈ 0.</p></div>
+          <figure class="rp-fig rp-wide">
+            <div id="fig-align"></div>
+            <figcaption><b>Figure 10. Paired brain–image cosine on held-out images, ten-participant means.</b> Grey dot: raw teacher features; blue dot: with a trainable visual adapter. Self-supervised teachers (MAE, DINOv2) are nearly unpredictable raw but become so once adapted; the shared target is the most predictable of all. Non-paired baseline ≈ 0.</figcaption>
+          </figure>
 
           <h3>8.2 Shared geometry across teacher-specific outputs</h3>
-          <div class="rp-figbox"><div class="seg seg--light"><button type="button" class="seg__btn is-active" data-rsm="vfm">Teacher features</button><button type="button" class="seg__btn" data-rsm="bha">BHA student outputs</button></div><div id="rp-rsm" class="heat heat--light"></div><p class="rp-cap" id="rp-rsm-note">Pearson correlation between representational similarity matrices, ten-participant means. Teachers: 0.07–0.70. Student outputs predicted from the same brain signal: 0.71–0.91. The shared expert best preserves inter-image relations (r = 0.82).</p></div>
+          <figure class="rp-fig rp-wide">
+            <div class="rp-fig__grid2"><div id="fig-rsm-vfm"></div><div id="fig-rsm-bha"></div></div>
+            <figcaption><b>Figure 11. Correlation between representational similarity matrices.</b> Left: the teachers' own features disagree about which images are similar (r = 0.07 to 0.70). Right: the four student outputs predicted from the same brain signal largely agree (r = 0.71 to 0.91). The shared expert best preserves inter-image relations (r = 0.82 with the fused target).</figcaption>
+          </figure>
 
-          <h3>8.3 Opposite attributions on the same regions</h3>
-          <div class="rp-figbox"><div id="rp-attr-picks" class="attr__picks"></div><div id="rp-attr" class="attr__row"></div><p class="rp-cap">Occlusion attribution of each expert’s match score (ten-participant mean maps, 16×16 patches, signed within-map percentiles). For the bonnet, OpenCLIP and DFN experts raise the match from the hat while MAE and DINOv2 experts lower it from the same pixels. Similar embedding geometry does not imply interchangeable matching functions.</p></div>
+          <h3>8.3 Same geometry, opposite attributions</h3>
+          <p>If the student outputs are so correlated, do the readouts simply do the same thing? No. Occluding image patches and measuring the change in each expert's match score shows that experts with near-identical geometry can disagree about the sign of a region's contribution.</p>
+          <figure class="rp-fig rp-wide">
+            <div id="rp-attr-picks" class="attr__picks"></div><div id="rp-attr" class="attr__row"></div>
+            <figcaption><b>Figure 12. Occlusion attribution of each expert's match score.</b> Ten-participant mean maps, 16×16 patches, signed within-map percentiles. For the bonnet, the OpenCLIP and DFN experts raise the match from the hat while the MAE and DINOv2 experts lower it from the same pixels. Similar embedding geometry does not imply interchangeable matching functions.</figcaption>
+          </figure>
 
-          <h3>8.4 Concept selectivity</h3>
-          <div class="rp-figbox"><div id="rp-units" class="units"></div><div id="rp-concept" class="rp-bars"></div><p class="rp-cap">CLIP-Dissect associates model units with 27 THINGS categories; concepts are selected on training images and evaluated on held-out images. Brain–visual concept-profile cosine: OpenCLIP 0.612, DFN-6 0.726, MAE-18 0.796, DINOv2-12 0.812, shared 0.814; neuron shuffling ≈ 0. These characterise the learned model, not neuron identities in cortex.</p></div>
+          <h3>8.4 Concept-selective units</h3>
+          <figure class="rp-fig rp-wide">
+            <div id="rp-units" class="rp-units"></div>
+            <div id="fig-concept"></div>
+            <figcaption><b>Figure 13. Units respond to concepts.</b> Top: three units of the fused representation and the five held-out images that activate them most. Bottom: cosine between brain-side and vision-side concept profiles over 27 THINGS categories (CLIP-Dissect; concepts selected on training images, evaluated on held-out images). Shuffling neuron identities drives it to zero.</figcaption>
+          </figure>
 
-          <h3>8.5 Temporal dependence</h3>
-          <div class="rp-figbox"><div class="seg seg--light"><button type="button" class="seg__btn is-active" data-temporal="eeg">THINGS-EEG2</button><button type="button" class="seg__btn" data-temporal="meg">THINGS-MEG</button></div><div class="tchart"><svg id="rp-tdel" viewBox="0 0 520 300"></svg><svg id="rp-tkeep" viewBox="0 0 520 300"></svg></div><div id="rp-tlegend" class="tlegend tlegend--light"></div><p class="rp-cap">50 ms windows, 10 ms stride; frozen models. Left: Top-1 lost when the window is deleted. Right: Top-1 when only the window is kept (chance 0.5%). Sensitivity peaks near 100–125 ms and again around 220 ms; later peaks overlap image offset, so masking cannot separate those contributions.</p></div>
+          <h3>8.5 When the decision is made</h3>
+          <figure class="rp-fig rp-wide">
+            <div class="seg seg--light rp-seg"><button type="button" class="seg__btn is-active" data-temporal="eeg">THINGS-EEG2</button><button type="button" class="seg__btn" data-temporal="meg">THINGS-MEG</button></div>
+            <div class="tchart rp-tchart"><svg id="rp-tdel" viewBox="0 0 520 300"></svg><svg id="rp-tkeep" viewBox="0 0 520 300"></svg></div>
+            <div id="rp-tlegend" class="tlegend tlegend--light"></div>
+            <figcaption><b>Figure 14. Temporal masking of frozen models.</b> 50 ms windows, 10 ms stride. Left: Top-1 lost when the window is deleted. Right: Top-1 when only the window is kept (chance 0.5%). Sensitivity peaks near 100 to 125 ms and again around 220 ms; later peaks overlap image offset, so masking cannot separate those contributions.</figcaption>
+          </figure>
 
           <h3>8.6 Alignment is not generation</h3>
-          <p>Under the BiCLIP objective, adapting the visual target toward the brain raises paired cosine from 0.217 to 0.481 and Raw Top-1 from 30.05% to 37.80%, but lowers CLIP identification of reconstructions from 0.754 to 0.706. Under an MSE–BiCLIP objective, adaptation lowers both. This is the empirical face of the second bound in Section 2 and the reason reconstruction uses generator-native prediction spaces.</p>
+          <p>The second bound in Section 4 predicts a trade-off, and it appears in practice. Under the BiCLIP objective, adapting the visual target toward the brain makes retrieval better and reconstruction worse at the same time.</p>
+          <figure class="rp-fig rp-wide">
+            <div id="fig-trap"></div>
+            <figcaption><b>Figure 15. Adapting the target toward the brain.</b> Paired cosine and Raw Top-1 rise; CLIP identification of the reconstructions falls. Under an MSE–BiCLIP objective, adaptation lowers all three. This is why reconstruction predicts in the generator's native spaces.</figcaption>
+          </figure>
         </section>
 
+        <!-- 9 LIMITATIONS -->
         <section id="s9" class="rp-sec">
-          <h2><span>09</span>Limitations</h2>
+          <h2>Limitations</h2>
           <ul class="rp-ul">
-            <li><b>Cross-subject transfer.</b> LOSO accuracy is 22.5% Raw / 30.4% CSLS-2 on EEG and 3.6% / 5.3% on MEG. The encoder itself transfers poorly (22.5% vs 80.8% within), leaving little teacher-specific signal to compose; readout specialization does not help here.</li>
-            <li><b>Transductive rescoring.</b> CSLS uses the unlabeled query set as references and depends on the cohort; Raw numbers are the non-transductive ones.</li>
-            <li><b>Reconstruction is metric-dependent.</b> Richer pretraining helps structure (SSIM) but not semantic identification at stronger generation settings.</li>
+            <li><b>Cross-participant transfer.</b> LOSO accuracy is 22.5% Raw / 30.4% CSLS-2 on EEG and 3.6% / 5.3% on MEG. The encoder itself transfers poorly (22.5% versus 80.8% within), which leaves little teacher-specific signal to compose.</li>
+            <li><b>Transductive rescoring.</b> CSLS uses the unlabeled query set as references and depends on the cohort. Raw numbers are the non-transductive ones.</li>
+            <li><b>Metric-dependent reconstruction.</b> Richer pretraining helps structure (SSIM) but not semantic identification at stronger generation settings; no single number summarises reconstruction quality.</li>
             <li><b>Temporal interpretation.</b> The 220 ms sensitivity overlaps image offset and the next stimulus; masking cannot separate these.</li>
             <li><b>Interpretability claims are about the model.</b> Concept-selective units and shared geometry describe the learned representations; they do not establish corresponding neurons or causal mechanisms in cortex.</li>
           </ul>
         </section>
 
+        <!-- 10 SETUP -->
         <section id="s10" class="rp-sec">
-          <h2><span>10</span>Reproducibility</h2>
-          <p>Main results use seed 42 with subject-wise models; every follow-up test in Section 7 uses seeds 42, 43 and 44 with the validation split fixed to seed 42 and checkpoint selection on validation Raw Top-1. Stage 2 keeps BrainViT and fusion frozen; the unfrozen variant was also tested as a pre-registered final scenario. Reconstruction uses SDXL-Turbo with IP-Adapter (ip scale 1.5, α = 0.75, 5 steps, CFG 0, three draws). Code, configs and pretrained weights will be released after review together with the per-subject tables.</p>
-          <p class="rp-note">Prior-method numbers are as reported in their papers. This page is kept anonymous while the manuscript is under review.</p>
+          <h2>Setup and reproducibility</h2>
+          <dl class="rp-dl">
+            <dt>Data</dt><dd>THINGS-EEG2: 10 participants, 63 channels, 250 Hz, 1,654 concepts × 10 images for training (16,540 images), 200 held-out test images, 80 repetitions per test image. THINGS-MEG: 4 participants, 271 channels. Reconstruction is evaluated on THINGS-EEG2.</dd>
+            <dt>Teachers</dt><dd>OpenCLIP ViT-H/14, DFN (layer 6), MAE (layer 18), DINOv2 (layer 12). Layers were chosen by single-teacher retrieval; intermediate layers of self-supervised models are more brain-predictable than their final layers.</dd>
+            <dt>Protocols</dt><dd>Within participant: train and test on the same person. LOSO: train on all others, test on the held-out person. Raw ranks each query independently; CSLS-k rescales scores with the k nearest unlabeled queries (k = 2 selected on validation).</dd>
+            <dt>Metrics</dt><dd>200-way Top-1 / Top-5 retrieval. Reconstruction: PixCorr, SSIM, AlexNet(2/5), InceptionV3 and CLIP two-way identification (higher is better); EfficientNet-B and SwAV distances (lower is better).</dd>
+            <dt>Seeds</dt><dd>Main results use seed 42 with per-participant models; every follow-up test in Section 6 uses seeds 42, 43 and 44 with the validation split fixed and checkpoint selection on validation Raw Top-1.</dd>
+            <dt>Generation</dt><dd>SDXL-Turbo with IP-Adapter, ip scale 1.5, α = 0.75, 5 steps, classifier-free guidance 0, three draws per image. Optional VAE-guided variant reported separately.</dd>
+            <dt>Release</dt><dd>Code, configs, pretrained weights and per-participant tables will be released after review. Prior-method numbers are as reported in their papers. This page is anonymous while the manuscript is under review.</dd>
+          </dl>
         </section>
       </main>
     </div>
@@ -438,6 +472,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/contrib/auto-render.min.js"></script>
-    <script src="report.js?v=4" defer></script>
+    <script src="report.js?v=7" defer></script>
   </body>
 </html>
