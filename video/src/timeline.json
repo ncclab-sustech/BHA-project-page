@@ -1,5 +1,5 @@
 {
- "duration": 193.059,
+ "duration": 193.464,
  "chapters": [
   {
    "slide": 0,
@@ -24,27 +24,27 @@
   {
    "slide": 4,
    "title": "One brain model, four teachers.",
-   "start": 82.507
+   "start": 83.616
   },
   {
    "slide": 5,
    "title": "A new state of the art on EEG and MEG.",
-   "start": 106.328
+   "start": 106.733
   },
   {
    "slide": 6,
    "title": "From brainwaves to pictures.",
-   "start": 130.491
+   "start": 130.896
   },
   {
    "slide": 7,
    "title": "Is this mind reading? Does it work on anyone?",
-   "start": 154.504
+   "start": 154.909
   },
   {
    "slide": 8,
    "title": "A new interface between mind and machine.",
-   "start": 178.539
+   "start": 178.944
   }
  ],
  "cues": [
@@ -135,211 +135,211 @@
   {
    "slide": 3,
    "start": 60.849,
-   "end": 62.081,
+   "end": 62.071,
    "text": "That choice matters."
   },
   {
    "slide": 3,
-   "start": 62.081,
-   "end": 63.621,
+   "start": 62.071,
+   "end": 63.598,
    "text": "CLIP cares about meaning."
   },
   {
    "slide": 3,
-   "start": 63.621,
-   "end": 67.317,
+   "start": 63.598,
+   "end": 67.263,
    "text": "Self-supervised models like DINO care about shape and parts."
   },
   {
    "slide": 3,
-   "start": 67.317,
-   "end": 70.396,
+   "start": 67.263,
+   "end": 70.317,
    "text": "Masked autoencoders care about texture and layout."
   },
   {
    "slide": 3,
-   "start": 70.396,
-   "end": 76.494,
+   "start": 70.317,
+   "end": 76.364,
    "text": "Each one sees a picture differently, and the brain predicts some of those views better than others."
   },
   {
    "slide": 3,
-   "start": 76.494,
-   "end": 78.835,
+   "start": 76.364,
+   "end": 78.685,
    "text": "Pick one, and you throw the rest away."
   },
   {
    "slide": 3,
-   "start": 78.835,
-   "end": 81.607,
-   "text": "Average them, and you blur their differences."
+   "start": 78.685,
+   "end": 82.716,
+   "text": "Average them into a single target, and you blur their differences."
   },
   {
    "slide": 4,
-   "start": 83.007,
-   "end": 86.36,
+   "start": 84.116,
+   "end": 87.452,
    "text": "BHA, Beyond Hierarchical Alignment, stops choosing."
   },
   {
    "slide": 4,
-   "start": 86.36,
-   "end": 90.239,
+   "start": 87.452,
+   "end": 91.312,
    "text": "One brain model is trained by four vision teachers at once."
   },
   {
    "slide": 4,
-   "start": 90.239,
-   "end": 100.234,
-   "text": "Then, with the brain model frozen, each teacher gets its own small read-out, and a learned gate decides, for every single query, whose opinion to trust."
+   "start": 91.312,
+   "end": 100.666,
+   "text": "Then, with the brain model frozen, each teacher gets its own small read-out, and learned weights decide how much each teacher's opinion counts."
   },
   {
    "slide": 4,
-   "start": 100.234,
-   "end": 102.798,
+   "start": 100.666,
+   "end": 103.217,
    "text": "The image generator is never retrained."
   },
   {
    "slide": 4,
-   "start": 102.798,
-   "end": 105.428,
+   "start": 103.217,
+   "end": 105.833,
    "text": "The brain's prediction simply steers it."
   },
   {
    "slide": 5,
-   "start": 106.828,
-   "end": 107.666,
+   "start": 107.233,
+   "end": 108.072,
    "text": "Does it work?"
   },
   {
    "slide": 5,
-   "start": 107.666,
-   "end": 113.47,
+   "start": 108.072,
+   "end": 113.875,
    "text": "Show the model two hundred candidate pictures, and ask which one the person is looking at."
   },
   {
    "slide": 5,
-   "start": 113.47,
-   "end": 118.5,
+   "start": 113.875,
+   "end": 118.905,
    "text": "On E E G, BHA picks the right one ninety-three point nine percent of the time."
   },
   {
    "slide": 5,
-   "start": 118.5,
-   "end": 121.272,
+   "start": 118.905,
+   "end": 121.678,
    "text": "The previous best was eighty-two point six."
   },
   {
    "slide": 5,
-   "start": 121.272,
-   "end": 125.206,
+   "start": 121.678,
+   "end": 125.611,
    "text": "On M E G, sixty-eight point one percent, against forty-eight."
   },
   {
    "slide": 5,
-   "start": 125.206,
-   "end": 129.591,
+   "start": 125.611,
+   "end": 129.996,
    "text": "And the gain holds even when we train on only a quarter of the data."
   },
   {
    "slide": 6,
-   "start": 130.991,
-   "end": 133.898,
+   "start": 131.396,
+   "end": 134.303,
    "text": "Beyond picking from a gallery, BHA generates."
   },
   {
    "slide": 6,
-   "start": 133.898,
-   "end": 141.264,
+   "start": 134.303,
+   "end": 141.669,
    "text": "Every image on the bottom row was produced from one person's E E G response to a photo they had never seen before."
   },
   {
    "slide": 6,
-   "start": 141.264,
-   "end": 153.604,
+   "start": 141.669,
+   "end": 154.009,
    "text": "Pixel-level fidelity is up forty-two percent over the strongest published method, and the meaning of the picture comes through more often, with the generator itself left completely untouched."
   },
   {
    "slide": 7,
-   "start": 155.004,
-   "end": 156.857,
+   "start": 155.409,
+   "end": 157.262,
    "text": "Two questions we always get."
   },
   {
    "slide": 7,
-   "start": 156.857,
-   "end": 158.247,
+   "start": 157.262,
+   "end": 158.652,
    "text": "Is this mind reading?"
   },
   {
    "slide": 7,
-   "start": 158.247,
-   "end": 158.446,
+   "start": 158.652,
+   "end": 158.851,
    "text": "No."
   },
   {
    "slide": 7,
-   "start": 158.446,
-   "end": 164.601,
+   "start": 158.851,
+   "end": 165.006,
    "text": "It decodes the visual response to a picture on a screen, in a lab, with the person's consent."
   },
   {
    "slide": 7,
-   "start": 164.601,
-   "end": 167.711,
+   "start": 165.006,
+   "end": 168.117,
    "text": "Does it work on a new person, without training?"
   },
   {
    "slide": 7,
-   "start": 167.711,
-   "end": 168.241,
+   "start": 168.117,
+   "end": 168.646,
    "text": "Not yet."
   },
   {
    "slide": 7,
-   "start": 168.241,
-   "end": 171.351,
+   "start": 168.646,
+   "end": 171.757,
    "text": "Cross-subject accuracy is about thirty percent."
   },
   {
    "slide": 7,
-   "start": 171.351,
-   "end": 175.124,
+   "start": 171.757,
+   "end": 175.529,
    "text": "That is sixty times chance, but far below within-subject."
   },
   {
    "slide": 7,
-   "start": 175.124,
-   "end": 177.639,
+   "start": 175.529,
+   "end": 178.044,
    "text": "It is the next problem we are solving."
   },
   {
    "slide": 8,
-   "start": 179.039,
-   "end": 179.936,
+   "start": 179.444,
+   "end": 180.342,
    "text": "Non-invasive."
   },
   {
    "slide": 8,
-   "start": 179.936,
-   "end": 180.972,
+   "start": 180.342,
+   "end": 181.377,
    "text": "Data-efficient."
   },
   {
    "slide": 8,
-   "start": 180.972,
-   "end": 186.427,
+   "start": 181.377,
+   "end": 186.833,
    "text": "Built on a generator that gets better every month, without us lifting a finger."
   },
   {
    "slide": 8,
-   "start": 186.427,
-   "end": 189.742,
+   "start": 186.833,
+   "end": 190.147,
    "text": "BHA is a new interface between mind and machine."
   },
   {
    "slide": 8,
-   "start": 189.742,
-   "end": 192.159,
+   "start": 190.147,
+   "end": 192.564,
    "text": "And this is just the first picture."
   }
  ]

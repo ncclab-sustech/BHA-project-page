@@ -115,17 +115,17 @@ def slide_idea(s):
  <div style="font-size:26px;color:rgba(255,255,255,.75);margin-top:26px">One brain model, supervised by four vision teachers at once.</div>
 </div>
 <div class="card" style="padding:40px">
- <div class="kicker" style="margin-bottom:18px;color:#c7d2ff">Stage 2 · decide per query</div>
+ <div class="kicker" style="margin-bottom:18px;color:#c7d2ff">Stage 2 · compose</div>
  <div style="display:flex;align-items:center;gap:26px">
   <div class="card" style="width:190px;height:190px;border-radius:50%;display:grid;place-items:center;font-family:'Plus Jakarta Sans';font-weight:800;font-size:34px;line-height:1.1;text-align:center;background:rgba(255,255,255,.08)">BHA<br><span style="font-size:20px;color:#9fd0ff">frozen ❄</span></div>
   <div style="font-size:50px;color:#9fd0ff">→</div>
   <div style="flex:1;display:grid;gap:12px">
-   <div class="card" style="padding:16px 22px;font-size:26px">4 teacher read-outs <span style="color:rgba(255,255,255,.55)">+ a learned gate</span></div>
+   <div class="card" style="padding:16px 22px;font-size:26px">4 teacher read-outs <span style="color:rgba(255,255,255,.55)">+ learned weights</span></div>
    <div class="card" style="padding:16px 22px;font-size:26px;background:linear-gradient(95deg,rgba(43,92,255,.5),rgba(124,58,237,.5))">compose → retrieval</div>
    <div class="card" style="padding:16px 22px;font-size:26px">steer a <b>frozen</b> generator → picture</div>
   </div>
  </div>
- <div style="font-size:26px;color:rgba(255,255,255,.75);margin-top:26px">Whose opinion to trust is decided for every single query.</div>
+ <div style="font-size:26px;color:rgba(255,255,255,.75);margin-top:26px">Learned weights decide how much each teacher's opinion counts.</div>
 </div></div>"""
     return shell(s["kicker"], s["title"], body, "Beyond Hierarchical Alignment", 72)
 

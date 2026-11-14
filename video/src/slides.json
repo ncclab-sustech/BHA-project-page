@@ -59,7 +59,7 @@
    "kicker": "03 · The catch",
    "title": "Every vision model sees a different picture.",
    "visual_focus": "the same photo through four models",
-   "voice": "That choice matters. CLIP cares about meaning. Self-supervised models like DINO care about shape and parts. Masked autoencoders care about texture and layout. Each one sees a picture differently, and the brain predicts some of those views better than others. Pick one, and you throw the rest away. Average them, and you blur their differences.",
+   "voice": "That choice matters. CLIP cares about meaning. Self-supervised models like DINO care about shape and parts. Masked autoencoders care about texture and layout. Each one sees a picture differently, and the brain predicts some of those views better than others. Pick one, and you throw the rest away. Average them into a single target, and you blur their differences.",
    "evidence": [
     "§1",
     "Fig. 1",
@@ -75,7 +75,7 @@
    "kicker": "04 · The idea",
    "title": "One brain model, four teachers.",
    "visual_focus": "two-stage training diagram",
-   "voice": "BHA, Beyond Hierarchical Alignment, stops choosing. One brain model is trained by four vision teachers at once. Then, with the brain model frozen, each teacher gets its own small read-out, and a learned gate decides, for every single query, whose opinion to trust. The image generator is never retrained. The brain's prediction simply steers it.",
+   "voice": "BHA, Beyond Hierarchical Alignment, stops choosing. One brain model is trained by four vision teachers at once. Then, with the brain model frozen, each teacher gets its own small read-out, and learned weights decide how much each teacher's opinion counts. The image generator is never retrained. The brain's prediction simply steers it.",
    "evidence": [
     "§4",
     "Fig. 2"
