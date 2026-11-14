@@ -245,7 +245,7 @@
 
   /* Figure 12: attribution */
   (function () {
-    var IM = ["bok_choy", "bonnet", "snowshoe", "gondola", "goose"], HAS = IM;
+    var IM = ["bok_choy", "bonnet", "snowshoe", "gondola", "goose", "pocketknife"], HAS = IM;
     var GROUPS = ["openclip", "dfn", "mae", "dinov2l", "shared_fusion"], GLAB = { openclip: "OpenCLIP", dfn: "DFN-6", mae: "MAE-18", dinov2l: "DINOv2-12", shared_fusion: "Shared" };
     var picks = document.getElementById("rp-attr-picks"), row = document.getElementById("rp-attr"), ATTR = null;
     if (!picks || !row) return;
