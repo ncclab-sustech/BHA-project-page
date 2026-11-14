@@ -13,7 +13,23 @@ come from the narration timeline (`../timeline.json`, `../audio/tts_manifest.jso
     BHA_REPO=<site root> node record.mjs all      # ~5 800 frames
     ./assemble.sh
 
-# Brand film (`brand.html`)
+# Brand film (`brand2.html`, current)
+
+The published `video/brand.mp4` is the 86-second second cut: six chapters (a universe · a century
+of listening · the picture · four ways of seeing · a third of a second · what it is for), an
+editorial Didone type system (Bodoni Moda + Syne + JetBrains Mono), hard cuts with cream flash
+frames, wipes, a stateless 3-D particle cosmos, a 1924 cream "magazine page", a ten-thousand-
+pictures rapid montage, a seen/decoded pair montage with a ticker, the attribution maps as four
+teachers, a radial 300 ms EEG "sun", and a cream end card. `synth2.py` renders the cue: the felt
+piano bed, a 64 bpm heartbeat under chapters III–V, risers and impacts on the flash cuts.
+
+    BHA_REPO=<site root> node record2.mjs brand2.html stills stills_b2 6.5,9,16,22,29.5,34,38.5,45,54,63,72,84
+    BHA_REPO=<site root> node record2.mjs brand2.html all frames_brand2
+    ../../../../kokoro/venv/bin/python synth2.py 86        # brand2_music.wav
+    ffmpeg -framerate 30 -i frames_brand2/f%05d.jpg -i brand2_music.wav -c:v libx264 -crf 23 \
+      -pix_fmt yuv420p -c:a aac -b:a 160k -shortest brand2.mp4
+
+# Brand film, first cut (`brand.html`)
 
 An 84-second cinematic piece in the style of recent lab films (annotated real signal, poetic
 lines, a cream serif end card) — no narration, only a felt-piano cue. `brand.html` is the same
