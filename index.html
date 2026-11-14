@@ -6,7 +6,7 @@
     <title>BHA — Beyond Hierarchical Alignment for Brain Visual Decoding</title>
     <meta
       name="description"
-      content="BHA decodes what a person sees from non-invasive brain recordings (EEG, MEG, fMRI) by distilling several vision foundation models into one brain model, with state-of-the-art retrieval and reconstruction."
+      content="BHA decodes what a person sees from non-invasive brain recordings (EEG, MEG) by distilling several vision foundation models into one brain model, with state-of-the-art retrieval and reconstruction."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -25,7 +25,6 @@
             <a href="#overview" data-i18n="nav.overview">Overview</a>
             <a href="#method" data-i18n="nav.method">Method</a>
             <a href="#results" data-i18n="nav.results">Results</a>
-            <a href="#fmri" data-i18n="nav.fmri">fMRI</a>
             <a href="#analysis" data-i18n="nav.analysis">Interpretability</a>
             <a href="#examples" data-i18n="nav.examples">Examples</a>
             <a href="#why" data-i18n="nav.why">Why it matters</a>
@@ -61,9 +60,9 @@
           <a class="btn btn--ghost" href="#results" data-i18n="hero.cta.results">See results</a>
         </div>
         <div class="hero__meta">
-          <span><strong data-i18n="hero.meta.modalities">Modalities</strong> · EEG (63-ch) · MEG (271-ch) · 7T fMRI</span>
+          <span><strong data-i18n="hero.meta.modalities">Modalities</strong> · EEG (63-ch) · MEG (271-ch)</span>
           <span><strong data-i18n="hero.meta.tasks">Tasks</strong> · <span data-i18n="hero.meta.tasks.val">Retrieval · Reconstruction</span></span>
-          <span><strong data-i18n="hero.meta.datasets">Datasets</strong> · THINGS-EEG2 · THINGS-MEG · NSD</span>
+          <span><strong data-i18n="hero.meta.datasets">Datasets</strong> · THINGS-EEG2 · THINGS-MEG</span>
         </div>
       </div>
     </header>
@@ -317,41 +316,8 @@
         </div>
       </section>
 
-      <section id="fmri" class="section">
-        <div class="section__inner">
-          <p class="section__label" data-i18n="fmri.label">Beyond EEG and MEG</p>
-          <h2 data-i18n="fmri.title">The same recipe transfers to 7T fMRI</h2>
-          <p class="lead" data-i18n="fmri.lead">
-            To test whether BHA is tied to scalp recordings, we ported it unchanged — except for the input
-            tokenizer, a per-participant linear voxel adapter — to the Natural Scenes Dataset (NSD), the
-            largest public 7T fMRI dataset. A single model is trained jointly on all eight participants and
-            evaluated on the four with complete test data.
-          </p>
-          <div class="stats stats--compact">
-            <div class="stat">
-              <div class="stat__value">94.1<span class="stat__unit">%</span></div>
-              <div class="stat__label" data-i18n="fmri.stat1.label">300-way brain→image Top-1 (raw)</div>
-              <div class="stat__note" data-i18n="fmri.stat1.note">96.6% with CSLS-2 · four-participant mean</div>
-            </div>
-            <div class="stat">
-              <div class="stat__value">87.2<span class="stat__unit">%</span></div>
-              <div class="stat__label" data-i18n="fmri.stat2.label">1000-way brain→image Top-1 (raw)</div>
-              <div class="stat__note" data-i18n="fmri.stat2.note">91.1% with CSLS-2 · four-participant mean</div>
-            </div>
-            <div class="stat">
-              <div class="stat__value">0.947</div>
-              <div class="stat__label" data-i18n="fmri.stat3.label">Reconstruction CLIP identification</div>
-              <div class="stat__note" data-i18n="fmri.stat3.note">Inception 0.941 · AlexNet(5) 0.959 · three-seed mean</div>
-            </div>
-          </div>
-          <p class="note" data-i18n="fmri.note">
-            Preliminary: fMRI numbers come from an ongoing extension and have not yet been through peer review.
-            They are reported here to show that the architecture is modality-agnostic, not as a benchmark claim.
-          </p>
-        </div>
-      </section>
 
-      <section id="analysis" class="section section--alt">
+      <section id="analysis" class="section">
         <div class="section__inner">
           <p class="section__label" data-i18n="analysis.label">Interpretability</p>
           <h2 data-i18n="analysis.title">We can see what each expert is matching on</h2>
@@ -396,7 +362,7 @@
         </div>
       </section>
 
-      <section id="examples" class="section">
+      <section id="examples" class="section section--alt">
         <div class="section__inner">
           <p class="section__label" data-i18n="examples.label">Qualitative</p>
           <h2 data-i18n="examples.title">Reconstructions from EEG</h2>
@@ -523,7 +489,7 @@
         </div>
       </section>
 
-      <section id="why" class="section section--alt">
+      <section id="why" class="section">
         <div class="section__inner">
           <p class="section__label" data-i18n="why.label">Why it matters</p>
           <h2 data-i18n="why.title">Built to scale beyond the lab</h2>
@@ -542,7 +508,7 @@
             </article>
             <article class="card">
               <h3 data-i18n="why.card3.title">Modality-general</h3>
-              <p data-i18n="why.card3.body">One recipe runs on 63-channel EEG, 271-channel MEG and 7T fMRI; only the input tokenizer changes.</p>
+              <p data-i18n="why.card3.body">One recipe runs on 63-channel EEG and 271-channel MEG; only the input tokenizer changes between modalities.</p>
             </article>
             <article class="card">
               <h3 data-i18n="why.card4.title">Interpretable</h3>
@@ -552,13 +518,13 @@
         </div>
       </section>
 
-      <section id="status" class="section">
+      <section id="status" class="section section--alt">
         <div class="section__inner">
           <p class="section__label" data-i18n="status.label">Status</p>
           <h2 data-i18n="status.title">Where the project stands</h2>
           <ul class="checklist checklist--status">
             <li data-i18n="status.item1">A full manuscript with theory, benchmarks and analyses is under peer review. This page is kept anonymous for that reason.</li>
-            <li data-i18n="status.item2">A complete pipeline exists end to end: data preprocessing, two-stage training, retrieval and reconstruction, an eight-metric evaluation suite, and ports to EEG, MEG and fMRI.</li>
+            <li data-i18n="status.item2">A complete pipeline exists end to end: data preprocessing, two-stage training, retrieval and reconstruction, an eight-metric evaluation suite, on both EEG and MEG.</li>
             <li data-i18n="status.item3">Open problem: cross-subject transfer. A model trained on other people reaches 30.4% Top-1 on EEG (chance 0.5%) but far below within-subject accuracy; closing this gap is the focus of ongoing work.</li>
             <li data-i18n="status.item4">Code and pretrained weights will be released after review.</li>
           </ul>
@@ -568,7 +534,7 @@
 
     <footer class="site-footer">
       <p data-i18n="footer.body">
-        Anonymous project page · Built on public datasets (THINGS-EEG2, THINGS-MEG, NSD) and open models
+        Anonymous project page · Built on public datasets (THINGS-EEG2, THINGS-MEG) and open models
         (OpenCLIP, DFN, MAE, DINOv2, SDXL-Turbo, IP-Adapter, CLIP-Dissect).
       </p>
     </footer>

@@ -2,7 +2,7 @@
 
 Project page for *Beyond Hierarchical Alignment: Distilling Teacher Diversity for Brain Visual Decoding*.
 
-BHA decodes what a person sees from non-invasive brain recordings (EEG, MEG, fMRI) by distilling several vision foundation models into one brain model, with state-of-the-art retrieval and reconstruction on the THINGS benchmarks.
+BHA decodes what a person sees from non-invasive brain recordings (EEG, MEG) by distilling several vision foundation models into one brain model, with state-of-the-art retrieval and reconstruction on the THINGS benchmarks.
 
 **Live site:** enable GitHub Pages on this repository (Settings → Pages → branch `main`, folder `/`).
 

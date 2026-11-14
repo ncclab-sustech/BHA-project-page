@@ -11,7 +11,6 @@
       "nav.overview": "Overview",
       "nav.method": "Method",
       "nav.results": "Results",
-      "nav.fmri": "fMRI",
       "nav.analysis": "Interpretability",
       "nav.examples": "Examples",
       "nav.why": "Why it matters",
@@ -92,18 +91,6 @@
       "results.data.figcap":
         "THINGS-EEG2 within-subject Raw Top-1 (%) as a function of training-data fraction; ten-participant means.",
 
-      "fmri.label": "Beyond EEG and MEG",
-      "fmri.title": "The same recipe transfers to 7T fMRI",
-      "fmri.lead":
-        "To test whether BHA is tied to scalp recordings, we ported it unchanged — except for the input tokenizer, a per-participant linear voxel adapter — to the Natural Scenes Dataset (NSD), the largest public 7T fMRI dataset. A single model is trained jointly on all eight participants and evaluated on the four with complete test data.",
-      "fmri.stat1.label": "300-way brain→image Top-1 (raw)",
-      "fmri.stat1.note": "96.6% with CSLS-2 · four-participant mean",
-      "fmri.stat2.label": "1000-way brain→image Top-1 (raw)",
-      "fmri.stat2.note": "91.1% with CSLS-2 · four-participant mean",
-      "fmri.stat3.label": "Reconstruction CLIP identification",
-      "fmri.stat3.note": "Inception 0.941 · AlexNet(5) 0.959 · three-seed mean",
-      "fmri.note":
-        "Preliminary: fMRI numbers come from an ongoing extension and have not yet been through peer review. They are reported here to show that the architecture is modality-agnostic, not as a benchmark claim.",
 
       "analysis.label": "Interpretability",
       "analysis.title": "We can see what each expert is matching on",
@@ -133,25 +120,24 @@
       "why.card2.title": "Generator-agnostic",
       "why.card2.body": "The image generator stays frozen. Better generators can be dropped in without retraining the brain model.",
       "why.card3.title": "Modality-general",
-      "why.card3.body": "One recipe runs on 63-channel EEG, 271-channel MEG and 7T fMRI; only the input tokenizer changes.",
+      "why.card3.body": "One recipe runs on 63-channel EEG and 271-channel MEG; only the input tokenizer changes between modalities.",
       "why.card4.title": "Interpretable",
       "why.card4.body": "Attribution maps and concept-selective neurons expose what the decoder is relying on, which matters for clinical and consumer use.",
 
       "status.label": "Status",
       "status.title": "Where the project stands",
       "status.item1": "A full manuscript with theory, benchmarks and analyses is under peer review. This page is kept anonymous for that reason.",
-      "status.item2": "A complete pipeline exists end to end: data preprocessing, two-stage training, retrieval and reconstruction, an eight-metric evaluation suite, and ports to EEG, MEG and fMRI.",
+      "status.item2": "A complete pipeline exists end to end: data preprocessing, two-stage training, retrieval and reconstruction, an eight-metric evaluation suite, on both EEG and MEG.",
       "status.item3": "Open problem: cross-subject transfer. A model trained on other people reaches 30.4% Top-1 on EEG (chance 0.5%) but far below within-subject accuracy; closing this gap is the focus of ongoing work.",
       "status.item4": "Code and pretrained weights will be released after review.",
 
       "footer.body":
-        "Anonymous project page · Built on public datasets (THINGS-EEG2, THINGS-MEG, NSD) and open models (OpenCLIP, DFN, MAE, DINOv2, SDXL-Turbo, IP-Adapter, CLIP-Dissect).",
+        "Anonymous project page · Built on public datasets (THINGS-EEG2, THINGS-MEG) and open models (OpenCLIP, DFN, MAE, DINOv2, SDXL-Turbo, IP-Adapter, CLIP-Dissect).",
     },
     zh: {
       "nav.overview": "概览",
       "nav.method": "方法",
       "nav.results": "结果",
-      "nav.fmri": "fMRI",
       "nav.analysis": "可解释性",
       "nav.examples": "示例",
       "nav.why": "价值",
@@ -232,18 +218,6 @@
       "results.data.figcap":
         "THINGS-EEG2 被试内 Raw Top-1（%）随训练数据比例的变化；10 名被试平均。",
 
-      "fmri.label": "超越 EEG 与 MEG",
-      "fmri.title": "同一方案可迁移到 7T fMRI",
-      "fmri.lead":
-        "为检验 BHA 是否依赖头皮记录，我们将其原封不动（仅更换输入分词器为逐被试线性体素适配器）移植到最大的公开 7T fMRI 数据集 Natural Scenes Dataset（NSD）。单一模型在全部 8 名被试上联合训练，在拥有完整测试数据的 4 名被试上评估。",
-      "fmri.stat1.label": "300 类 脑→图像 Top-1（Raw）",
-      "fmri.stat1.note": "CSLS-2 下 96.6% · 4 名被试平均",
-      "fmri.stat2.label": "1000 类 脑→图像 Top-1（Raw）",
-      "fmri.stat2.note": "CSLS-2 下 91.1% · 4 名被试平均",
-      "fmri.stat3.label": "重建 CLIP 辨识率",
-      "fmri.stat3.note": "Inception 0.941 · AlexNet(5) 0.959 · 3 个随机种子平均",
-      "fmri.note":
-        "初步结果：fMRI 数据来自进行中的扩展实验，尚未经过同行评审。此处列出是为了说明架构与模态无关，而非基准性能主张。",
 
       "analysis.label": "可解释性",
       "analysis.title": "可以看到每个专家在匹配什么",
@@ -273,19 +247,19 @@
       "why.card2.title": "生成器无关",
       "why.card2.body": "图像生成器保持冻结，更强的生成器可直接替换而无需重训脑模型。",
       "why.card3.title": "跨模态通用",
-      "why.card3.body": "同一方案运行于 63 通道 EEG、271 通道 MEG 与 7T fMRI，仅需更换输入分词器。",
+      "why.card3.body": "同一方案运行于 63 通道 EEG 与 271 通道 MEG，不同模态间仅需更换输入分词器。",
       "why.card4.title": "可解释",
       "why.card4.body": "归因图与概念选择性神经元揭示解码器依赖的信息，这对临床与消费级应用至关重要。",
 
       "status.label": "进展",
       "status.title": "项目现状",
       "status.item1": "包含理论、基准与分析的完整论文正在同行评审中；本页面因此保持匿名。",
-      "status.item2": "端到端流程已完整：数据预处理、两阶段训练、检索与重建、八指标评估套件，以及 EEG、MEG、fMRI 三种模态的移植。",
+      "status.item2": "端到端流程已完整：数据预处理、两阶段训练、检索与重建、八指标评估套件，覆盖 EEG 与 MEG 两种模态。",
       "status.item3": "待解决问题：跨被试迁移。在他人数据上训练的模型在 EEG 上可达 30.4% Top-1（随机水平 0.5%），但远低于被试内准确率；缩小这一差距是当前工作的重点。",
       "status.item4": "代码与预训练权重将在评审结束后发布。",
 
       "footer.body":
-        "匿名项目主页 · 基于公开数据集（THINGS-EEG2、THINGS-MEG、NSD）与开源模型（OpenCLIP、DFN、MAE、DINOv2、SDXL-Turbo、IP-Adapter、CLIP-Dissect）构建。",
+        "匿名项目主页 · 基于公开数据集（THINGS-EEG2、THINGS-MEG）与开源模型（OpenCLIP、DFN、MAE、DINOv2、SDXL-Turbo、IP-Adapter、CLIP-Dissect）构建。",
     },
   };
 
