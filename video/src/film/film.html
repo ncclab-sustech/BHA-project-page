@@ -1,0 +1,263 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#07080f;color:#fff;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+#stage{position:absolute;inset:0;overflow:hidden}
+.orb{position:absolute;width:1100px;height:1100px;border-radius:50%;filter:blur(120px);opacity:.55;will-change:transform}
+#o1{background:radial-gradient(circle,#2b5cff,transparent 60%)}
+#o2{background:radial-gradient(circle,#7c3aed,transparent 60%)}
+#o3{background:radial-gradient(circle,#ff3d81,transparent 60%)}
+#grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:96px 96px;mask-image:radial-gradient(70% 70% at 50% 50%,#000 10%,transparent 85%)}
+#grain{position:absolute;inset:-200px;opacity:.07;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/></filter><rect width='300' height='300' filter='url(%23n)'/></svg>");mix-blend-mode:overlay;pointer-events:none}
+.scene{position:absolute;inset:0;opacity:0;will-change:transform,opacity}
+.pad{position:absolute;left:140px;right:140px;top:110px;bottom:110px}
+.k{font-family:'JetBrains Mono',monospace;font-size:24px;letter-spacing:.16em;text-transform:uppercase;color:#9fd0ff}
+.h{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;letter-spacing:-.035em;line-height:1.02}
+.h .w{display:inline-block;margin-right:.26em;will-change:transform,opacity,filter}
+.g{background:linear-gradient(95deg,#06c7f1,#2b5cff 30%,#7c3aed 65%,#ff3d81);-webkit-background-clip:text;background-clip:text;color:transparent}
+.gradbg{background:linear-gradient(95deg,#06c7f1,#2b5cff 30%,#7c3aed 65%,#ff3d81)}
+.sub{font-size:34px;color:rgba(255,255,255,.78);line-height:1.4}
+.card{position:absolute;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:28px;backdrop-filter:blur(14px)}
+.mono{font-family:'JetBrains Mono',monospace}
+.big{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;letter-spacing:-.04em;line-height:1}
+.brand{position:absolute;left:140px;bottom:44px;font-family:'Plus Jakarta Sans';font-weight:800;font-size:28px;letter-spacing:.06em;display:flex;align-items:center;gap:14px;opacity:.9}
+.brand i{width:18px;height:18px;border-radius:5px;transform:rotate(45deg);background:linear-gradient(95deg,#06c7f1,#2b5cff,#7c3aed,#ff3d81)}
+.foot{position:absolute;right:140px;bottom:50px;font-family:'JetBrains Mono',monospace;font-size:20px;color:rgba(255,255,255,.4);letter-spacing:.04em}
+.img{position:absolute;border-radius:22px;overflow:hidden;background:#12151e}
+.img img{width:100%;height:100%;object-fit:cover;display:block}
+.img .nz{position:absolute;inset:0;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");mix-blend-mode:screen}
+.lbl{position:absolute;font-family:'JetBrains Mono',monospace;font-size:20px;letter-spacing:.1em;text-transform:uppercase;padding:8px 14px;border-radius:999px;background:rgba(7,8,15,.7);color:#fff}
+.bar{position:absolute;height:34px;border-radius:10px;background:rgba(255,255,255,.08);overflow:hidden}
+.bar i{position:absolute;left:0;top:0;bottom:0;border-radius:10px;background:rgba(255,255,255,.32)}
+.bar.ours i{background:linear-gradient(90deg,#06c7f1,#2b5cff,#7c3aed);box-shadow:0 0 30px rgba(124,58,237,.6)}
+.chip{position:absolute;padding:18px 32px;border-radius:999px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);font-size:32px;font-weight:600}
+.node{position:absolute;border-radius:26px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.node b{font-family:'Plus Jakarta Sans';font-weight:800;font-size:36px}
+.node span{font-size:22px;color:rgba(255,255,255,.65);margin-top:6px}
+svg.wire{position:absolute;left:0;top:0;width:1920px;height:1080px;pointer-events:none}
+svg.wire path{fill:none;stroke:#9fd0ff;stroke-width:3;stroke-linecap:round}
+.orbit{position:absolute;width:0;height:0}
+.sat{position:absolute;transform:translate(-50%,-50%);padding:16px 30px;border-radius:999px;background:rgba(122,162,255,.14);border:1px solid rgba(122,162,255,.55);font-family:'JetBrains Mono';font-size:28px;white-space:nowrap}
+.core{position:absolute;border-radius:50%;background:linear-gradient(95deg,#06c7f1,#2b5cff 30%,#7c3aed 65%,#ff3d81);display:grid;place-items:center;font-family:'Plus Jakarta Sans';font-weight:800;box-shadow:0 0 90px rgba(124,58,237,.7)}
+.badge{position:absolute;display:flex;align-items:center;gap:22px;padding:26px 40px;border-radius:30px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);font-size:34px}
+.badge .big{font-size:64px}
+.stamp{position:absolute;font-family:'Plus Jakarta Sans';font-weight:800;font-size:120px;letter-spacing:-.04em;color:#fff}
+</style></head>
+<body>
+<div id="stage">
+  <div class="orb" id="o1"></div><div class="orb" id="o2"></div><div class="orb" id="o3"></div>
+  <div id="grid"></div>
+  <div id="scenes"></div>
+  <div id="grain"></div>
+</div>
+<script>
+// ---------- tiny tween engine ----------
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const E={out:x=>1-Math.pow(1-x,3),inout:x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2,back:x=>{const c=1.70158;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)},lin:x=>x,expo:x=>x===1?1:1-Math.pow(2,-10*x)};
+const P=(t,s,d,e=E.out)=>e(clamp((t-s)/d));
+const L=(a,b,p)=>a+(b-a)*p;
+const SHOW=encodeURI(window.SHOW_DIR||'');
+const src=(id,k)=>SHOW+'/'+id+'_'+k+'.jpg';
+function el(tag,cls,html,st){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;if(st)for(const k in st){const v=st[k];e.style[k]=(typeof v==='number'&&k!=='opacity'&&k!=='zIndex')?v+'px':v;}return e;}
+function words(parent,text,cls,st){const h=el('div',cls,'',st);text.split(' ').forEach(w=>{const s=el('span','w',w);if(/^\*/.test(w)){s.textContent=w.slice(1);s.classList.add('g')}h.appendChild(s)});parent.appendChild(h);return h;}
+function setWords(h,t,s,stag=.07,dur=.7,outAt=null){const ws=h.querySelectorAll('.w');ws.forEach((w,i)=>{let p=P(t,s+i*stag,dur);let o=p;if(outAt!=null){const q=P(t,outAt+i*.03,.4);o=p*(1-q);w.style.transform=`translateY(${L(40,0,p)-q*30}px)`;}else w.style.transform=`translateY(${L(40,0,p)}px)`;w.style.opacity=o;w.style.filter=`blur(${(1-p)*14}px)`;});}
+function fadeUp(e,t,s,d=.7,dy=40,outAt=null){let p=P(t,s,d);let o=p;let y=L(dy,0,p);if(outAt!=null){const q=P(t,outAt,.45);o*=1-q;y-=q*20}e.style.opacity=o;e.style.transform=`translateY(${y}px)`;}
+function pop(e,t,s,d=.6,outAt=null){let p=P(t,s,d,E.back);let o=clamp(p*1.5);let sc=L(.8,1,p);if(outAt!=null){const q=P(t,outAt,.4);o*=1-q;sc*=1-q*.1}e.style.opacity=o;e.style.transform=`scale(${sc})`;}
+function count(e,t,s,d,to,dec=1,suf='%'){const p=P(t,s,d,E.expo);e.textContent=(to*p).toFixed(dec)+suf;}
+function grow(e,t,s,d,pct){e.style.width=(pct*P(t,s,d))+'%';}
+function materialize(box,t,s,d){const p=P(t,s,d,E.out);const img=box.querySelector('img');const nz=box.querySelector('.nz');img.style.filter=`blur(${(1-p)*30}px) saturate(${.2+.8*p})`;img.style.transform=`scale(${1.15-.15*p})`;nz.style.opacity=(1-p)*.95;box.style.opacity=clamp(p*4);}
+function draw(path,t,s,d){const len=path.getTotalLength();path.style.strokeDasharray=len;path.style.strokeDashoffset=len*(1-P(t,s,d));}
+function imgBox(id,k,st){const b=el('div','img','',st);b.appendChild(el('img','','', {}));b.querySelector('img').src=src(id,k);b.appendChild(el('div','nz'));return b;}
+
+// ---------- scenes ----------
+const scenes=[];
+function scene(build){const root=el('div','scene');document.getElementById('scenes').appendChild(root);const s={root,parts:{}};s.render=build(root,s.parts)||(()=>{});scenes.push(s);return s;}
+function brand(root,foot){root.appendChild(el('div','brand','<i></i>BHA'));if(foot)root.appendChild(el('div','foot',foot));}
+
+const IDS0=['cheetah','strawberry','lamb','goose','orange','suit','panther','espresso','pear','beaver','possum','cheese','lettuce','jelly_bean','omelet','pheasant','coconut','crow','antelope','pajamas','pie','television','gopher','basil'];const IDS=IDS0.concat(IDS0.slice(0,8));
+
+// S1 — hook
+scene((r,p)=>{
+  const wall=el('div','',null,{position:'absolute',left:'-120px',top:'-120px',width:'2300px',height:'1400px',display:'grid',gridTemplateColumns:'repeat(8,1fr)',gap:'14px',opacity:.35});
+  IDS.forEach((id,i)=>{wall.appendChild(imgBox(id,i%2?'gen0':'gt',{position:'relative',height:'270px',borderRadius:'18px'}));});
+  wall.querySelectorAll('.nz').forEach(n=>n.style.opacity=0);
+  r.appendChild(wall);
+  r.appendChild(el('div','',null,{position:'absolute',inset:0,background:'linear-gradient(90deg,rgba(7,8,15,.96) 0%,rgba(7,8,15,.86) 45%,rgba(7,8,15,.45) 100%)'}));
+  const pad=el('div','pad');r.appendChild(pad);
+  const k=el('div','k','BHA · non-invasive brain decoding',{position:'absolute',left:0,top:0});pad.appendChild(k);
+  const q1=words(pad,'Can a computer see what you see?','h',{position:'absolute',left:0,top:140,fontSize:'112px',maxWidth:'1300px'});
+  const q2=words(pad,'Not your thoughts. Just the *picture in front of your eyes.','h',{position:'absolute',left:0,top:140,fontSize:'96px',maxWidth:'1400px'});
+  const q3=words(pad,'No surgery. No implants.','h',{position:'absolute',left:0,top:140,fontSize:'112px'});
+  const t1=words(pad,'See what the brain *sees.','h',{position:'absolute',left:0,top:140,fontSize:'150px',maxWidth:'1300px'});
+  const s1=el('div','sub','A cap of electrodes. A few hundred milliseconds of brain activity.',{position:'absolute',left:0,top:'640px',maxWidth:'1100px',opacity:0});pad.appendChild(s1);
+  brand(r,'a three-minute explainer');
+  return (t,c)=>{wall.style.transform=`translate(${-t*12}px,${-t*6}px) scale(1.04)`;
+    fadeUp(k,t,.2);
+    setWords(q1,t,c[0],.08,.8,c[1]-.2);
+    setWords(q2,t,c[1],.07,.7,c[3]-.2);
+    setWords(q3,t,c[3],.08,.7,c[4]-.2);
+    setWords(t1,t,c[4]+.1,.12,.9);
+    fadeUp(s1,t,c[4]+.9);
+    r.style.setProperty('--wall',1);
+  }
+});
+
+// S2 — setup
+scene((r,p)=>{
+  const pad=el('div','pad');r.appendChild(pad);
+  pad.appendChild(el('div','k','01 · The setup',{position:'absolute',left:0,top:0}));
+  const h=words(pad,'A cap, a screen, and thousands of pictures.','h',{position:'absolute',left:0,top:56,fontSize:'84px',maxWidth:'1500px'});
+  const panel=el('div','card','',{left:0,top:250,width:'1000px',height:'560px',padding:'28px'});pad.appendChild(panel);
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 940 500');svg.setAttribute('width','940');svg.setAttribute('height','500');panel.appendChild(svg);
+  const paths=[];(window.EEG||[]).slice(0,8).forEach((ch,c)=>{const row=500/9;let d='';ch.forEach((v,i)=>{d+=(i?'L':'M')+(i/(ch.length-1)*940).toFixed(1)+' '+(row*(c+1)-v*row*.42).toFixed(1)+' '});const pa=document.createElementNS('http://www.w3.org/2000/svg','path');pa.setAttribute('d',d);pa.setAttribute('fill','none');pa.setAttribute('stroke',c>=5?'#9fd0ff':'rgba(255,255,255,.35)');pa.setAttribute('stroke-width',c>=5?2.6:1.6);svg.appendChild(pa);paths.push(pa);});
+  panel.appendChild(el('div','mono','real EEG · participant 08 · 1 000 ms',{position:'absolute',right:'30px',top:'24px',fontSize:'20px',color:'#9fd0ff'}));
+  const facts=[['63','electrodes on the scalp'],['250 Hz','sampling rate'],['16,540','training images per person'],['200','held-out test images'],['10 + 4','EEG and MEG participants'],['public','THINGS-EEG2 · THINGS-MEG']];
+  const cards=facts.map((f,i)=>{const c=el('div','card',`<div class="big g" style="font-size:58px">${f[0]}</div><div style="font-size:23px;color:rgba(255,255,255,.7);margin-top:8px">${f[1]}</div>`,{left:(1040+(i%2)*310)+'px',top:(250+Math.floor(i/2)*190)+'px',width:'290px',padding:'26px 28px',opacity:0});pad.appendChild(c);return c;});
+  brand(r,'public benchmarks · anyone can check');
+  return (t,c)=>{setWords(h,t,c[0]);paths.forEach((pa,i)=>draw(pa,t,c[1]+i*.08,1.4));fadeUp(panel,t,c[1]-.2,.8);cards.forEach((cd,i)=>pop(cd,t,(i<2?c[1]+.4:i<4?c[2]:c[3])+(i%2)*.12,.6));}
+});
+
+// S3 — prior work
+scene((r,p)=>{
+  const pad=el('div','pad');r.appendChild(pad);
+  pad.appendChild(el('div','k','02 · How it was done before',{position:'absolute',left:0,top:0}));
+  const h=words(pad,'Predict one vision model, then search or generate.','h',{position:'absolute',left:0,top:56,fontSize:'84px',maxWidth:'1500px'});
+  const n1=el('div','node','<div style="font-size:40px">〰</div><b>Brain signal</b><span>EEG / MEG</span>',{left:'0px',top:'360px',width:'360px',height:'220px',opacity:0});
+  const n2=el('div','node','<div style="font-size:40px">◎</div><b>Predict CLIP features</b><span>one vision model</span>',{left:'520px',top:'360px',width:'460px',height:'220px',opacity:0});
+  const n3=el('div','node','<div style="font-size:40px">⌕</div><b>Search a gallery</b><span>retrieval</span>',{left:'1140px',top:'270px',width:'420px',height:'180px',opacity:0});
+  const n4=el('div','node','<div style="font-size:40px">✦</div><b>Drive a generator</b><span>reconstruction</span>',{left:'1140px',top:'490px',width:'420px',height:'180px',opacity:0});
+  [n1,n2,n3,n4].forEach(n=>pad.appendChild(n));
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('class','wire');const mk=d=>{const pa=document.createElementNS('http://www.w3.org/2000/svg','path');pa.setAttribute('d',d);svg.appendChild(pa);return pa};
+  const w1=mk('M500 580 L 660 580'),w2=mk('M1120 580 C 1200 580, 1200 470, 1280 470'),w3=mk('M1120 580 C 1200 580, 1200 690, 1280 690');r.appendChild(svg);
+  const punch=words(pad,'Which vision model to *imitate?','h',{position:'absolute',left:0,top:760,fontSize:'72px'});
+  const note=el('div','sub','The standard recipe. It works — and it silently decides',{position:'absolute',left:0,top:700,opacity:0});pad.appendChild(note);
+  brand(r,'prior work · 2023 – 2026');
+  return (t,c)=>{setWords(h,t,c[0]);pop(n1,t,c[1]);draw(w1,t,c[1]+.3,.5);pop(n2,t,c[1]+.5);draw(w2,t,c[2],.5);draw(w3,t,c[2]+.1,.5);pop(n3,t,c[2]+.3);pop(n4,t,c[2]+.45);fadeUp(note,t,c[3]);setWords(punch,t,c[4],.08,.7);n2.style.boxShadow=t>c[4]?`0 0 ${40*P(t,c[4],.8)}px rgba(255,61,129,.8)`:'none';n2.style.borderColor=t>c[4]?'#ff3d81':'';}
+});
+
+// S4 — the catch
+scene((r,p)=>{
+  const pad=el('div','pad');r.appendChild(pad);
+  pad.appendChild(el('div','k','03 · The catch',{position:'absolute',left:0,top:0}));
+  const h=words(pad,'Every vision model sees a different picture.','h',{position:'absolute',left:0,top:56,fontSize:'84px',maxWidth:'1500px'});
+  const models=[['CLIP','meaning','none'],['DINOv2','shape & parts','grayscale(1) contrast(1.6)'],['MAE','texture & layout','blur(7px) saturate(.6)'],['DFN','web semantics','saturate(1.9) hue-rotate(12deg)']];
+  const cards=models.map((m,i)=>{const c=el('div','card','',{left:(i*410)+'px',top:'230px',width:'380px',height:'560px',padding:'18px',opacity:0});const im=el('div','img','',{position:'relative',width:'344px',height:'344px',borderRadius:'18px'});im.appendChild(el('img'));im.querySelector('img').src=src('cheetah','gt');im.querySelector('img').style.filter=m[2];c.appendChild(im);c.appendChild(el('div','big',m[0],{fontSize:'40px',marginTop:'20px'}));c.appendChild(el('div','',`sees <b style="color:#fff">${m[1]}</b>`,{fontSize:'24px',color:'rgba(255,255,255,.7)',marginTop:'4px'}));pad.appendChild(c);return c;});
+  const l1=words(pad,'Pick one — and you throw the rest away.','h',{position:'absolute',left:0,top:'812px',fontSize:'48px'});
+  const l2=words(pad,'Average them — and you *blur their differences.','h',{position:'absolute',left:0,top:'812px',fontSize:'48px'});
+  brand(r,'same photo · four vision models');
+  return (t,c)=>{setWords(h,t,c[0]);cards.forEach((cd,i)=>pop(cd,t,c[1+Math.min(i,3)]+(i===3?.3:0),.6));
+    const dim=P(t,c[5],.6),blur=P(t,c[6],.9);
+    cards.forEach((cd,i)=>{cd.style.filter=`brightness(${i===0?1:L(1,.35,dim)}) blur(${blur*10}px)`;cd.style.transform+=``;});
+    setWords(l1,t,c[5],.06,.6,c[6]-.1);setWords(l2,t,c[6],.06,.6);
+    if(blur>0){cards.forEach((cd,i)=>{cd.style.transform=`scale(${L(.8,1,P(t,c[1+Math.min(i,3)],.6,E.back))}) translateX(${(1.5-i)*blur*180}px)`;cd.style.opacity=L(1,.6,blur)});}
+  }
+});
+
+// S5 — the idea
+scene((r,p)=>{
+  const pad=el('div','pad');r.appendChild(pad);
+  pad.appendChild(el('div','k','04 · The idea',{position:'absolute',left:0,top:0}));
+  const h=words(pad,'One brain model, *four teachers.','h',{position:'absolute',left:0,top:56,fontSize:'84px'});
+  const core=el('div','core','BHA',{left:'250px',top:'430px',width:'220px',height:'220px',fontSize:'52px',opacity:0});pad.appendChild(core);
+  const sats=['OpenCLIP','DFN','MAE','DINOv2'].map((n,i)=>{const s=el('div','sat',n,{left:'360px',top:'540px',opacity:0});pad.appendChild(s);return s;});
+  const frozen=el('div','lbl','❄ frozen',{left:'300px',top:'760px',opacity:0,color:'#9fd0ff',fontSize:'22px'});pad.appendChild(frozen);
+  const col=el('div','',null,{position:'absolute',left:'900px',top:'330px',width:'740px'});pad.appendChild(col);
+  const rows=[['4 teacher read-outs','each predicts its teacher\'s own space'],['learned weights','how much each opinion counts'],['frozen generator ❄','never retrained — the prediction steers it']].map((x,i)=>{const d=el('div','card',`<div style="font-family:'Plus Jakarta Sans';font-weight:800;font-size:38px">${x[0]}</div><div style="font-size:24px;color:rgba(255,255,255,.7);margin-top:6px">${x[1]}</div>`,{position:'relative',padding:'26px 32px',marginBottom:'22px',opacity:0});col.appendChild(d);return d;});
+  const pic=imgBox('lamb','gen0',{left:'1380px',top:'330px',width:'260px',height:'260px',opacity:0});pad.appendChild(pic);
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('class','wire');r.appendChild(svg);
+  const wires=sats.map(()=>{const pa=document.createElementNS('http://www.w3.org/2000/svg','path');pa.setAttribute('stroke','rgba(159,208,255,.6)');svg.appendChild(pa);return pa;});
+  const arrow=document.createElementNS('http://www.w3.org/2000/svg','path');arrow.setAttribute('d','M620 650 C 800 650, 820 470, 1030 470');arrow.setAttribute('stroke','#ff3d81');svg.appendChild(arrow);
+  brand(r,'Beyond Hierarchical Alignment');
+  return (t,c)=>{setWords(h,t,c[0]);pop(core,t,c[1],.7);
+    sats.forEach((s,i)=>{const p=P(t,c[1]+.3+i*.15,.9,E.out);const ang=-Math.PI/2+i*Math.PI/2+t*.25;const R=L(140,250,p);const x=360+Math.cos(ang)*R,y=540+Math.sin(ang)*R*.72;s.style.left=x+'px';s.style.top=y+'px';s.style.opacity=p;wires[i].setAttribute('d',`M500 650 L${x+140} ${y+110}`);wires[i].style.opacity=p*.8;});
+    core.style.boxShadow=`0 0 ${90+30*Math.sin(t*3)}px rgba(124,58,237,.7)`;
+    pop(frozen,t,c[2],.5);rows.forEach((d,i)=>fadeUp(d,t,c[2]+.3+i*.25));
+    draw(arrow,t,c[4],.6);materialize(pic,t,c[4]+.3,1.2);
+  }
+});
+
+// S6 — results
+scene((r,p)=>{
+  const pad=el('div','pad');r.appendChild(pad);
+  pad.appendChild(el('div','k','05 · Results',{position:'absolute',left:0,top:0}));
+  const h=words(pad,'A new state of the art on EEG *and MEG.','h',{position:'absolute',left:0,top:56,fontSize:'84px',maxWidth:'1500px'});
+  const gridEl=el('div','',null,{position:'absolute',left:0,top:'240px',width:'1640px',display:'grid',gridTemplateColumns:'repeat(40,1fr)',gap:'6px',opacity:0});for(let i=0;i<200;i++){gridEl.appendChild(el('div','',null,{height:'26px',borderRadius:'5px',background:'rgba(255,255,255,.14)'}));}pad.appendChild(gridEl);
+  const mkChart=(title,rows,x)=>{const box=el('div','card','',{left:x+'px',top:'240px',width:'790px',height:'500px',padding:'30px 38px',opacity:0});box.appendChild(el('div','k',title,{color:'#c7d2ff',marginBottom:'18px',fontSize:'22px'}));const items=rows.map(([n,v,o],i)=>{const row=el('div','',null,{position:'relative',height:'62px'});row.appendChild(el('div','',n,{position:'absolute',left:0,top:'14px',fontSize:'28px',fontWeight:o?700:400,color:o?'#fff':'rgba(255,255,255,.7)'}));const b=el('div','bar'+(o?' ours':''),'<i></i>',{left:'230px',top:'14px',width:'360px'});row.appendChild(b);const val=el('div','mono','0',{position:'absolute',left:'610px',top:'14px',fontSize:'30px',color:o?'#c7d2ff':'rgba(255,255,255,.85)',fontWeight:o?600:400});row.appendChild(val);box.appendChild(row);return{b:b.querySelector('i'),val,v};});pad.appendChild(box);return{box,items};};
+  const eeg=mkChart('EEG · Top-1 of 200 candidates',[['BHA (ours)',93.9,1],['DMSA',82.6],['LVBP',80.0],['MBP',75.7],['HyFI',68.2],['UBP',50.9]],0);
+  const meg=mkChart('MEG · Top-1 of 200 candidates',[['BHA (ours)',68.1,1],['DMSA',48.0],['LVBP',44.0],['HyFI',35.8],['MBP',33.9],['UBP',26.7]],850);
+  const badge=el('div','badge','<span class="big g">25%</span><span>of the training data — the gain still holds<br><span class="mono" style="font-size:22px;color:rgba(255,255,255,.55)">53.3% vs 42.7% for the backbone alone</span></span>',{left:0,top:'752px',opacity:0,padding:'16px 30px'});pad.appendChild(badge);
+  brand(r,'Table 1 · THINGS-EEG2 / THINGS-MEG');
+  return (t,c)=>{setWords(h,t,c[0]);
+    const gp=P(t,c[1],.5),gq=P(t,c[2]-.3,.5);gridEl.style.opacity=gp*(1-gq);[...gridEl.children].forEach((d,i)=>{const pp=P(t,c[1]+(i%40)*.012+Math.floor(i/40)*.05,.3);d.style.transform=`scale(${pp})`;d.style.background=i===77&&t>c[1]+1.2?'#ff3d81':'rgba(255,255,255,.14)';d.style.boxShadow=i===77&&t>c[1]+1.2?'0 0 20px #ff3d81':'none';});
+    fadeUp(eeg.box,t,c[2]-.1,.7);eeg.items.forEach((it,i)=>{const s=i===0?c[2]:c[3]+(i-1)*.12;grow(it.b,t,s,1.1,it.v);count(it.val,t,s,1.1,it.v);});
+    fadeUp(meg.box,t,c[4]-.1,.7);meg.items.forEach((it,i)=>{const s=c[4]+i*.12;grow(it.b,t,s,1.1,it.v);count(it.val,t,s,1.1,it.v);});
+    pop(badge,t,c[5],.6);
+  }
+});
+
+// S7 — reconstruction
+scene((r,p)=>{
+  const pad=el('div','pad');r.appendChild(pad);
+  pad.appendChild(el('div','k','06 · Reconstruction',{position:'absolute',left:0,top:0}));
+  const h=words(pad,'From brainwaves *to pictures.','h',{position:'absolute',left:0,top:56,fontSize:'84px'});
+  const ids=['cheetah','lamb','strawberry','goose','orange','suit','panther','pear'];
+  pad.appendChild(el('div','mono','SEEN',{position:'absolute',left:0,top:'330px',fontSize:'22px',color:'rgba(255,255,255,.55)'}));
+  pad.appendChild(el('div','mono','<span class="g">DECODED<br>from EEG</span>',{position:'absolute',left:0,top:'560px',fontSize:'22px'}));
+  const tops=ids.map((id,i)=>{const b=imgBox(id,'gt',{left:(170+i*185)+'px',top:'250px',width:'170px',height:'170px',opacity:0});b.querySelector('.nz').style.opacity=0;pad.appendChild(b);return b;});
+  const bots=ids.map((id,i)=>{const b=imgBox(id,'gen0',{left:(170+i*185)+'px',top:'450px',width:'170px',height:'170px',opacity:0,outline:'3px solid rgba(124,58,237,.8)',outlineOffset:'-3px'});pad.appendChild(b);return b;});
+  const b1=el('div','badge','<span class="big g" id="pc">+0%</span><span>pixel fidelity vs. the best prior method</span>',{left:0,top:'700px',opacity:0});
+  const b2=el('div','badge','<span class="big" style="color:#9fd0ff">0 ❄</span><span>generator weights changed</span>',{left:'900px',top:'700px',opacity:0});pad.appendChild(b1);pad.appendChild(b2);
+  brand(r,'ten participants · held-out images · frozen SDXL-Turbo');
+  return (t,c)=>{setWords(h,t,c[0]);tops.forEach((b,i)=>fadeUp(b,t,c[0]+.6+i*.08,.5,-30));bots.forEach((b,i)=>materialize(b,t,c[1]+.2+i*.45,1.3));pop(b1,t,c[2],.6);count(b1.querySelector('#pc'),t,c[2],1.2,42,0,'%');b1.querySelector('#pc').textContent='+'+b1.querySelector('#pc').textContent;pop(b2,t,c[3]+.1,.6);}
+});
+
+// S8 — discussion
+scene((r,p)=>{
+  const pad=el('div','pad');r.appendChild(pad);
+  pad.appendChild(el('div','k','07 · Two questions we always get',{position:'absolute',left:0,top:0}));
+  const q1=el('div','card','<div class="k" style="color:#c7d2ff;margin-bottom:14px">Q</div><div class="big" style="font-size:54px;letter-spacing:-.03em;max-width:470px">Is this mind reading?</div>',{left:0,top:'150px',width:'790px',height:'420px',padding:'44px 48px',opacity:0});
+  const a1=el('div','sub','It decodes the visual response to a picture on a screen, in a lab, with the person\'s consent.',{position:'absolute',left:'48px',top:'280px',width:'690px',opacity:0});q1.appendChild(a1);
+  const s1=el('div','stamp','No.',{right:'44px',top:'44px',opacity:0,color:'#ff3d81'});q1.appendChild(s1);
+  const q2=el('div','card','<div class="k" style="color:#c7d2ff;margin-bottom:14px">Q</div><div class="big" style="font-size:54px;letter-spacing:-.03em;max-width:380px">Does it work on a new person?</div>',{left:'850px',top:'150px',width:'790px',height:'420px',padding:'44px 48px',opacity:0});
+  const s2=el('div','stamp','Not yet.',{right:'44px',top:'62px',opacity:0,color:'#9fd0ff',fontSize:'62px'});q2.appendChild(s2);
+  const bars=[['chance','0.5%',0.5,'rgba(255,255,255,.35)'],['new person',"30%",30,'#9fd0ff'],['within-subject','94%',94,'linear-gradient(90deg,#06c7f1,#2b5cff,#7c3aed)']].map((x,i)=>{const row=el('div','',null,{position:'absolute',left:'48px',top:(250+i*52)+'px',width:'690px',height:'40px',opacity:0});row.appendChild(el('div','mono',x[0],{position:'absolute',left:0,top:'8px',fontSize:'20px',color:'rgba(255,255,255,.7)'}));const b=el('div','bar','<i></i>',{left:'190px',top:'6px',width:'380px',height:'26px'});b.querySelector('i').style.background=x[3];row.appendChild(b);row.appendChild(el('div','mono',x[1],{position:'absolute',left:'590px',top:'8px',fontSize:'22px'}));q2.appendChild(row);return{row,b:b.querySelector('i'),v:x[2]};});
+  pad.appendChild(q1);pad.appendChild(q2);
+  const nxt=words(pad,'That is the *next problem we are solving.','h',{position:'absolute',left:0,top:660,fontSize:'64px'});
+  brand(r,'reviewer discussion');
+  return (t,c)=>{fadeUp(q1,t,c[1]);pop(s1,t,c[2],.4);fadeUp(a1,t,c[3],.6,20);fadeUp(q2,t,c[4]);pop(s2,t,c[5],.4);bars.forEach((b,i)=>{fadeUp(b.row,t,c[6]+i*.2,.5,10);grow(b.b,t,c[6]+i*.2+.1,.9,b.v);});setWords(nxt,t,c[8],.07,.6);}
+});
+
+// S9 — close
+scene((r,p)=>{
+  const wall=el('div','',null,{position:'absolute',left:'-80px',top:'-80px',width:'2200px',height:'1300px',display:'grid',gridTemplateColumns:'repeat(8,1fr)',gap:'14px',opacity:.22});
+  IDS.forEach((id,i)=>{wall.appendChild(imgBox(id,i%2?'gt':'gen0',{position:'relative',height:'260px',borderRadius:'18px'}));});wall.querySelectorAll('.nz').forEach(n=>n.style.opacity=0);r.appendChild(wall);
+  r.appendChild(el('div','',null,{position:'absolute',inset:0,background:'linear-gradient(180deg,rgba(7,8,15,.85),rgba(7,8,15,.6) 50%,rgba(7,8,15,.9))'}));
+  const pad=el('div','pad');r.appendChild(pad);
+  const chips=['Non-invasive','Data-efficient','Generator-agnostic','Transparent'].map((x,i)=>{const ch=el('div','chip',x,{left:[0,290,590,960][i]+'px',top:'90px',opacity:0});pad.appendChild(ch);return ch;});
+  const h=words(pad,'A new interface between *mind and machine.','h',{position:'absolute',left:0,top:260,fontSize:'120px',maxWidth:'1500px'});
+  const last=words(pad,'And this is just the first picture.','h',{position:'absolute',left:0,top:640,fontSize:'60px',fontWeight:600,color:'rgba(255,255,255,.8)'});
+  const mark=el('div','',`<div style="display:flex;align-items:center;gap:22px"><i style="width:34px;height:34px;border-radius:9px;transform:rotate(45deg);display:inline-block" class="gradbg"></i><span class="big" style="font-size:72px;letter-spacing:.04em">BHA</span></div>`,{position:'absolute',left:0,top:800,opacity:0});pad.appendChild(mark);
+  r.appendChild(el('div','foot','manuscript under review · anonymous'));
+  return (t,c)=>{wall.style.transform=`translate(${-t*8}px,${-t*5}px)`;chips.forEach((ch,i)=>pop(ch,t,c[Math.min(i,2)]+(i>=2?(i-2)*.25:0),.5));setWords(h,t,c[3],.1,.9);setWords(last,t,c[4],.07,.7);fadeUp(mark,t,c[4]+1);}
+});
+
+// ---------- global seek ----------
+let TL=null;
+window.init=function(tl){TL=tl;};
+window.seek=function(t){
+  // background motion
+  const o1=document.getElementById('o1'),o2=document.getElementById('o2'),o3=document.getElementById('o3');
+  o1.style.transform=`translate(${-200+Math.sin(t*.11)*160}px,${-250+Math.cos(t*.09)*120}px)`;
+  o2.style.transform=`translate(${1000+Math.sin(t*.08+1)*180}px,${-300+Math.cos(t*.12+2)*140}px)`;
+  o3.style.transform=`translate(${700+Math.sin(t*.1+3)*220}px,${500+Math.cos(t*.07+1)*120}px)`;
+  document.getElementById('grain').style.transform=`translate(${(t*37)%120}px,${(t*23)%120}px)`;
+  const X=.7; // crossfade seconds
+  scenes.forEach((s,i)=>{const sc=TL.scenes[i];const lt=t-sc.start;const inP=P(t,sc.start-X*.5,X,E.inout);const outP=i<scenes.length-1?P(t,sc.start+sc.dur-X*.5,X,E.inout):0;const vis=inP>0&&outP<1;s.root.style.display=vis?'block':'none';if(!vis)return;
+    s.root.style.opacity=inP*(1-outP);
+    const zoom=1+0.025*clamp(lt/sc.dur)+(1-inP)*.03;s.root.style.transform=`scale(${zoom}) translateY(${(1-inP)*20-outP*30}px)`;
+    const cues=sc.cues.map(c=>c-sc.start);s.render(lt,cues);
+  });
+};
+</script></body></html>
