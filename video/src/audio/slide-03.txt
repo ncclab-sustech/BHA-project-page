@@ -1,0 +1,1 @@
+Modern decoders don't predict pixels directly. They predict what a pretrained vision model, usually CLIP, would compute for the image. Then they search a gallery, or drive an image generator, with that prediction. It works, and it is where the field was before us. But it quietly bakes in a choice: which vision model to imitate.

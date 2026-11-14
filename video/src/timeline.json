@@ -1,0 +1,346 @@
+{
+ "duration": 193.059,
+ "chapters": [
+  {
+   "slide": 0,
+   "title": "See what the brain sees.",
+   "start": 0.0
+  },
+  {
+   "slide": 1,
+   "title": "A cap, a screen, and thousands of pictures.",
+   "start": 17.784
+  },
+  {
+   "slide": 2,
+   "title": "Predict one vision model, then search or generate.",
+   "start": 38.896
+  },
+  {
+   "slide": 3,
+   "title": "Every vision model sees a different picture.",
+   "start": 60.349
+  },
+  {
+   "slide": 4,
+   "title": "One brain model, four teachers.",
+   "start": 82.507
+  },
+  {
+   "slide": 5,
+   "title": "A new state of the art on EEG and MEG.",
+   "start": 106.328
+  },
+  {
+   "slide": 6,
+   "title": "From brainwaves to pictures.",
+   "start": 130.491
+  },
+  {
+   "slide": 7,
+   "title": "Is this mind reading? Does it work on anyone?",
+   "start": 154.504
+  },
+  {
+   "slide": 8,
+   "title": "A new interface between mind and machine.",
+   "start": 178.539
+  }
+ ],
+ "cues": [
+  {
+   "slide": 0,
+   "start": 0.5,
+   "end": 2.532,
+   "text": "Can a computer see what you see?"
+  },
+  {
+   "slide": 0,
+   "start": 2.532,
+   "end": 3.993,
+   "text": "Not read your thoughts."
+  },
+  {
+   "slide": 0,
+   "start": 3.993,
+   "end": 6.469,
+   "text": "Just the picture in front of your eyes."
+  },
+  {
+   "slide": 0,
+   "start": 6.469,
+   "end": 10.534,
+   "text": "For decades, that took surgery, and electrodes inside the brain."
+  },
+  {
+   "slide": 0,
+   "start": 10.534,
+   "end": 16.884,
+   "text": "BHA does it from the outside: a cap of electrodes, and a few hundred milliseconds of brain activity."
+  },
+  {
+   "slide": 1,
+   "start": 18.284,
+   "end": 19.556,
+   "text": "Here is the setup."
+  },
+  {
+   "slide": 1,
+   "start": 19.556,
+   "end": 28.175,
+   "text": "A volunteer wears a sixty-three electrode E E G cap and watches thousands of photographs, each for a fraction of a second."
+  },
+  {
+   "slide": 1,
+   "start": 28.175,
+   "end": 31.567,
+   "text": "We record the brain's response to every picture."
+  },
+  {
+   "slide": 1,
+   "start": 31.567,
+   "end": 37.996,
+   "text": "The data is public, the THINGS E E G and M E G benchmarks, so anyone can check our numbers."
+  },
+  {
+   "slide": 2,
+   "start": 39.396,
+   "end": 42.234,
+   "text": "Modern decoders don't predict pixels directly."
+  },
+  {
+   "slide": 2,
+   "start": 42.234,
+   "end": 47.602,
+   "text": "They predict what a pretrained vision model, usually CLIP, would compute for the image."
+  },
+  {
+   "slide": 2,
+   "start": 47.602,
+   "end": 52.415,
+   "text": "Then they search a gallery, or drive an image generator, with that prediction."
+  },
+  {
+   "slide": 2,
+   "start": 52.415,
+   "end": 55.5,
+   "text": "It works, and it is where the field was before us."
+  },
+  {
+   "slide": 2,
+   "start": 55.5,
+   "end": 59.449,
+   "text": "But it quietly bakes in a choice: which vision model to imitate."
+  },
+  {
+   "slide": 3,
+   "start": 60.849,
+   "end": 62.081,
+   "text": "That choice matters."
+  },
+  {
+   "slide": 3,
+   "start": 62.081,
+   "end": 63.621,
+   "text": "CLIP cares about meaning."
+  },
+  {
+   "slide": 3,
+   "start": 63.621,
+   "end": 67.317,
+   "text": "Self-supervised models like DINO care about shape and parts."
+  },
+  {
+   "slide": 3,
+   "start": 67.317,
+   "end": 70.396,
+   "text": "Masked autoencoders care about texture and layout."
+  },
+  {
+   "slide": 3,
+   "start": 70.396,
+   "end": 76.494,
+   "text": "Each one sees a picture differently, and the brain predicts some of those views better than others."
+  },
+  {
+   "slide": 3,
+   "start": 76.494,
+   "end": 78.835,
+   "text": "Pick one, and you throw the rest away."
+  },
+  {
+   "slide": 3,
+   "start": 78.835,
+   "end": 81.607,
+   "text": "Average them, and you blur their differences."
+  },
+  {
+   "slide": 4,
+   "start": 83.007,
+   "end": 86.36,
+   "text": "BHA, Beyond Hierarchical Alignment, stops choosing."
+  },
+  {
+   "slide": 4,
+   "start": 86.36,
+   "end": 90.239,
+   "text": "One brain model is trained by four vision teachers at once."
+  },
+  {
+   "slide": 4,
+   "start": 90.239,
+   "end": 100.234,
+   "text": "Then, with the brain model frozen, each teacher gets its own small read-out, and a learned gate decides, for every single query, whose opinion to trust."
+  },
+  {
+   "slide": 4,
+   "start": 100.234,
+   "end": 102.798,
+   "text": "The image generator is never retrained."
+  },
+  {
+   "slide": 4,
+   "start": 102.798,
+   "end": 105.428,
+   "text": "The brain's prediction simply steers it."
+  },
+  {
+   "slide": 5,
+   "start": 106.828,
+   "end": 107.666,
+   "text": "Does it work?"
+  },
+  {
+   "slide": 5,
+   "start": 107.666,
+   "end": 113.47,
+   "text": "Show the model two hundred candidate pictures, and ask which one the person is looking at."
+  },
+  {
+   "slide": 5,
+   "start": 113.47,
+   "end": 118.5,
+   "text": "On E E G, BHA picks the right one ninety-three point nine percent of the time."
+  },
+  {
+   "slide": 5,
+   "start": 118.5,
+   "end": 121.272,
+   "text": "The previous best was eighty-two point six."
+  },
+  {
+   "slide": 5,
+   "start": 121.272,
+   "end": 125.206,
+   "text": "On M E G, sixty-eight point one percent, against forty-eight."
+  },
+  {
+   "slide": 5,
+   "start": 125.206,
+   "end": 129.591,
+   "text": "And the gain holds even when we train on only a quarter of the data."
+  },
+  {
+   "slide": 6,
+   "start": 130.991,
+   "end": 133.898,
+   "text": "Beyond picking from a gallery, BHA generates."
+  },
+  {
+   "slide": 6,
+   "start": 133.898,
+   "end": 141.264,
+   "text": "Every image on the bottom row was produced from one person's E E G response to a photo they had never seen before."
+  },
+  {
+   "slide": 6,
+   "start": 141.264,
+   "end": 153.604,
+   "text": "Pixel-level fidelity is up forty-two percent over the strongest published method, and the meaning of the picture comes through more often, with the generator itself left completely untouched."
+  },
+  {
+   "slide": 7,
+   "start": 155.004,
+   "end": 156.857,
+   "text": "Two questions we always get."
+  },
+  {
+   "slide": 7,
+   "start": 156.857,
+   "end": 158.247,
+   "text": "Is this mind reading?"
+  },
+  {
+   "slide": 7,
+   "start": 158.247,
+   "end": 158.446,
+   "text": "No."
+  },
+  {
+   "slide": 7,
+   "start": 158.446,
+   "end": 164.601,
+   "text": "It decodes the visual response to a picture on a screen, in a lab, with the person's consent."
+  },
+  {
+   "slide": 7,
+   "start": 164.601,
+   "end": 167.711,
+   "text": "Does it work on a new person, without training?"
+  },
+  {
+   "slide": 7,
+   "start": 167.711,
+   "end": 168.241,
+   "text": "Not yet."
+  },
+  {
+   "slide": 7,
+   "start": 168.241,
+   "end": 171.351,
+   "text": "Cross-subject accuracy is about thirty percent."
+  },
+  {
+   "slide": 7,
+   "start": 171.351,
+   "end": 175.124,
+   "text": "That is sixty times chance, but far below within-subject."
+  },
+  {
+   "slide": 7,
+   "start": 175.124,
+   "end": 177.639,
+   "text": "It is the next problem we are solving."
+  },
+  {
+   "slide": 8,
+   "start": 179.039,
+   "end": 179.936,
+   "text": "Non-invasive."
+  },
+  {
+   "slide": 8,
+   "start": 179.936,
+   "end": 180.972,
+   "text": "Data-efficient."
+  },
+  {
+   "slide": 8,
+   "start": 180.972,
+   "end": 186.427,
+   "text": "Built on a generator that gets better every month, without us lifting a finger."
+  },
+  {
+   "slide": 8,
+   "start": 186.427,
+   "end": 189.742,
+   "text": "BHA is a new interface between mind and machine."
+  },
+  {
+   "slide": 8,
+   "start": 189.742,
+   "end": 192.159,
+   "text": "And this is just the first picture."
+  }
+ ]
+}

@@ -1,0 +1,1 @@
+BHA, Beyond Hierarchical Alignment, stops choosing. One brain model is trained by four vision teachers at once. Then, with the brain model frozen, each teacher gets its own small read-out, and a learned gate decides, for every single query, whose opinion to trust. The image generator is never retrained. The brain's prediction simply steers it.

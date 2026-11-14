@@ -1,0 +1,1 @@
+Does it work? Show the model two hundred candidate pictures, and ask which one the person is looking at. On E E G, BHA picks the right one ninety-three point nine percent of the time. The previous best was eighty-two point six. On M E G, sixty-eight point one percent, against forty-eight. And the gain holds even when we train on only a quarter of the data.

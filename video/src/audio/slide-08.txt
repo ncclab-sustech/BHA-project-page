@@ -1,0 +1,1 @@
+Two questions we always get. Is this mind reading? No. It decodes the visual response to a picture on a screen, in a lab, with the person's consent. Does it work on a new person, without training? Not yet. Cross-subject accuracy is about thirty percent. That is sixty times chance, but far below within-subject. It is the next problem we are solving.

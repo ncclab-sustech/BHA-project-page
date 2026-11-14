@@ -1,0 +1,1 @@
+That choice matters. CLIP cares about meaning. Self-supervised models like DINO care about shape and parts. Masked autoencoders care about texture and layout. Each one sees a picture differently, and the brain predicts some of those views better than others. Pick one, and you throw the rest away. Average them, and you blur their differences.

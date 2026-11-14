@@ -1,0 +1,196 @@
+1
+00:00:00,500 --> 00:00:02,532
+Can a computer see what you see?
+
+2
+00:00:02,532 --> 00:00:03,993
+Not read your thoughts.
+
+3
+00:00:03,993 --> 00:00:06,469
+Just the picture in front of your eyes.
+
+4
+00:00:06,469 --> 00:00:10,534
+For decades, that took surgery, and electrodes inside the brain.
+
+5
+00:00:10,534 --> 00:00:16,884
+BHA does it from the outside: a cap of electrodes, and a few hundred milliseconds of brain activity.
+
+6
+00:00:18,284 --> 00:00:19,556
+Here is the setup.
+
+7
+00:00:19,556 --> 00:00:28,175
+A volunteer wears a sixty-three electrode E E G cap and watches thousands of photographs, each for a fraction of a second.
+
+8
+00:00:28,175 --> 00:00:31,567
+We record the brain's response to every picture.
+
+9
+00:00:31,567 --> 00:00:37,996
+The data is public, the THINGS E E G and M E G benchmarks, so anyone can check our numbers.
+
+10
+00:00:39,396 --> 00:00:42,234
+Modern decoders don't predict pixels directly.
+
+11
+00:00:42,234 --> 00:00:47,602
+They predict what a pretrained vision model, usually CLIP, would compute for the image.
+
+12
+00:00:47,602 --> 00:00:52,415
+Then they search a gallery, or drive an image generator, with that prediction.
+
+13
+00:00:52,415 --> 00:00:55,500
+It works, and it is where the field was before us.
+
+14
+00:00:55,500 --> 00:00:59,449
+But it quietly bakes in a choice: which vision model to imitate.
+
+15
+00:01:00,849 --> 00:01:02,081
+That choice matters.
+
+16
+00:01:02,081 --> 00:01:03,621
+CLIP cares about meaning.
+
+17
+00:01:03,621 --> 00:01:07,317
+Self-supervised models like DINO care about shape and parts.
+
+18
+00:01:07,317 --> 00:01:10,396
+Masked autoencoders care about texture and layout.
+
+19
+00:01:10,396 --> 00:01:16,494
+Each one sees a picture differently, and the brain predicts some of those views better than others.
+
+20
+00:01:16,494 --> 00:01:18,835
+Pick one, and you throw the rest away.
+
+21
+00:01:18,835 --> 00:01:21,607
+Average them, and you blur their differences.
+
+22
+00:01:23,007 --> 00:01:26,360
+BHA, Beyond Hierarchical Alignment, stops choosing.
+
+23
+00:01:26,360 --> 00:01:30,239
+One brain model is trained by four vision teachers at once.
+
+24
+00:01:30,239 --> 00:01:40,234
+Then, with the brain model frozen, each teacher gets its own small read-out, and a learned gate decides, for every single query, whose opinion to trust.
+
+25
+00:01:40,234 --> 00:01:42,798
+The image generator is never retrained.
+
+26
+00:01:42,798 --> 00:01:45,428
+The brain's prediction simply steers it.
+
+27
+00:01:46,828 --> 00:01:47,666
+Does it work?
+
+28
+00:01:47,666 --> 00:01:53,470
+Show the model two hundred candidate pictures, and ask which one the person is looking at.
+
+29
+00:01:53,470 --> 00:01:58,500
+On E E G, BHA picks the right one ninety-three point nine percent of the time.
+
+30
+00:01:58,500 --> 00:02:01,272
+The previous best was eighty-two point six.
+
+31
+00:02:01,272 --> 00:02:05,206
+On M E G, sixty-eight point one percent, against forty-eight.
+
+32
+00:02:05,206 --> 00:02:09,591
+And the gain holds even when we train on only a quarter of the data.
+
+33
+00:02:10,991 --> 00:02:13,898
+Beyond picking from a gallery, BHA generates.
+
+34
+00:02:13,898 --> 00:02:21,264
+Every image on the bottom row was produced from one person's E E G response to a photo they had never seen before.
+
+35
+00:02:21,264 --> 00:02:33,604
+Pixel-level fidelity is up forty-two percent over the strongest published method, and the meaning of the picture comes through more often, with the generator itself left completely untouched.
+
+36
+00:02:35,004 --> 00:02:36,857
+Two questions we always get.
+
+37
+00:02:36,857 --> 00:02:38,247
+Is this mind reading?
+
+38
+00:02:38,247 --> 00:02:38,446
+No.
+
+39
+00:02:38,446 --> 00:02:44,601
+It decodes the visual response to a picture on a screen, in a lab, with the person's consent.
+
+40
+00:02:44,601 --> 00:02:47,711
+Does it work on a new person, without training?
+
+41
+00:02:47,711 --> 00:02:48,241
+Not yet.
+
+42
+00:02:48,241 --> 00:02:51,351
+Cross-subject accuracy is about thirty percent.
+
+43
+00:02:51,351 --> 00:02:55,124
+That is sixty times chance, but far below within-subject.
+
+44
+00:02:55,124 --> 00:02:57,639
+It is the next problem we are solving.
+
+45
+00:02:59,039 --> 00:02:59,936
+Non-invasive.
+
+46
+00:02:59,936 --> 00:03:00,972
+Data-efficient.
+
+47
+00:03:00,972 --> 00:03:06,427
+Built on a generator that gets better every month, without us lifting a finger.
+
+48
+00:03:06,427 --> 00:03:09,742
+BHA is a new interface between mind and machine.
+
+49
+00:03:09,742 --> 00:03:12,159
+And this is just the first picture.
+

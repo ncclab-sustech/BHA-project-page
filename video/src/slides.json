@@ -1,0 +1,166 @@
+{
+ "project": {
+  "id": "bha-explainer",
+  "title": "See what the brain sees",
+  "language": "en-US",
+  "resolution": "1920x1080",
+  "fps": 30
+ },
+ "slides": [
+  {
+   "id": "hook",
+   "role": "hook",
+   "kind": "hook",
+   "kicker": "BHA · non-invasive brain decoding",
+   "title": "See what the brain sees.",
+   "visual_focus": "montage of seen and decoded images",
+   "voice": "Can a computer see what you see? Not read your thoughts. Just the picture in front of your eyes. For decades, that took surgery, and electrodes inside the brain. BHA does it from the outside: a cap of electrodes, and a few hundred milliseconds of brain activity.",
+   "evidence": [
+    "Abstract",
+    "§1"
+   ],
+   "purpose": "Open with the question and the promise",
+   "key_message": "See what the brain sees."
+  },
+  {
+   "id": "setup",
+   "role": "setup",
+   "kind": "setup",
+   "kicker": "01 · The setup",
+   "title": "A cap, a screen, and thousands of pictures.",
+   "visual_focus": "real EEG traces with recording facts",
+   "voice": "Here is the setup. A volunteer wears a sixty-three electrode E E G cap and watches thousands of photographs, each for a fraction of a second. We record the brain's response to every picture. The data is public, the THINGS E E G and M E G benchmarks, so anyone can check our numbers.",
+   "evidence": [
+    "§5.1",
+    "Appendix: Datasets"
+   ],
+   "purpose": "Explain what is recorded and from whom",
+   "key_message": "A cap, a screen, and thousands of pictures."
+  },
+  {
+   "id": "prior",
+   "role": "prior_work",
+   "kind": "prior",
+   "kicker": "02 · How it was done before",
+   "title": "Predict one vision model, then search or generate.",
+   "visual_focus": "the standard pipeline diagram",
+   "voice": "Modern decoders don't predict pixels directly. They predict what a pretrained vision model, usually CLIP, would compute for the image. Then they search a gallery, or drive an image generator, with that prediction. It works, and it is where the field was before us. But it quietly bakes in a choice: which vision model to imitate.",
+   "evidence": [
+    "§1",
+    "§2"
+   ],
+   "purpose": "Establish the prior-work recipe and its hidden choice",
+   "key_message": "Predict one vision model, then search or generate."
+  },
+  {
+   "id": "problem",
+   "role": "prior_work",
+   "kind": "problem",
+   "kicker": "03 · The catch",
+   "title": "Every vision model sees a different picture.",
+   "visual_focus": "the same photo through four models",
+   "voice": "That choice matters. CLIP cares about meaning. Self-supervised models like DINO care about shape and parts. Masked autoencoders care about texture and layout. Each one sees a picture differently, and the brain predicts some of those views better than others. Pick one, and you throw the rest away. Average them, and you blur their differences.",
+   "evidence": [
+    "§1",
+    "Fig. 1",
+    "§5.5"
+   ],
+   "purpose": "Show why the choice of vision model matters",
+   "key_message": "Every vision model sees a different picture."
+  },
+  {
+   "id": "idea",
+   "role": "contribution",
+   "kind": "idea",
+   "kicker": "04 · The idea",
+   "title": "One brain model, four teachers.",
+   "visual_focus": "two-stage training diagram",
+   "voice": "BHA, Beyond Hierarchical Alignment, stops choosing. One brain model is trained by four vision teachers at once. Then, with the brain model frozen, each teacher gets its own small read-out, and a learned gate decides, for every single query, whose opinion to trust. The image generator is never retrained. The brain's prediction simply steers it.",
+   "evidence": [
+    "§4",
+    "Fig. 2"
+   ],
+   "purpose": "State the contribution: one brain model, four teachers, frozen generator",
+   "key_message": "One brain model, four teachers."
+  },
+  {
+   "id": "retrieval",
+   "role": "result",
+   "kind": "retrieval",
+   "kicker": "05 · Results",
+   "title": "A new state of the art on EEG and MEG.",
+   "visual_focus": "bar chart of 200-way Top-1 accuracy",
+   "voice": "Does it work? Show the model two hundred candidate pictures, and ask which one the person is looking at. On E E G, BHA picks the right one ninety-three point nine percent of the time. The previous best was eighty-two point six. On M E G, sixty-eight point one percent, against forty-eight. And the gain holds even when we train on only a quarter of the data.",
+   "evidence": [
+    "Table 1",
+    "Fig. 3"
+   ],
+   "purpose": "Present retrieval results against prior work",
+   "key_message": "A new state of the art on EEG and MEG."
+  },
+  {
+   "id": "recon",
+   "role": "result",
+   "kind": "recon",
+   "kicker": "06 · Reconstruction",
+   "title": "From brainwaves to pictures.",
+   "visual_focus": "seen versus decoded image pairs",
+   "voice": "Beyond picking from a gallery, BHA generates. Every image on the bottom row was produced from one person's E E G response to a photo they had never seen before. Pixel-level fidelity is up forty-two percent over the strongest published method, and the meaning of the picture comes through more often, with the generator itself left completely untouched.",
+   "evidence": [
+    "Table 2",
+    "Appendix: reconstruction examples"
+   ],
+   "purpose": "Present reconstruction results and the frozen generator",
+   "key_message": "From brainwaves to pictures."
+  },
+  {
+   "id": "discussion",
+   "role": "discussion",
+   "kind": "qa",
+   "kicker": "07 · Two questions we always get",
+   "title": "Is this mind reading? Does it work on anyone?",
+   "visual_focus": "two question cards",
+   "questions": [
+    {
+     "prompt": "Is this mind reading?",
+     "answer": "No. It decodes the visual response to a picture on a screen, in a lab, with consent."
+    },
+    {
+     "prompt": "Does it work on a new person?",
+     "answer": "Not yet. Cross-subject accuracy is ~30% — 60× chance, far below within-subject. That is the next problem."
+    }
+   ],
+   "voice": "Two questions we always get. Is this mind reading? No. It decodes the visual response to a picture on a screen, in a lab, with the person's consent. Does it work on a new person, without training? Not yet. Cross-subject accuracy is about thirty percent. That is sixty times chance, but far below within-subject. It is the next problem we are solving.",
+   "evidence": [
+    "Table 1 (LOSO)",
+    "§6"
+   ],
+   "purpose": "Reviewer discussion on scope and limits",
+   "key_message": "Is this mind reading? Does it work on anyone?"
+  },
+  {
+   "id": "close",
+   "role": "discussion",
+   "kind": "close",
+   "kicker": "BHA",
+   "title": "A new interface between mind and machine.",
+   "visual_focus": "closing statement",
+   "voice": "Non-invasive. Data-efficient. Built on a generator that gets better every month, without us lifting a finger. BHA is a new interface between mind and machine. And this is just the first picture.",
+   "evidence": [
+    "§6"
+   ],
+   "purpose": "Close on the vision",
+   "key_message": "A new interface between mind and machine.",
+   "questions": [
+    {
+     "prompt": "Is this mind reading?",
+     "answer": "No. It decodes the visual response to a picture on a screen, in a lab, with consent."
+    },
+    {
+     "prompt": "Does it work on a new person?",
+     "answer": "Not yet. Cross-subject accuracy is ~30% — 60× chance, far below within-subject. That is the next problem."
+    }
+   ]
+  }
+ ]
+}

@@ -3,237 +3,219 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>BHA — Beyond Hierarchical Alignment</title>
+    <title>BHA — See what the brain sees</title>
     <meta
       name="description"
-      content="BHA decodes what a person sees from non-invasive brain recordings (EEG, MEG) by distilling several vision foundation models into one brain model, with state-of-the-art retrieval and reconstruction."
+      content="BHA turns non-invasive brain recordings into pictures. One brain model learns from four vision models at once and sets a new state of the art for EEG and MEG decoding."
     />
-    <meta name="theme-color" content="#07080c" />
+    <meta name="theme-color" content="#0b1020" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%2306c7f1'/%3E%3Cstop offset='.5' stop-color='%237c3aed'/%3E%3Cstop offset='1' stop-color='%23ff3d81'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='14' y='14' width='36' height='36' rx='8' transform='rotate(45 32 32)' fill='url(%23g)'/%3E%3C/svg%3E" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=3" />
   </head>
   <body>
-    <div class="grain" aria-hidden="true"></div>
-
-    <nav class="nav" aria-label="Primary">
-      <a class="nav__brand" href="#top"><span class="nav__dot" aria-hidden="true"></span>BHA</a>
+    <nav class="nav" id="nav">
+      <a class="nav__brand" href="#top"><span class="nav__logo" aria-hidden="true"></span>BHA</a>
       <div class="nav__links">
-        <a href="#idea" data-i18n="nav.idea">Idea</a>
+        <a href="#film" data-i18n="nav.film">Film</a>
+        <a href="#decoder" data-i18n="nav.decoder">Decoder</a>
+        <a href="#how" data-i18n="nav.how">How it works</a>
         <a href="#results" data-i18n="nav.results">Results</a>
-        <a href="#decoded" data-i18n="nav.decoded">Decoded</a>
-        <a href="#inside" data-i18n="nav.inside">Inside</a>
-        <a href="#why" data-i18n="nav.why">Why</a>
-        <a href="#status" data-i18n="nav.status">Status</a>
+        <a href="#vision" data-i18n="nav.vision">Vision</a>
       </div>
-      <div class="lang" role="group" data-i18n-attr="aria-label:lang.label">
-        <button type="button" class="lang__btn is-active" data-set-lang="en" aria-pressed="true">EN</button>
-        <button type="button" class="lang__btn" data-set-lang="zh" aria-pressed="false">中文</button>
+      <div class="nav__right">
+        <div class="lang" role="group" data-i18n-attr="aria-label:lang.label">
+          <button type="button" class="lang__btn is-active" data-set-lang="en" aria-pressed="true">EN</button>
+          <button type="button" class="lang__btn" data-set-lang="zh" aria-pressed="false">中文</button>
+        </div>
+        <a class="btn btn--grad btn--sm" href="#film" data-i18n="nav.cta">Watch the film</a>
       </div>
     </nav>
 
+    <!-- ================= HERO ================= -->
     <header id="top" class="hero">
-      <canvas id="eeg" class="hero__eeg" aria-hidden="true"></canvas>
-      <div class="hero__inner">
-        <div class="hero__copy">
-          <p class="eyebrow">
-            <span class="eyebrow__live" aria-hidden="true"></span>
-            <span data-i18n="hero.eyebrow">Real EEG · participant 08 · THINGS-EEG2</span>
-          </p>
-          <h1 class="hero__title" aria-label="Beyond Hierarchical Alignment">
-            <span class="w"><span>Beyond</span></span>
-            <span class="w"><span><em>Hierarchical</em></span></span>
-            <span class="w"><span>Alignment</span></span>
-          </h1>
-          <p class="hero__sub" data-i18n="hero.sub">
-            Decoding what a person sees from non-invasive brain recordings — by teaching one brain model
-            to think like four vision models at once.
-          </p>
-          <div class="hero__cta">
-            <a class="btn btn--solid" href="#decoded" data-i18n="hero.cta1">See decoded images</a>
-            <a class="btn btn--line" href="#idea" data-i18n="hero.cta2">How it works</a>
-          </div>
+      <video class="hero__video" autoplay muted loop playsinline poster="video/showreel_poster.jpg" aria-hidden="true">
+        <source src="video/showreel.mp4" type="video/mp4" />
+      </video>
+      <div class="hero__shade" aria-hidden="true"></div>
+      <div class="hero__aurora" aria-hidden="true"></div>
+      <div class="hero__content">
+        <p class="hero__kicker reveal-h" data-i18n="hero.kicker">Non-invasive brain decoding · EEG & MEG</p>
+        <h1 class="hero__title reveal-h">
+          <span class="line"><span data-i18n="hero.t1">See what</span></span>
+          <span class="line"><span data-i18n="hero.t2">the brain</span></span>
+          <span class="line"><span class="grad" data-i18n="hero.t3">sees.</span></span>
+        </h1>
+        <p class="hero__sub reveal-h" data-i18n="hero.sub">
+          BHA turns a few hundred milliseconds of brain activity into the picture a person is looking at.
+          No surgery, no implants — a cap of electrodes and one model that learns from four vision models at once.
+        </p>
+        <div class="hero__cta reveal-h">
+          <a class="btn btn--grad" href="#film"><span class="btn__play" aria-hidden="true"></span><span data-i18n="hero.cta1">Watch the film</span></a>
+          <a class="btn btn--glass" href="#decoder" data-i18n="hero.cta2">Try the decoder</a>
         </div>
-
-        <figure class="decode" aria-label="Live decoding demo">
-          <div class="decode__pane">
-            <span class="decode__tag" data-i18n="decode.seen">Seen</span>
-            <img class="decode__img" id="decode-seen" src="assets/showcase/cheetah_gt.jpg" alt="" width="400" height="400" />
-          </div>
-          <div class="decode__link" aria-hidden="true">
-            <svg viewBox="0 0 120 40" class="decode__wave"><path id="decode-wave" d="M0 20 L120 20" /></svg>
-            <span class="decode__arrow">→</span>
-          </div>
-          <div class="decode__pane">
-            <span class="decode__tag decode__tag--out" data-i18n="decode.out">Decoded from EEG</span>
-            <img class="decode__img" id="decode-out" src="assets/showcase/cheetah_gen0.jpg" alt="" width="400" height="400" />
-          </div>
-          <figcaption class="decode__cap"><span id="decode-label">cheetah</span> · <span data-i18n="decode.cap">single participant, held-out image</span></figcaption>
-        </figure>
-      </div>
-
-      <div class="ticker" aria-hidden="true">
-        <div class="ticker__track">
-          <span>EEG 200-way Top-1 <b>93.9%</b></span><i>◆</i>
-          <span>MEG 200-way Top-1 <b>68.1%</b></span><i>◆</i>
-          <span>Reconstruction PixCorr <b>+42%</b></span><i>◆</i>
-          <span>Vision teachers <b>4</b></span><i>◆</i>
-          <span>Frozen generator <b>no fine-tuning</b></span><i>◆</i>
-          <span>Gains hold at <b>25% data</b></span><i>◆</i>
-          <span>EEG 200-way Top-1 <b>93.9%</b></span><i>◆</i>
-          <span>MEG 200-way Top-1 <b>68.1%</b></span><i>◆</i>
-          <span>Reconstruction PixCorr <b>+42%</b></span><i>◆</i>
-          <span>Vision teachers <b>4</b></span><i>◆</i>
-          <span>Frozen generator <b>no fine-tuning</b></span><i>◆</i>
-          <span>Gains hold at <b>25% data</b></span><i>◆</i>
+        <div class="hero__chips reveal-h">
+          <div class="chip"><b>93.9%</b><span data-i18n="chip.eeg">EEG retrieval, 200 images</span></div>
+          <div class="chip"><b>68.1%</b><span data-i18n="chip.meg">MEG retrieval, 200 images</span></div>
+          <div class="chip"><b>+42%</b><span data-i18n="chip.rec">sharper reconstructions</span></div>
         </div>
       </div>
+      <div class="hero__scroll" aria-hidden="true"><span></span></div>
     </header>
 
     <main>
-      <!-- ================= NUMBERS ================= -->
-      <section class="numbers" aria-label="Headline numbers">
-        <div class="wrap numbers__grid">
-          <div class="num reveal">
-            <div class="num__v"><span class="count" data-to="93.9" data-dec="1">0</span><span class="num__u">%</span></div>
-            <div class="num__l" data-i18n="num.eeg">EEG · 200-way Top-1 retrieval</div>
-            <div class="num__n" data-i18n="num.eeg.n">prior best 82.6%</div>
+      <!-- ================= FILM ================= -->
+      <section id="film" class="sec sec--film">
+        <div class="wrap">
+          <div class="sec__head reveal">
+            <p class="kicker" data-i18n="film.kicker">The film</p>
+            <h2 class="h2" data-i18n-html="film.title">Three minutes. <span class="grad">One idea.</span></h2>
+            <p class="lede" data-i18n="film.lede">A short explainer, narrated in English: what we record, what the model learns, and what comes out the other end.</p>
           </div>
-          <div class="num reveal">
-            <div class="num__v"><span class="count" data-to="68.1" data-dec="1">0</span><span class="num__u">%</span></div>
-            <div class="num__l" data-i18n="num.meg">MEG · 200-way Top-1 retrieval</div>
-            <div class="num__n" data-i18n="num.meg.n">prior best 48.0%</div>
-          </div>
-          <div class="num reveal">
-            <div class="num__v">+<span class="count" data-to="42" data-dec="0">0</span><span class="num__u">%</span></div>
-            <div class="num__l" data-i18n="num.rec">Reconstruction fidelity</div>
-            <div class="num__n" data-i18n="num.rec.n">PixCorr 0.277 vs. 0.195</div>
-          </div>
-          <div class="num reveal">
-            <div class="num__v"><span class="count" data-to="4" data-dec="0">0</span></div>
-            <div class="num__l" data-i18n="num.teach">Vision teachers, one brain model</div>
-            <div class="num__n">OpenCLIP · DFN · MAE · DINOv2</div>
+          <div class="player reveal" id="player">
+            <video id="film-video" class="player__video" preload="metadata" playsinline controls poster="video/explainer_poster.jpg">
+              <source src="video/explainer.mp4" type="video/mp4" />
+              <track kind="subtitles" src="video/explainer.vtt" srclang="en" label="English" default />
+            </video>
+            <button type="button" class="player__btn" id="film-play" aria-label="Play the film">
+              <span class="player__ring" aria-hidden="true"></span>
+              <span class="player__tri" aria-hidden="true"></span>
+            </button>
+            <div class="player__meta" aria-hidden="true">
+              <span class="player__tag">BHA · explainer</span>
+              <span class="player__dur" id="film-dur">3:00</span>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- ================= IDEA ================= -->
-      <section id="idea" class="sec">
+      <!-- ================= DECODER ================= -->
+      <section id="decoder" class="sec">
         <div class="wrap">
-          <p class="label reveal" data-i18n="idea.label">01 — The idea</p>
-          <h2 class="h2 reveal" data-i18n-html="idea.title">A strong vision model is <em>not</em> automatically a good decoding target.</h2>
-          <div class="cols">
-            <div class="cols__text reveal">
-              <p data-i18n-html="idea.p1">
-                Modern brain decoders do not predict pixels. They predict the <strong>features</strong> a
-                pretrained vision model would compute for the image a person is looking at, then search or
-                generate from those features. Which model to imitate is the central design decision — and
-                CLIP-style, self-supervised and masked-autoencoder models each see an image differently.
-              </p>
-              <p data-i18n-html="idea.p2">
-                <strong>BHA stops choosing.</strong> One brain encoder learns a representation that four vision
-                teachers supervise together. At decision time the teachers’ distinct notions of similarity are
-                kept alive and composed, instead of collapsed into a single fused space. The same backbone then
-                drives a <strong>frozen</strong> image generator — no generator fine-tuning.
-              </p>
-              <ul class="ticks">
-                <li data-i18n="idea.t1">Brain encoder and fused visual target learned jointly</li>
-                <li data-i18n="idea.t2">Teacher-specific readouts, gated score composition</li>
-                <li data-i18n="idea.t3">Semantic + spatial adapters into a frozen generator</li>
-              </ul>
-            </div>
+          <div class="sec__head reveal">
+            <p class="kicker" data-i18n="dec.kicker">Live decoder</p>
+            <h2 class="h2" data-i18n-html="dec.title">From brainwaves <span class="grad">to pictures.</span></h2>
+            <p class="lede" data-i18n="dec.lede">Real data, no cherry-picked pixels. One participant looks at a photo they have never seen; their EEG goes into BHA; a picture comes out. Pick any image to run it.</p>
+          </div>
 
-            <div class="cols__viz reveal">
-              <svg class="flow" viewBox="0 0 640 420" role="img" aria-label="Animated pipeline: EEG goes through the BrainViT encoder, is supervised by four vision teachers, and feeds gated retrieval and a frozen generator.">
-                <g class="flow__wires" fill="none" stroke-width="1.5">
-                  <path class="wire" d="M68 210 L 196 210" />
-                  <path class="wire" d="M264 210 C 320 210, 320 80, 378 80" />
-                  <path class="wire" d="M264 210 C 320 210, 320 165, 378 165" />
-                  <path class="wire" d="M264 210 C 320 210, 320 250, 378 250" />
-                  <path class="wire" d="M264 210 C 320 210, 320 335, 378 335" />
-                  <path class="wire" d="M442 80 C 490 80, 490 165, 531 165" />
-                  <path class="wire" d="M442 165 L 531 165" />
-                  <path class="wire" d="M442 250 C 490 250, 490 165, 531 165" />
-                  <path class="wire" d="M442 335 C 490 335, 490 165, 531 165" />
-                  <path class="wire wire--alt" d="M264 210 C 300 210, 300 300, 400 390 L 531 390" />
-                </g>
-                <g class="flow__nodes">
-                  <g class="node node--in" transform="translate(40,210)">
-                    <circle r="28" /><text y="5">EEG</text>
-                    <text class="node__sub" y="48" data-i18n="flow.in">brain signal</text>
-                  </g>
-                  <g class="node node--enc" transform="translate(230,210)">
-                    <rect x="-34" y="-34" width="68" height="68" rx="14" /><text y="-4">Brain</text><text y="14">ViT</text>
-                    <text class="node__sub" y="54" data-i18n="flow.enc">shared encoder</text>
-                  </g>
-                  <g class="node node--t" transform="translate(410,80)"><rect x="-32" y="-18" width="64" height="36" rx="10" /><text y="5">OpenCLIP</text></g>
-                  <g class="node node--t" transform="translate(410,165)"><rect x="-32" y="-18" width="64" height="36" rx="10" /><text y="5">DFN</text></g>
-                  <g class="node node--t" transform="translate(410,250)"><rect x="-32" y="-18" width="64" height="36" rx="10" /><text y="5">MAE</text></g>
-                  <g class="node node--t" transform="translate(410,335)"><rect x="-32" y="-18" width="64" height="36" rx="10" /><text y="5">DINOv2</text></g>
-                  <text class="flow__cap" x="410" y="44" text-anchor="middle" data-i18n="flow.teachers">four frozen vision teachers</text>
-                  <g class="node node--out" transform="translate(575,165)">
-                    <rect x="-44" y="-22" width="88" height="44" rx="12" /><text y="-2" data-i18n="flow.gate">gated</text><text y="14" data-i18n="flow.ret">retrieval</text>
-                  </g>
-                  <g class="node node--out node--gen" transform="translate(575,390)">
-                    <rect x="-44" y="-22" width="88" height="44" rx="12" /><text y="-2" data-i18n="flow.frozen">frozen</text><text y="14" data-i18n="flow.gen">generator</text>
-                  </g>
-                </g>
-                <g class="flow__pulses">
-                  <circle r="3.5"><animateMotion dur="2.6s" repeatCount="indefinite" path="M68 210 L 196 210 L 264 210 C 320 210, 320 80, 378 80 L 442 80 C 490 80, 490 165, 531 165" /></circle>
-                  <circle r="3.5"><animateMotion dur="2.6s" begin="0.5s" repeatCount="indefinite" path="M68 210 L 196 210 L 264 210 C 320 210, 320 165, 378 165 L 442 165 L 531 165" /></circle>
-                  <circle r="3.5"><animateMotion dur="2.6s" begin="1s" repeatCount="indefinite" path="M68 210 L 196 210 L 264 210 C 320 210, 320 250, 378 250 L 442 250 C 490 250, 490 165, 531 165" /></circle>
-                  <circle r="3.5"><animateMotion dur="2.6s" begin="1.5s" repeatCount="indefinite" path="M68 210 L 196 210 L 264 210 C 320 210, 320 335, 378 335 L 442 335 C 490 335, 490 165, 531 165" /></circle>
-                  <circle r="3.5" class="pulse--alt"><animateMotion dur="3.2s" begin="0.8s" repeatCount="indefinite" path="M68 210 L 196 210 L 264 210 C 300 210, 300 300, 400 390 L 531 390" /></circle>
-                </g>
-              </svg>
-              <p class="flow__note" data-i18n="flow.note">Stage 1 trains the encoder with all four teachers. Stage 2 freezes it and learns how to weigh each teacher per query.</p>
+          <div class="demo reveal" id="demo">
+            <div class="demo__stage">
+              <div class="demo__col">
+                <span class="demo__lbl" data-i18n="dec.seen">What they saw</span>
+                <div class="demo__frame"><img id="demo-seen" src="assets/showcase/cheetah_gt.jpg" alt="Seen image" width="512" height="512" /></div>
+              </div>
+              <div class="demo__col demo__col--mid">
+                <span class="demo__lbl" data-i18n="dec.eeg">Their brain, 63 channels</span>
+                <div class="demo__eeg"><canvas id="demo-eeg" width="320" height="320"></canvas><span class="demo__ms" id="demo-ms">0 ms</span></div>
+                <span class="demo__arrow" aria-hidden="true">→</span>
+              </div>
+              <div class="demo__col">
+                <span class="demo__lbl demo__lbl--out" data-i18n="dec.out">What BHA decoded</span>
+                <div class="demo__frame demo__frame--out"><canvas id="demo-out" width="512" height="512"></canvas></div>
+                <div class="demo__draws" id="demo-draws"></div>
+              </div>
+            </div>
+            <div class="demo__picker" id="demo-picker"></div>
+            <div class="demo__foot">
+              <span id="demo-name">cheetah</span> · <span data-i18n="dec.foot">participant 08 · THINGS-EEG2 held-out image · three independent decodes</span>
             </div>
           </div>
 
+          <div class="wall reveal" aria-label="Seen and decoded image pairs">
+            <div class="wall__row" id="wall-a"></div>
+            <div class="wall__row wall__row--rev" id="wall-b"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= HOW ================= -->
+      <section id="how" class="sec sec--soft">
+        <div class="wrap">
+          <div class="sec__head reveal">
+            <p class="kicker" data-i18n="how.kicker">How it works</p>
+            <h2 class="h2" data-i18n-html="how.title">One brain model, <span class="grad">four teachers.</span></h2>
+            <p class="lede" data-i18n="how.lede">Every vision model sees an image differently. Instead of picking one, BHA lets four of them teach a single brain model — and keeps their opinions separate when it matters.</p>
+          </div>
+
+          <div class="steps">
+            <article class="step reveal">
+              <div class="step__art step__art--listen" aria-hidden="true">
+                <canvas id="art-listen" width="520" height="340"></canvas>
+              </div>
+              <span class="step__n">01</span>
+              <h3 data-i18n="how.s1t">Listen</h3>
+              <p data-i18n="how.s1b">A 63-electrode cap records the brain’s response to a picture: a few hundred milliseconds of electrical activity, noisy and faint.</p>
+            </article>
+            <article class="step reveal">
+              <div class="step__art step__art--learn" aria-hidden="true">
+                <div class="orbit">
+                  <div class="orbit__core"><span>BHA</span></div>
+                  <div class="orbit__ring"></div>
+                  <div class="orbit__sat" style="--i:0"><span>CLIP</span></div>
+                  <div class="orbit__sat" style="--i:1"><span>DFN</span></div>
+                  <div class="orbit__sat" style="--i:2"><span>MAE</span></div>
+                  <div class="orbit__sat" style="--i:3"><span>DINO</span></div>
+                </div>
+              </div>
+              <span class="step__n">02</span>
+              <h3 data-i18n="how.s2t">Learn from four teachers</h3>
+              <p data-i18n="how.s2b">The brain model is trained to predict what four different vision models would say about the picture. A learned gate decides, per query, whose opinion to trust.</p>
+            </article>
+            <article class="step reveal">
+              <div class="step__art step__art--gen" aria-hidden="true">
+                <div class="gen"><img src="assets/showcase/strawberry_gen0.jpg" alt="" width="512" height="512" /><div class="gen__noise"></div></div>
+              </div>
+              <span class="step__n">03</span>
+              <h3 data-i18n="how.s3t">Generate</h3>
+              <p data-i18n="how.s3b">The prediction steers a frozen image generator. Nothing about the generator is retrained, so a better one can be swapped in tomorrow.</p>
+            </article>
+          </div>
+
           <details class="more reveal">
-            <summary data-i18n="idea.more">Show the full architecture figure</summary>
-            <figure class="fig">
-              <img src="imgs/fig-framework.png" alt="BHA architecture figure from the manuscript." width="2000" height="824" loading="lazy" />
-              <figcaption data-i18n="idea.figcap">(a) BrainViT encoder. (b) Stage 1 jointly learns BrainViT and visual fusion; Stage 2 freezes both and trains shared and teacher-specific readouts. (c) Semantic and spatial predictors condition the frozen diffusion generator.</figcaption>
-            </figure>
+            <summary data-i18n="how.more">For researchers: the architecture figure</summary>
+            <figure class="fig"><img src="imgs/fig-framework.png" alt="BHA architecture figure from the manuscript." width="2000" height="824" loading="lazy" /></figure>
           </details>
         </div>
       </section>
 
       <!-- ================= RESULTS ================= -->
-      <section id="results" class="sec sec--tint">
+      <section id="results" class="sec">
         <div class="wrap">
-          <p class="label reveal" data-i18n="res.label">02 — Results</p>
-          <h2 class="h2 reveal" data-i18n-html="res.title">State of the art on <em>both</em> EEG and MEG.</h2>
-          <p class="lede reveal" data-i18n="res.lede">
-            200-way brain-to-image retrieval, within-subject Top-1 accuracy. Averages over ten EEG and four MEG
-            participants on the public THINGS benchmarks. Bars show raw scores; the hatched extension is BHA with
-            CSLS-2 re-scoring.
-          </p>
+          <div class="sec__head reveal">
+            <p class="kicker" data-i18n="res.kicker">Results</p>
+            <h2 class="h2" data-i18n-html="res.title">A new state of the art, <span class="grad">on both EEG and MEG.</span></h2>
+            <p class="lede" data-i18n="res.lede">Shown 200 candidate pictures, how often does the model pick the exact one the person is looking at? Averages over ten EEG and four MEG participants on the public THINGS benchmarks.</p>
+          </div>
+
+          <div class="big3">
+            <div class="big reveal"><div class="big__v"><span class="count" data-to="93.9" data-dec="1">0</span>%</div><div class="big__l" data-i18n="big.eeg">EEG · Top-1 of 200</div><div class="big__n" data-i18n="big.eeg.n">previous best 82.6%</div></div>
+            <div class="big reveal"><div class="big__v"><span class="count" data-to="68.1" data-dec="1">0</span>%</div><div class="big__l" data-i18n="big.meg">MEG · Top-1 of 200</div><div class="big__n" data-i18n="big.meg.n">previous best 48.0%</div></div>
+            <div class="big reveal"><div class="big__v"><span class="count" data-to="53.3" data-dec="1">0</span>%</div><div class="big__l" data-i18n="big.data">with only 25% of the data</div><div class="big__n" data-i18n="big.data.n">backbone alone 42.7%</div></div>
+          </div>
 
           <div class="bars reveal" id="bars">
-            <div class="bars__tabs" role="tablist">
-              <button type="button" class="tab is-active" role="tab" data-mod="eeg">EEG</button>
-              <button type="button" class="tab" role="tab" data-mod="meg">MEG</button>
-            </div>
+            <div class="bars__tabs"><button type="button" class="tab is-active" data-mod="eeg">EEG</button><button type="button" class="tab" data-mod="meg">MEG</button></div>
             <div class="bars__list" id="bars-list"></div>
           </div>
 
           <div class="recon reveal">
-            <h3 class="h3" data-i18n="res.rec.title">Reconstruction from EEG</h3>
-            <p class="lede--sm" data-i18n="res.rec.lede">Ten-participant means on THINGS-EEG2 against the strongest published EEG method. Higher is better.</p>
+            <div class="recon__text">
+              <h3 data-i18n="rec.title">Sharper pictures, same generator.</h3>
+              <p data-i18n="rec.body">On image reconstruction from EEG, BHA beats the strongest published method on every pixel-level and semantic metric — while leaving the image generator completely untouched.</p>
+            </div>
             <div class="minis" id="minis"></div>
           </div>
 
           <details class="more reveal">
-            <summary data-i18n="res.more">Show the full comparison tables</summary>
+            <summary data-i18n="res.more">Full comparison tables</summary>
             <div class="table-wrap">
               <table class="tbl">
-                <caption data-i18n-html="res.t1cap"><strong>200-way retrieval (Top-1 / Top-5, %).</strong> LOSO = leave-one-subject-out, tested on a person never seen in training.</caption>
+                <caption data-i18n-html="res.t1cap"><strong>200-way retrieval (Top-1 / Top-5, %).</strong> LOSO = tested on a person never seen in training.</caption>
                 <thead>
                   <tr><th rowspan="2" data-i18n="res.th.method">Method</th><th colspan="4">EEG</th><th colspan="4">MEG</th></tr>
                   <tr><th colspan="2" data-i18n="res.th.within">Within</th><th colspan="2">LOSO</th><th colspan="2" data-i18n="res.th.within">Within</th><th colspan="2">LOSO</th></tr>
@@ -273,113 +255,37 @@
         </div>
       </section>
 
-      <!-- ================= DECODED ================= -->
-      <section id="decoded" class="sec">
+      <!-- ================= VISION ================= -->
+      <section id="vision" class="sec sec--dark">
+        <div class="sec__aurora" aria-hidden="true"></div>
         <div class="wrap">
-          <p class="label reveal" data-i18n="dec.label">03 — Decoded</p>
-          <h2 class="h2 reveal" data-i18n-html="dec.title">What the brain saw, <em>and what we decoded.</em></h2>
-          <p class="lede reveal" data-i18n="dec.lede">
-            Every image below was generated from one participant’s EEG response to a photograph they had never
-            seen during training. Drag the slider, or hover a tile to flip between the seen image and three
-            independent decodes.
-          </p>
-
-          <div class="compare reveal" id="compare">
-            <div class="compare__stage" id="cmp-stage">
-              <img class="compare__img" id="cmp-seen" src="assets/showcase/elephant_gt.jpg" alt="Seen image" width="400" height="400" />
-              <img class="compare__img compare__img--top" id="cmp-out" src="assets/showcase/elephant_gen0.jpg" alt="Decoded image" width="400" height="400" />
-              <div class="compare__handle" id="cmp-handle"><span></span></div>
-              <span class="compare__lbl compare__lbl--l" data-i18n="dec.decoded">decoded</span>
-              <span class="compare__lbl compare__lbl--r" data-i18n="dec.seen">seen</span>
-              <input class="compare__range" id="cmp-range" type="range" min="0" max="100" value="50" aria-label="Reveal slider" />
-            </div>
-            <div class="compare__picks" id="cmp-picks"></div>
+          <div class="sec__head sec__head--center reveal">
+            <p class="kicker kicker--light" data-i18n="vis.kicker">Why it matters</p>
+            <h2 class="h2 h2--light" data-i18n-html="vis.title">A new interface between <span class="grad">mind and machine.</span></h2>
+            <p class="lede lede--light" data-i18n="vis.lede">Non-invasive, wearable-ready, data-efficient. BHA is built for the constraints of the real world, not just the lab.</p>
           </div>
-
-          <div class="tiles reveal" id="tiles"></div>
-          <p class="foot" data-i18n="dec.foot">Participant 08, THINGS-EEG2 test set. Decodes use the main-table configuration: semantic + spatial conditioning of a frozen SDXL-Turbo generator.</p>
-        </div>
-      </section>
-
-      <!-- ================= DATA EFFICIENCY ================= -->
-      <section class="sec sec--tint">
-        <div class="wrap cols cols--rev">
-          <div class="cols__text reveal">
-            <p class="label" data-i18n="eff.label">04 — Data efficiency</p>
-            <h2 class="h2" data-i18n-html="eff.title">The gain survives with a <em>quarter</em> of the data.</h2>
-            <p data-i18n="eff.p1">
-              Composing teacher-specific scores on top of the shared representation lifts within-subject EEG accuracy
-              at every training-data scale. With 25% of a participant’s data the gated readout reaches 53.3% Top-1,
-              against 42.7% for the pretrained backbone alone.
-            </p>
-            <p data-i18n="eff.p2">
-              Recording sessions are short and expensive. Needing fewer of them is the difference between a lab
-              demo and a product.
-            </p>
+          <div class="pillars">
+            <article class="pillar reveal"><div class="pillar__ic" aria-hidden="true">⚡</div><h3 data-i18n="vis.p1t">Data-efficient</h3><p data-i18n="vis.p1b">Gains hold with a quarter of a participant’s data. Shorter calibration means products, not demos.</p></article>
+            <article class="pillar reveal"><div class="pillar__ic" aria-hidden="true">⟲</div><h3 data-i18n="vis.p2t">Generator-agnostic</h3><p data-i18n="vis.p2b">The image generator stays frozen. Every advance in generative AI upgrades BHA for free.</p></article>
+            <article class="pillar reveal"><div class="pillar__ic" aria-hidden="true">◎</div><h3 data-i18n="vis.p3t">Transparent</h3><p data-i18n="vis.p3b">We can show which image regions and which concepts the decoder relies on — the groundwork for clinical and consumer trust.</p></article>
           </div>
-          <div class="cols__viz reveal">
-            <svg class="chart" id="chart" viewBox="0 0 560 360" role="img" aria-label="Line chart: within-subject Top-1 accuracy versus training-data fraction for three readouts."></svg>
+          <div class="road reveal">
+            <div class="road__item is-now"><span class="road__dot"></span><b data-i18n="road.1t">Now</b><p data-i18n="road.1b">State of the art on EEG and MEG, within-subject. Full pipeline, manuscript under review.</p></div>
+            <div class="road__item"><span class="road__dot"></span><b data-i18n="road.2t">Next</b><p data-i18n="road.2b">Cross-subject generalization: a model that works on a person it has never seen (today 30.4% Top-1 on EEG, chance 0.5%).</p></div>
+            <div class="road__item"><span class="road__dot"></span><b data-i18n="road.3t">Ambition</b><p data-i18n="road.3b">Real-time decoding on consumer-grade wearables, and the same recipe on new signals and new tasks.</p></div>
           </div>
-        </div>
-      </section>
-
-      <!-- ================= INSIDE ================= -->
-      <section id="inside" class="sec">
-        <div class="wrap">
-          <p class="label reveal" data-i18n="in.label">05 — Inside the model</p>
-          <h2 class="h2 reveal" data-i18n-html="in.title">We can see what each expert is <em>matching on.</em></h2>
-          <p class="lede reveal" data-i18n="in.lede">
-            Because BHA keeps teacher-specific prediction spaces, its decisions can be attributed. Occlusion maps show
-            which image regions each expert uses to match a brain response; concept analysis shows individual model
-            neurons becoming selective for food, clothing or animals.
-          </p>
-          <div class="gallery">
-            <figure class="fig fig--zoom reveal">
-              <img src="imgs/fig-rsa.png" alt="Representational analysis and occlusion attribution maps per expert." width="2000" height="942" loading="lazy" />
-              <figcaption data-i18n-html="in.cap1"><strong>Shared geometry, distinct contributions.</strong> (e) Red regions raise an expert’s match score, blue regions lower it — experts can disagree on the same region, which is what score composition exploits.</figcaption>
-            </figure>
-            <figure class="fig fig--zoom reveal">
-              <img src="imgs/fig-concept_analysis.png" alt="Concept analysis: alignment per teacher and neurons selective for food, clothing and animals." width="2000" height="1004" loading="lazy" />
-              <figcaption data-i18n-html="in.cap2"><strong>Semantic selectivity.</strong> (d–e) Example neurons and the held-out images that activate them most strongly.</figcaption>
-            </figure>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= WHY ================= -->
-      <section id="why" class="sec sec--tint">
-        <div class="wrap">
-          <p class="label reveal" data-i18n="why.label">06 — Why it matters</p>
-          <h2 class="h2 reveal" data-i18n-html="why.title">Built for the constraints <em>outside</em> the lab.</h2>
-          <div class="why">
-            <article class="why__card reveal"><span class="why__n">01</span><h3 data-i18n="why.1t">Data-efficient</h3><p data-i18n="why.1b">Gains hold with a quarter of a participant’s training data, shortening calibration sessions.</p></article>
-            <article class="why__card reveal"><span class="why__n">02</span><h3 data-i18n="why.2t">Generator-agnostic</h3><p data-i18n="why.2b">The image generator stays frozen. Better generators drop in without retraining the brain model.</p></article>
-            <article class="why__card reveal"><span class="why__n">03</span><h3 data-i18n="why.3t">Modality-general</h3><p data-i18n="why.3b">One recipe runs on 63-channel EEG and 271-channel MEG; only the input tokenizer changes.</p></article>
-            <article class="why__card reveal"><span class="why__n">04</span><h3 data-i18n="why.4t">Interpretable</h3><p data-i18n="why.4b">Attribution maps and concept-selective neurons expose what the decoder relies on — essential for clinical and consumer use.</p></article>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= STATUS ================= -->
-      <section id="status" class="sec">
-        <div class="wrap">
-          <p class="label reveal" data-i18n="st.label">07 — Status</p>
-          <h2 class="h2 reveal" data-i18n-html="st.title">Where the project <em>stands.</em></h2>
-          <ol class="timeline">
-            <li class="reveal"><b data-i18n="st.1t">Manuscript</b><span data-i18n="st.1b">A full paper with theory, benchmarks and analyses is under peer review. This page is kept anonymous for that reason.</span></li>
-            <li class="reveal"><b data-i18n="st.2t">Pipeline</b><span data-i18n="st.2b">End to end: preprocessing, two-stage training, retrieval and reconstruction, an eight-metric evaluation suite, on EEG and MEG.</span></li>
-            <li class="reveal"><b data-i18n="st.3t">Open problem</b><span data-i18n="st.3b">Cross-subject transfer. A model trained on other people reaches 30.4% Top-1 on EEG (chance 0.5%) but far below within-subject accuracy; closing this gap is the focus of ongoing work.</span></li>
-            <li class="reveal"><b data-i18n="st.4t">Release</b><span data-i18n="st.4b">Code and pretrained weights will be released after review.</span></li>
-          </ol>
         </div>
       </section>
     </main>
 
-    <footer class="foot-bar">
-      <span data-i18n="footer">Anonymous project page · built on THINGS-EEG2, THINGS-MEG, OpenCLIP, DFN, MAE, DINOv2, SDXL-Turbo, IP-Adapter and CLIP-Dissect.</span>
+    <footer class="foot">
+      <div class="wrap foot__in">
+        <span class="foot__brand"><span class="nav__logo" aria-hidden="true"></span>BHA</span>
+        <span data-i18n="footer">Anonymous project page · manuscript under peer review · built on THINGS-EEG2, THINGS-MEG, OpenCLIP, DFN, MAE, DINOv2, SDXL-Turbo and IP-Adapter.</span>
+      </div>
     </footer>
 
-    <script src="i18n.js"></script>
-    <script src="script.js" defer></script>
+    <script src="i18n.js?v=3"></script>
+    <script src="script.js?v=3" defer></script>
   </body>
 </html>

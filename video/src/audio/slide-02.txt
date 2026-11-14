@@ -1,0 +1,1 @@
+Here is the setup. A volunteer wears a sixty-three electrode E E G cap and watches thousands of photographs, each for a fraction of a second. We record the brain's response to every picture. The data is public, the THINGS E E G and M E G benchmarks, so anyone can check our numbers.
