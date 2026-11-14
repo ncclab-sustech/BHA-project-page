@@ -14,6 +14,9 @@
       "nav.results": "Results",
       "nav.vision": "Vision",
       "nav.cta": "Watch the film",
+      "nav.report": "Tech report",
+      "res.report": "Read the technical report →",
+      "res.reportSub": "Model, ablations, pre-registered readout tests, interpretability and limitations, written for practitioners.",
       "lang.label": "Language",
 
       "hero.kicker": "Non-invasive brain decoding · EEG & MEG",
@@ -23,13 +26,14 @@
       "hero.sub": "BHA turns a few hundred milliseconds of brain activity into the picture a person is looking at — and, because it learns from four vision models kept separate, it shows which AI representations the brain actually carries, where it looks, and when.",
       "hero.cta1": "Watch the film",
       "hero.cta2": "What we learned",
+      "hero.cta3": "Technical report",
       "chip.eeg": "EEG retrieval, 200 images",
       "chip.meg": "MEG retrieval, 200 images",
       "chip.rec": "sharper reconstructions",
 
       "film.kicker": "The film",
-      "film.title": "Three minutes. <span class=\"grad\">One idea.</span>",
-      "film.lede": "A short explainer, narrated in English: what we record, what the model learns, and what comes out the other end.",
+      "film.title": "Every second, <span class=\"grad\">your brain is drawing.</span>",
+      "film.lede": "An 84-second brand film built only from real material: one participant’s EEG, the pictures they saw, the pictures BHA decoded, and the model’s own attribution maps. Sound on.",
 
       "dec.kicker": "Live decoder",
       "dec.title": "From brainwaves <span class=\"grad\">to pictures.</span>",
@@ -154,6 +158,9 @@
       "ins.l5.keep": "Keep only a 50 ms window",
       "ins.l5.pp": "accuracy lost (pp)",
       "ins.l5.top1": "Top-1 (%)",
+      "expl.kicker": "The explainer",
+      "expl.title": "Three minutes. One idea.",
+      "expl.lede": "Want the mechanism? A narrated walk-through in English: what we record, what the model learns from four vision teachers, what comes out, and what is still open.",
       "footer": "Anonymous project page · manuscript under peer review · built on THINGS-EEG2, THINGS-MEG, OpenCLIP, DFN, MAE, DINOv2, SDXL-Turbo and IP-Adapter."
     },
     zh: {
@@ -163,6 +170,9 @@
       "nav.results": "结果",
       "nav.vision": "愿景",
       "nav.cta": "观看短片",
+      "nav.report": "技术报告",
+      "res.report": "阅读技术报告 →",
+      "res.reportSub": "模型、消融、预注册的读出头测试、可解释性与局限，面向从业者撰写。",
       "lang.label": "语言",
 
       "hero.kicker": "非侵入式脑解码 · EEG 与 MEG",
@@ -172,13 +182,14 @@
       "hero.sub": "BHA 把几百毫秒的脑活动还原成一个人正在看的画面——并且因为它向四个彼此独立的视觉模型学习，它还能告诉我们大脑究竟携带了哪些 AI 表征、看向图像的哪里、信号何时到来。",
       "hero.cta1": "观看短片",
       "hero.cta2": "我们学到了什么",
+      "hero.cta3": "技术报告",
       "chip.eeg": "EEG 检索，200 张候选",
       "chip.meg": "MEG 检索，200 张候选",
       "chip.rec": "更清晰的重建",
 
       "film.kicker": "短片",
-      "film.title": "三分钟，<span class=\"grad\">一个想法。</span>",
-      "film.lede": "一段英文讲解短片：我们记录什么、模型学到什么、另一端输出什么。",
+      "film.title": "每一秒，<span class=\"grad\">你的大脑都在作画。</span>",
+      "film.lede": "一支 84 秒的品牌短片，素材全部真实：一名被试的 EEG、她看到的图片、BHA 解码出的图片，以及模型自己的归因图。请开声音。",
 
       "dec.kicker": "实时解码",
       "dec.title": "从脑电波<span class=\"grad\">到图像。</span>",
@@ -303,6 +314,9 @@
       "ins.l5.keep": "仅保留 50 毫秒窗口",
       "ins.l5.pp": "损失的准确率（百分点）",
       "ins.l5.top1": "Top-1 (%)",
+      "expl.kicker": "讲解片",
+      "expl.title": "三分钟，一个想法。",
+      "expl.lede": "想了解机制？英文旁白逐步讲解：我们记录什么、模型从四位视觉教师学到什么、输出什么、还有什么未解。",
       "footer": "匿名项目主页 · 论文同行评审中 · 基于 THINGS-EEG2、THINGS-MEG、OpenCLIP、DFN、MAE、DINOv2、SDXL-Turbo 与 IP-Adapter 构建。"
     }
   };

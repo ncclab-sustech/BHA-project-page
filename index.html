@@ -16,7 +16,7 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=5" />
+    <link rel="stylesheet" href="styles.css?v=7" />
   </head>
   <body>
     <nav class="nav" id="nav">
@@ -28,6 +28,7 @@
         <a href="#insights" data-i18n="nav.insights">Insights</a>
         <a href="#results" data-i18n="nav.results">Results</a>
         <a href="#vision" data-i18n="nav.vision">Vision</a>
+        <a href="report.html" class="nav__report" data-i18n="nav.report">Tech report</a>
       </div>
       <div class="nav__right">
         <div class="lang" role="group" data-i18n-attr="aria-label:lang.label">
@@ -58,6 +59,7 @@
         <div class="hero__cta reveal-h">
           <a class="btn btn--grad" href="#film"><span class="btn__play" aria-hidden="true"></span><span data-i18n="hero.cta1">Watch the film</span></a>
           <a class="btn btn--glass" href="#insights" data-i18n="hero.cta2">What we learned</a>
+          <a class="btn btn--glass" href="report.html" data-i18n="hero.cta3">Technical report</a>
         </div>
         <div class="hero__chips reveal-h">
           <div class="chip"><b>93.9%</b><span data-i18n="chip.eeg">EEG retrieval, 200 images</span></div>
@@ -74,21 +76,42 @@
         <div class="wrap">
           <div class="sec__head reveal">
             <p class="kicker" data-i18n="film.kicker">The film</p>
-            <h2 class="h2" data-i18n-html="film.title">Three minutes. <span class="grad">One idea.</span></h2>
-            <p class="lede" data-i18n="film.lede">A short explainer, narrated in English: what we record, what the model learns, and what comes out the other end.</p>
+            <h2 class="h2" data-i18n-html="film.title">Every second, <span class="grad">your brain is drawing.</span></h2>
+            <p class="lede" data-i18n="film.lede">A 84-second brand film built only from real material: one participant’s EEG, the pictures they saw, the pictures BHA decoded, and the model’s own attribution maps. Sound on.</p>
           </div>
           <div class="player reveal" id="player">
-            <video id="film-video" class="player__video" preload="metadata" playsinline controls poster="video/explainer_poster.jpg">
-              <source src="video/explainer.mp4" type="video/mp4" />
-              <track kind="subtitles" src="video/explainer.vtt" srclang="en" label="English" default />
+            <video id="film-video" class="player__video" preload="metadata" playsinline controls poster="video/brand_poster.jpg">
+              <source src="video/brand.mp4" type="video/mp4" />
             </video>
             <button type="button" class="player__btn" id="film-play" aria-label="Play the film">
               <span class="player__ring" aria-hidden="true"></span>
               <span class="player__tri" aria-hidden="true"></span>
             </button>
             <div class="player__meta" aria-hidden="true">
-              <span class="player__tag">BHA · explainer</span>
-              <span class="player__dur" id="film-dur">3:00</span>
+              <span class="player__tag">BHA · film</span>
+              <span class="player__dur" id="film-dur">1:24</span>
+            </div>
+          </div>
+
+          <div class="explainer reveal">
+            <div class="explainer__text">
+              <p class="kicker" data-i18n="expl.kicker">The explainer</p>
+              <h3 data-i18n="expl.title">Three minutes. One idea.</h3>
+              <p data-i18n="expl.lede">Want the mechanism? A narrated walk-through in English: what we record, what the model learns from four vision teachers, what comes out, and what is still open.</p>
+            </div>
+            <div class="player player--sm" id="player2">
+              <video id="film-video2" class="player__video" preload="metadata" playsinline controls poster="video/explainer_poster.jpg">
+                <source src="video/explainer.mp4" type="video/mp4" />
+                <track kind="subtitles" src="video/explainer.vtt" srclang="en" label="English" default />
+              </video>
+              <button type="button" class="player__btn" id="film-play2" aria-label="Play the explainer">
+                <span class="player__ring" aria-hidden="true"></span>
+                <span class="player__tri" aria-hidden="true"></span>
+              </button>
+              <div class="player__meta" aria-hidden="true">
+                <span class="player__tag">BHA · explainer</span>
+                <span class="player__dur" id="film-dur2">3:13</span>
+              </div>
             </div>
           </div>
         </div>
@@ -381,6 +404,7 @@
               </table>
             </div>
           </details>
+          <p class="report-cta reveal"><a class="btn btn--grad" href="report.html" data-i18n="res.report">Read the technical report →</a><span data-i18n="res.reportSub">Model, ablations, pre-registered readout tests, interpretability and limitations, written for practitioners.</span></p>
         </div>
       </section>
 
@@ -414,7 +438,7 @@
       </div>
     </footer>
 
-    <script src="i18n.js?v=5"></script>
-    <script src="script.js?v=5" defer></script>
+    <script src="i18n.js?v=7"></script>
+    <script src="script.js?v=6" defer></script>
   </body>
 </html>

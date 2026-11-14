@@ -103,34 +103,21 @@
     fillMinis();
   }
 
-  /* ---------- film player ---------- */
-  var player = document.getElementById("player");
-  var film = document.getElementById("film-video");
-  var filmBtn = document.getElementById("film-play");
-  var filmDur = document.getElementById("film-dur");
-  if (film && filmBtn) {
-    filmBtn.addEventListener("click", function () {
+  /* ---------- film players ---------- */
+  document.querySelectorAll(".player").forEach(function (player) {
+    var film = player.querySelector("video"), btn = player.querySelector(".player__btn"), dur = player.querySelector(".player__dur");
+    if (!film || !btn) return;
+    btn.addEventListener("click", function () {
+      document.querySelectorAll(".player video").forEach(function (v) { if (v !== film) v.pause(); });
       film.play();
     });
-    film.addEventListener("play", function () {
-      player.classList.add("is-playing");
-    });
-    film.addEventListener("pause", function () {
-      if (film.currentTime < film.duration - 0.2) player.classList.remove("is-playing");
-    });
-    film.addEventListener("ended", function () {
-      player.classList.remove("is-playing");
-    });
+    film.addEventListener("play", function () { player.classList.add("is-playing"); });
+    film.addEventListener("pause", function () { if (film.currentTime < film.duration - 0.2) player.classList.remove("is-playing"); });
+    film.addEventListener("ended", function () { player.classList.remove("is-playing"); });
     film.addEventListener("loadedmetadata", function () {
-      if (isFinite(film.duration)) {
-        var m = Math.floor(film.duration / 60), s = Math.round(film.duration % 60);
-        filmDur.textContent = m + ":" + (s < 10 ? "0" : "") + s;
-      }
+      if (isFinite(film.duration) && dur) { var m = Math.floor(film.duration / 60), s = Math.round(film.duration % 60); dur.textContent = m + ":" + (s < 10 ? "0" : "") + s; }
     });
-    film.addEventListener("error", function () {
-      player.classList.add("is-missing");
-    });
-  }
+  });
 
   /* ---------- manifest ---------- */
   var manifestReady = fetch("assets/showcase/manifest.json").then(function (r) {
