@@ -5,7 +5,7 @@ const REPO = process.env.BHA_REPO; const HTML = process.argv[2]; const mode = pr
 const FPS = 30; fs.mkdirSync(outDir, { recursive: true });
 const eeg = JSON.parse(fs.readFileSync(path.join(REPO, 'assets', 'eeg_sub08.json'), 'utf8'));
 const attr = JSON.parse(fs.readFileSync(path.join(REPO, 'assets', 'insight', 'attribution_maps.json'), 'utf8'));
-const b = await puppeteer.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true, args: ['--hide-scrollbars', '--disable-gpu', '--font-render-hinting=none'] });
+const b = await puppeteer.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true, args: ['--hide-scrollbars', '--disable-gpu', '--font-render-hinting=none', '--allow-file-access-from-files'] });
 const p = await b.newPage(); await p.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 1 });
 await p.evaluateOnNewDocument((show, e, ch, a, ins) => { window.SHOW_DIR = show; window.EEG = e; window.EEGCH = ch; window.ATTR = a; window.INS_DIR = ins; }, path.join(REPO, 'assets', 'showcase'), eeg.trials[3].avg, eeg.channels, attr, path.join(REPO, 'assets', 'insight', 'img'));
 await p.goto('file://' + path.join(HERE, HTML), { waitUntil: 'load' });

@@ -13,7 +13,27 @@ come from the narration timeline (`../timeline.json`, `../audio/tts_manifest.jso
     BHA_REPO=<site root> node record.mjs all      # ~5 800 frames
     ./assemble.sh
 
-# Brand film (`brand2.html`, current)
+# Brand film (`brand3.html`, current)
+
+The published `video/brand.mp4` is the 95-second third cut. Type is Fraunces (600/700, italic
+500) with Syne and JetBrains Mono labels at 20 px; every stroke is 2 px or heavier so the film
+reads on a phone. Photographs are never shown larger than 580 px: the ten-thousand-pictures beat
+and the retrieval beat are mosaics of small tiles. Scenes: an iris opener, the particle cosmos,
+the 1924 cream page, a hundred years of lines, the mosaic, the first picture, six seen/decoded
+pairs over a dimmed contact sheet, "one in two hundred" (87 of 100 found among 200 candidates,
+previous best 83), the four-teacher attribution maps, the radial 300 ms sweep, "a brain it has
+never met" (leave-one-subject-out: 22.5 % top-1 against 0.5 % chance, 45×), a crow that gathers
+out of 3,200 particles (labelled "imagined, not yet measured"), the cream "what it is for" page,
+the cosmos collapse and the end card. `record2.mjs` now passes `--allow-file-access-from-files`
+so the particle scene can sample a local image. `synth3.py` renders the cue.
+
+    BHA_REPO=<site root> node record2.mjs brand3.html stills stills_b3 1.5,8,15,22,27,33,42,50,55,61,66,74,80,92
+    BHA_REPO=<site root> node record2.mjs brand3.html all frames_brand3
+    ../../../../kokoro/venv/bin/python synth3.py 95        # brand3_music.wav
+    ffmpeg -framerate 30 -i frames_brand3/f%05d.jpg -i brand3_music.wav -c:v libx264 -crf 23 \
+      -pix_fmt yuv420p -c:a aac -b:a 160k -shortest brand3.mp4
+
+# Brand film, second cut (`brand2.html`)
 
 The published `video/brand.mp4` is the 86-second second cut: six chapters (a universe · a century
 of listening · the picture · four ways of seeing · a third of a second · what it is for), an

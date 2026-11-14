@@ -33,7 +33,7 @@
 
       "film.kicker": "The film",
       "film.title": "Every second, <span class=\"grad\">your brain is drawing.</span>",
-      "film.lede": "An 86-second brand film in six chapters, from the 86 billion neurons inside you to the first picture read back from a cap of electrodes. Every frame is real material: one participant’s EEG, the pictures they saw, the pictures BHA decoded, and the model’s own attribution maps. Sound on.",
+      "film.lede": "A 95-second brand film in seven chapters: from the 86 billion neurons inside you, through a century of listening, to the first picture read back from a cap of electrodes, a brain the decoder has never met, and a bird made of light. Every frame is real material: one participant’s EEG, the pictures they saw, the pictures BHA decoded, and the model’s own attribution maps. Sound on.",
 
       "dec.kicker": "Live decoder",
       "dec.title": "From brainwaves <span class=\"grad\">to pictures.</span>",
@@ -189,7 +189,7 @@
 
       "film.kicker": "短片",
       "film.title": "每一秒，<span class=\"grad\">你的大脑都在作画。</span>",
-      "film.lede": "一支 86 秒、六个章节的品牌短片：从你体内的 860 亿个神经元，到第一张从一顶电极帽里读回的图片。素材全部真实：一名被试的 EEG、她看到的图片、BHA 解码出的图片，以及模型自己的归因图。请开声音。",
+      "film.lede": "一支 95 秒、七个章节的品牌短片：从你体内的 860 亿个神经元，穿过一百年的倾听，到第一张从一顶电极帽里读回的图片、一个解码器从未见过的大脑，和一只由光构成的鸟。素材全部真实：一名被试的 EEG、她看到的图片、BHA 解码出的图片，以及模型自己的归因图。请开声音。",
 
       "dec.kicker": "实时解码",
       "dec.title": "从脑电波<span class=\"grad\">到图像。</span>",
