@@ -33,7 +33,7 @@
 
       "film.kicker": "The film",
       "film.title": "Every second, <span class=\"grad\">your brain is drawing.</span>",
-      "film.lede": "A 95-second brand film in seven chapters: from the 86 billion neurons inside you, through a century of listening, to the first picture read back from a cap of electrodes, a brain the decoder has never met, and a bird made of light. Every frame is real material: one participant’s EEG, the pictures they saw, the pictures BHA decoded, and the model’s own attribution maps. Sound on.",
+      "film.lede": "A 103-second brand film in seven chapters: from the 86 billion neurons inside you, through a century of listening, to the first picture read back from a cap of electrodes, the one world that every eye, human or machine, is looking at, a brain the decoder has never met, and a bird made of light. Every frame is real material: one participant’s EEG, the pictures they saw, the pictures BHA decoded, and the model’s own attribution maps. Sound on.",
 
       "dec.kicker": "Live decoder",
       "dec.title": "From brainwaves <span class=\"grad\">to pictures.</span>",
@@ -159,8 +159,8 @@
       "ins.l5.pp": "accuracy lost (pp)",
       "ins.l5.top1": "Top-1 (%)",
       "expl.kicker": "The explainer",
-      "expl.title": "Three minutes. One idea.",
-      "expl.lede": "Want the mechanism? A narrated walk-through in English: what we record, what the model learns from four vision teachers, what comes out, and what is still open.",
+      "expl.title": "Four minutes. One idea.",
+      "expl.lede": "Want the mechanism? A narrated walk-through in English: what we record, why brains and vision models describe one world, what the model learns from four teachers, what comes out, and what is still open.",
       "footer": "Anonymous project page · manuscript under peer review · built on THINGS-EEG2, THINGS-MEG, OpenCLIP, DFN, MAE, DINOv2, SDXL-Turbo and IP-Adapter."
     },
     zh: {
@@ -189,7 +189,7 @@
 
       "film.kicker": "短片",
       "film.title": "每一秒，<span class=\"grad\">你的大脑都在作画。</span>",
-      "film.lede": "一支 95 秒、七个章节的品牌短片：从你体内的 860 亿个神经元，穿过一百年的倾听，到第一张从一顶电极帽里读回的图片、一个解码器从未见过的大脑，和一只由光构成的鸟。素材全部真实：一名被试的 EEG、她看到的图片、BHA 解码出的图片，以及模型自己的归因图。请开声音。",
+      "film.lede": "一支 103 秒、七个章节的品牌短片：从你体内的 860 亿个神经元，穿过一百年的倾听，到第一张从一顶电极帽里读回的图片、人眼与机器共同注视的同一个世界、一个解码器从未见过的大脑，和一只由光构成的鸟。素材全部真实：一名被试的 EEG、她看到的图片、BHA 解码出的图片，以及模型自己的归因图。请开声音。",
 
       "dec.kicker": "实时解码",
       "dec.title": "从脑电波<span class=\"grad\">到图像。</span>",
@@ -315,8 +315,8 @@
       "ins.l5.pp": "损失的准确率（百分点）",
       "ins.l5.top1": "Top-1 (%)",
       "expl.kicker": "讲解片",
-      "expl.title": "三分钟，一个想法。",
-      "expl.lede": "想了解机制？英文旁白逐步讲解：我们记录什么、模型从四位视觉教师学到什么、输出什么、还有什么未解。",
+      "expl.title": "四分钟，一个想法。",
+      "expl.lede": "想了解机制？英文旁白逐步讲解：我们记录什么、为什么大脑与视觉模型描述的是同一个世界、模型从四位教师学到什么、输出什么、还有什么未解。",
       "footer": "匿名项目主页 · 论文同行评审中 · 基于 THINGS-EEG2、THINGS-MEG、OpenCLIP、DFN、MAE、DINOv2、SDXL-Turbo 与 IP-Adapter 构建。"
     }
   };

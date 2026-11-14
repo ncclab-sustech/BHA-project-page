@@ -71,7 +71,7 @@ def shell(kicker, title, body, foot="", title_size=None, bg_image=None):
 
 def slide_hook(s):
     body = """<div class="sub" style="font-size:36px;margin-top:34px">Non-invasive brain decoding with EEG and MEG.<br>No surgery. No implants. Just a cap of electrodes.</div>"""
-    return shell(s["kicker"], 'See what<br>the brain <span class="g">sees.</span>', body, "a three-minute explainer", 118, bg_image=os.path.join(REPO, "video", "showreel_poster.jpg"))
+    return shell(s["kicker"], 'See what<br>the brain <span class="g">sees.</span>', body, "a four-minute explainer", 118, bg_image=os.path.join(REPO, "video", "showreel_poster.jpg"))
 
 def slide_setup(s):
     facts = [("63", "electrodes on the scalp"), ("250 Hz", "sampling rate"), ("16,540", "training images per person"), ("200", "held-out test images"), ("10 + 4", "EEG and MEG participants")]
@@ -166,7 +166,20 @@ def slide_close(s):
 <div class="sub" style="font-size:34px;margin-top:70px">And this is just the first picture.</div>"""
     return shell(s["kicker"], 'A new interface between<br><span class="g">mind and machine.</span>', body, "manuscript under review · anonymous", 104)
 
-BUILDERS = dict(hook=slide_hook, setup=slide_setup, prior=slide_prior, problem=slide_problem, idea=slide_idea, retrieval=slide_retrieval, recon=slide_recon, qa=slide_qa, close=slide_close)
+def slide_world(s):
+    views = [("The brain", "gen0", "none", "its reading"), ("OpenCLIP", "gt", "none", "meaning"), ("DFN", "gt", "saturate(1.9) hue-rotate(12deg)", "web semantics"), ("MAE", "gt", "blur(6px) saturate(.6)", "texture & layout"), ("DINOv2", "gt", "grayscale(1) contrast(1.6)", "shape & parts")]
+    xs = [360, 660, 960, 1260, 1560]
+    cards = "".join(f'<div class="card" style="position:absolute;left:{x-125}px;top:660px;width:250px;padding:14px;text-align:center"><img src="{img("bok_choy",k)}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;filter:{f}"><div style="font-family:\'Plus Jakarta Sans\';font-weight:800;font-size:28px;margin-top:12px">{n}</div><div style="font-size:20px;color:rgba(255,255,255,.7)">sees <b style="color:#fff">{d}</b></div></div>' for (n, k, f, d), x in zip(views, xs))
+    lines = "".join(f'<path d="M960 548 C960 620 {x} 590 {x} 660" fill="none" stroke="rgba(159,208,255,.7)" stroke-width="3"/>' for x in xs)
+    body = f"""<div style="position:absolute;left:0;top:0;width:1920px;height:1080px">
+<svg style="position:absolute;left:0;top:0" width="1920" height="1080">{lines}</svg>
+<div style="position:absolute;left:840px;top:300px;width:240px;height:240px;border-radius:50%;overflow:hidden;box-shadow:0 0 90px rgba(43,92,255,.65);outline:4px solid rgba(255,255,255,.3)"><img src="{img('bok_choy','gt')}" style="width:100%;height:100%;object-fit:cover"></div>
+<div class="mono" style="position:absolute;left:0;width:1920px;top:256px;text-align:center;font-size:22px;color:#9fd0ff;letter-spacing:.14em;text-transform:uppercase">the world · one · objective · invariant</div>
+<div style="position:absolute;right:120px;top:300px;width:420px;font-size:26px;line-height:1.45;color:rgba(255,255,255,.78)">Representations of brains and models converge toward the <b style="color:#fff">same world</b>. Each view is partial; together they describe it.</div>
+{cards}</div>"""
+    return shell(s["kicker"], s["title"], body, "platonic representation hypothesis · Huh et al., 2024", 64)
+
+BUILDERS = dict(hook=slide_hook, setup=slide_setup, prior=slide_prior, problem=slide_problem, world=slide_world, idea=slide_idea, retrieval=slide_retrieval, recon=slide_recon, qa=slide_qa, close=slide_close)
 
 def render():
     for i, s in enumerate(SLIDES):

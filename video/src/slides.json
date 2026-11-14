@@ -69,10 +69,25 @@
    "key_message": "Every vision model sees a different picture."
   },
   {
+   "id": "world",
+   "role": "contribution",
+   "kind": "world",
+   "kicker": "04 · The idea",
+   "title": "One world, many ways of seeing it.",
+   "visual_focus": "one photograph at the centre and five views of it: the brain's reading and four vision models",
+   "voice": "Here is the idea underneath BHA. Brains and vision models are looking at the same physical world, and the better they get, the more their representations converge toward it: the platonic representation hypothesis. We take it one step further. There is one world, objective and invariant. And there are many ways of seeing it: CLIP's, DINO's, MAE's, and your brain's, each partial and subjective. So a decoder should not imitate one view. It should learn from all of them, because together they describe the world the brain is also looking at.",
+   "evidence": [
+    "§1",
+    "§3"
+   ],
+   "purpose": "State the premise: brains and models describe one world, so the decoder should learn from the diversity of views",
+   "key_message": "One world, many ways of seeing it."
+  },
+  {
    "id": "idea",
    "role": "contribution",
    "kind": "idea",
-   "kicker": "04 · The idea",
+   "kicker": "05 · The method",
    "title": "One brain model, four teachers.",
    "visual_focus": "two-stage training diagram",
    "voice": "BHA, Beyond Hierarchical Alignment, stops choosing. One brain model is trained by four vision teachers at once. Then, with the brain model frozen, each teacher gets its own small read-out, and learned weights decide how much each teacher's opinion counts. The image generator is never retrained. The brain's prediction simply steers it.",
@@ -87,7 +102,7 @@
    "id": "retrieval",
    "role": "result",
    "kind": "retrieval",
-   "kicker": "05 · Results",
+   "kicker": "06 · Results",
    "title": "A new state of the art on EEG and MEG.",
    "visual_focus": "bar chart of 200-way Top-1 accuracy",
    "voice": "Does it work? Show the model two hundred candidate pictures, and ask which one the person is looking at. On E E G, BHA picks the right one ninety-three point nine percent of the time. The previous best was eighty-two point six. On M E G, sixty-eight point one percent, against forty-eight. And the gain holds even when we train on only a quarter of the data.",
@@ -102,7 +117,7 @@
    "id": "recon",
    "role": "result",
    "kind": "recon",
-   "kicker": "06 · Reconstruction",
+   "kicker": "07 · Reconstruction",
    "title": "From brainwaves to pictures.",
    "visual_focus": "seen versus decoded image pairs",
    "voice": "Beyond picking from a gallery, BHA generates. Every image on the bottom row was produced from one person's E E G response to a photo they had never seen before. Pixel-level fidelity is up forty-two percent over the strongest published method, and the meaning of the picture comes through more often, with the generator itself left completely untouched.",
@@ -117,7 +132,7 @@
    "id": "discussion",
    "role": "discussion",
    "kind": "qa",
-   "kicker": "07 · Two questions we always get",
+   "kicker": "08 · Two questions we always get",
    "title": "Is this mind reading? Does it work on anyone?",
    "visual_focus": "two question cards",
    "questions": [

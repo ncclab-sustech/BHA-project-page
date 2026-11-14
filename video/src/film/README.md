@@ -13,9 +13,27 @@ come from the narration timeline (`../timeline.json`, `../audio/tts_manifest.jso
     BHA_REPO=<site root> node record.mjs all      # ~5 800 frames
     ./assemble.sh
 
-# Brand film (`brand3.html`, current)
+# Brand film (`brand4.html`, current)
 
-The published `video/brand.mp4` is the 95-second third cut. Type is Fraunces (600/700, italic
+The published `video/brand.mp4` is the 103-second fourth cut. Changes against the third cut: a
+new 8-second chapter at 52 s, "one world, many eyes" (one photograph at the centre, five views
+of it: the brain's own reading and the four teachers, under the platonic representation
+hypothesis: every eye, human or machine, is looking at the same world); the four-teacher beat
+uses the bok choy instead of the bonnet (OpenCLIP lowers the match, DFN and MAE raise it,
+DINOv2 splits); the ticker in the pairs montage moves inside a fixed, soft-edged clip box so
+no word is cut at the frame edge; the "a film · 2026" stamp is gone. Chapters now run
+0 / 12 / 23 / 45 / 52 / 71 / 85 / 97 s. `synth4.py` renders the 103-second cue (flash cuts at
+12, 29, 52, 60, 85, 97 s; heartbeat 23–77 s).
+
+    BHA_REPO=<site root> node record2.mjs brand4.html stills stills_b4 39,53.5,57.5,63,70,87,100
+    BHA_REPO=<site root> node record2.mjs brand4.html all frames_brand4
+    ../../../../kokoro/venv/bin/python synth4.py 103       # brand4_music.wav
+    ffmpeg -framerate 30 -i frames_brand4/f%05d.jpg -i brand4_music.wav -c:v libx264 -crf 23 \
+      -pix_fmt yuv420p -c:a aac -b:a 160k -shortest brand4.mp4
+
+# Brand film, third cut (`brand3.html`)
+
+The 95-second third cut. Type is Fraunces (600/700, italic
 500) with Syne and JetBrains Mono labels at 20 px; every stroke is 2 px or heavier so the film
 reads on a phone. Photographs are never shown larger than 580 px: the ten-thousand-pictures beat
 and the retrieval beat are mosaics of small tiles. Scenes: an iris opener, the particle cosmos,
