@@ -538,9 +538,9 @@
     renderHeat("vfm");
 
     // L3: occlusion attribution maps, drawn natively from the ten-participant means
-    var IM = ["bonnet", "snowshoe", "gondola"], GROUPS = ["openclip", "dfn", "mae", "dinov2l", "shared_fusion"];
+    var IM = ["bok_choy", "boat", "bonnet", "goose", "recorder", "snowshoe", "gondola", "pocketknife"], GROUPS = ["openclip", "dfn", "mae", "dinov2l", "shared_fusion"];
     var GLAB = { openclip: "OpenCLIP", dfn: "DFN-6", mae: "MAE-18", dinov2l: "DINOv2-12", shared_fusion: "ins.l3.shared" };
-    var picks = document.getElementById("attr-picks"), row = document.getElementById("attr-row"), ATTR = null, curAttr = "bonnet";
+    var picks = document.getElementById("attr-picks"), row = document.getElementById("attr-row"), ATTR = null, curAttr = "bok_choy";
     function divColor(v) { // -1..1 -> blue..white..red
       var a = Math.abs(v), r, g, b;
       if (v >= 0) { r = 255; g = Math.round(255 - a * 215); b = Math.round(255 - a * 230); }
@@ -576,7 +576,7 @@
         b.addEventListener("click", function () { renderAttr(id); });
         picks.appendChild(b);
       });
-      fetch("assets/insight/attribution_maps.json").then(function (r) { return r.json(); }).then(function (d) { ATTR = d; renderAttr("bonnet"); });
+      fetch("assets/insight/attribution_maps.json").then(function (r) { return r.json(); }).then(function (d) { ATTR = d; renderAttr("bok_choy"); });
     }
 
     // L4: concept-selective units, native cards
